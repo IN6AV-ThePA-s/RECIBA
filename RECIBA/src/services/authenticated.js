@@ -1,7 +1,7 @@
 'use strict'
 
 const jwt = require('jsonwebtoken')
-const ROLES = Object.freeze({ master: 'MASTER', admin: 'ADMIN', client: 'CLIENT' })
+const ROLES = Object.freeze({ master: 'MASTER', partner: 'PARTNER', recycler: 'RECYCLER', client: 'CLIENT' })
 
 exports.ensureAdvance = (req, res, next) => {
     if(!req.headers.authorization) return res.status(403).send({ message: `Does not contain header "AUTHORIZATION"`})
@@ -22,14 +22,25 @@ exports.ensureAdvance = (req, res, next) => {
     next()
 }
 
-exports.isAdmin = (req, res, next) => {
+exports.isPartner = (req, res, next) => {
     try {
         let user = req.user
-        if (user.role !== ROLES.admin && user.role !== ROLES.master) return res.status(403).send({ message: 'Unauthorized user :(' })
+        if (user.role !== ROLES.partner && user.role !== ROLES.master) return res.status(403).send({ message: 'Unauthorized user :(' })
         next()
     } catch (err) {
         console.error(err)
         return res.status(500).send({message: 'Error, unauthorized user :(', error: err})
+    }
+}
+
+exports.isRecycler = (req, res, next)=>{
+    try {
+        let user = req.user
+        if(user.role !== ROLES.recycler && user.role !== ROLES.master) return res.status(403).send({message: 'Unauthorized user'})
+        next()
+    } catch (err) {
+        console.error(err);
+        return res.status(500).send({message: 'Error, unauthorized user', error: err})
     }
 }
 
@@ -41,5 +52,18 @@ exports.isMaster = (req, res, next) => {
     } catch (err) {
         console.error(err)
         return res.status(500).send({ message: 'Error, unauthorized user :(', error: err })
+    }
+}
+
+exports.authImg = (req, res, next) => {
+    try {
+        let user = req.user
+        let id = req.params.id
+        
+        if (user.sub !== id && user.role !== ROLES.master) return res.status(403).send({ message: 'Unauthorized' })
+        next()
+    } catch (err) {
+        console.error(err)
+        return res.status(500).send({ message: 'Error, unauthorized to do this action :(' })
     }
 }
