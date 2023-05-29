@@ -2,7 +2,7 @@
 
 const mongoose = require('mongoose')
 
-const partnerschema = mongoose.Schema({
+const partnerSchema = mongoose.Schema({
     name:{
         type: String,
         required: true
@@ -28,4 +28,4 @@ const partnerschema = mongoose.Schema({
     versionKey: false
 })
 
-module.exports = mongoose.model('Partner', partnerschema);
+module.exports = mongoose.model('Partner', partnerSchema);
