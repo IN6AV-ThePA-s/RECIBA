@@ -24,6 +24,8 @@ const partnerschema = mongoose.Schema({
         ref: 'User',
         required: true
     }
+},{
+    versionKey: false
 })
 
 module.exports = mongoose.model('Partner', partnerschema);
