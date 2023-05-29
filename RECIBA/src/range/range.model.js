@@ -5,7 +5,9 @@ const mongoose = require('mongoose')
 const rangeSchema = mongoose.Schema({
     name: {
         type: String,
-        required: true
+        required: true,
+        uppercase: true,
+        unique: true
     },
     initExp: {
         type: Number,
