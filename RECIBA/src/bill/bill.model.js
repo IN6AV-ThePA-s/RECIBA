@@ -10,7 +10,7 @@ const billSchema = mongoose.Schema({
     },
     recycler:{
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Recycler',
+        ref: 'Recycle',
         required: true
     },
     cantMaterials:[{
