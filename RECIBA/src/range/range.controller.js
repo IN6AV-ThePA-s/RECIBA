@@ -9,6 +9,27 @@ exports.test = (req, res) => {
     return res.send({ message: 'Test range' })
 }
 
+/* DEFAULT RANGE */
+exports.defaultRange = async(req, res) => {
+    try {
+        let range = await Range.findOne({ name: 'JUNIOR' })
+        if (range) return console.log('Range default already created in db')
+
+        let data = {
+            name: 'JUNIOR',
+            initExp: 0,
+            limitExp: 1000
+        }
+        let defRange = new Range(data)
+        await defRange.save()
+        return console.log('Range default created successfully')
+        
+    } catch (err) {
+        console.error(err)
+        return res.status(500).send({ message: 'Error creating range default', error: err })
+    }
+}
+
 /* ADD */
 exports.add = async(req, res) => {
     try {
