@@ -11,6 +11,7 @@ const partnerRoutes = require('../src/partner/partner.routes');
 const recyclerRoutes = require('../src/recycler/recycler.routes')
 const materialRoutes = require('../src/material/material.routes')
 const rewardRoutes = require('../src/reward/reward.routes')
+const billRoutes = require('../src/bill/bill.routes')
 
 app.use(express.urlencoded({ extended: false }))
 app.use(express.json())
@@ -23,6 +24,8 @@ app.use('/partner', partnerRoutes);
 app.use('/recycler', recyclerRoutes);
 app.use('/material', materialRoutes);
 app.use('/reward', rewardRoutes)
+app.use('/bill', billRoutes)
+
 
 /* START SERVER */
 exports.initServer = () => {
