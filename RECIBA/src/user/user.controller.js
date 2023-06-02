@@ -13,8 +13,6 @@ exports.test = (req, res) => {
     res.send({ message: 'Test users' })
 }
 
-//PARA METER OBJETOS A LOCALSTORAGE ---- AL METER JSON.stringify() y al sacar JSON.parse()
-
 /* ----- DEFAULT MASTER ----- */
 exports.defaultMaster = async() => {
     try {
