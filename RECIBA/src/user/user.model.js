@@ -43,13 +43,9 @@ const userSchema = mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Range',
     },
-    achievements:{
-        type: [{
-            achievement:{
-                type: mongoose.Schema.Types.ObjectId,
-                ref: 'Achievements',
-            }
-        }]
+    achievements: {
+        type: Array,
+        default: []
     },
     photo:{
         type: String

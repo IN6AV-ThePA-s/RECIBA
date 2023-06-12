@@ -16,6 +16,9 @@ const rangeSchema = mongoose.Schema({
     limitExp: {
         type: Number,
         required: true
+    },
+    photo: {
+        type: String
     }
 }, {
     versionKey: false

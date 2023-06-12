@@ -2,12 +2,13 @@
 
 const User = require('./user.model')
 const Range = require('../range/range.model')
+const Achievement = require('../achievements/achievements.model')
 const { encrypt, validateData, check, sensitiveData } = require('../utils/validate')
 const { createToken } = require('../services/jwt')
 const fs = require('fs')
 const path = require('path')
 
-const ROLES = Object.freeze({ partner: 'PARTNER',recycler: 'RECYCLER', master: 'MASTER', client: 'CLIENT' })
+const ROLES = Object.freeze({ partner: 'PARTNER', recycler: 'RECYCLER', master: 'MASTER', client: 'CLIENT' })
 
 exports.test = (req, res) => {
     res.send({ message: 'Test users' })
@@ -95,6 +96,9 @@ exports.register = async(req, res) => {
 
         data.role = ROLES.client
         data.password = await encrypt(data.password)
+        
+        let achieves = await Achievement.find()
+        if (achieves) data.achievements = achieves
         
         let user = new User(data)
         await user.save()
