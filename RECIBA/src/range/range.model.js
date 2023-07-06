@@ -5,7 +5,9 @@ const mongoose = require('mongoose')
 const rangeSchema = mongoose.Schema({
     name: {
         type: String,
-        required: true
+        required: true,
+        uppercase: true,
+        unique: true
     },
     initExp: {
         type: Number,
@@ -14,6 +16,9 @@ const rangeSchema = mongoose.Schema({
     limitExp: {
         type: Number,
         required: true
+    },
+    photo: {
+        type: String
     }
 }, {
     versionKey: false
