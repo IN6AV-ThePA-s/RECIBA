@@ -39,6 +39,10 @@ const userSchema = mongoose.Schema({
     points: {
         type: Number
     },
+    exp: {
+        type: Number,
+        default: 0
+    },
     range:{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Range',
