@@ -1,34 +1,31 @@
 import React, { useContext, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import './loginStyle.css'
-
-
-
+import { AuthContext } from '../../index'
 import axios from 'axios'
 import Swal from 'sweetalert2'
 import { NavbarHome } from '../../components/NavbarHome'
 
 export const LoginPage = () => {
-    //const { loggedIn, setLoggedIn, setDataUser, dataUser } = useContext(AuthContext)
+    const { loggedIn, setLoggedIn, setDataUser, dataUser } = useContext(AuthContext)
     const navigate = useNavigate()
     const [form, setForm] = useState({
         username: '',
         password: ''
     })
-    
 
     const handleChange = (e) => {
         setForm({
             ...form,
-            [e.target.name] : e.target.value
+            [e.target.name]: e.target.value
         })
     }
 
-    const login = async(e) => {
+    const login = async (e) => {
         try {
-            const { data } = await axios.post('http://localhost:3022/user/login', form)
+            const { data } = await axios.post('http://localhost:3033/user/login', form)
 
-            if(data.token) {
+            if (data.token) {
                 Swal.fire({
                     title: data.message,
                     icon: 'success',
@@ -36,11 +33,29 @@ export const LoginPage = () => {
                     showConfirmButton: false
                 })
                 localStorage.setItem('token', data.token)
-                localStorage.setItem('name', data.user.names)
-                localStorage.setItem('username', data.user.username)
-                localStorage.setItem('role', data.user.role)
+                localStorage.setItem('user', JSON.stringify(data.user))
+                setDataUser(data.user)
                 setLoggedIn(true)
-                navigate('/dashboard')
+
+                switch (data.user.role) {
+                    case 'CLIENT':
+                        navigate(`/home`)
+                        break;
+
+                    case 'MASTER':
+                        navigate(`/master`)
+                        break;
+
+                    case 'RECYCLER':
+                        navigate(`/recycler`)
+                        break;
+
+                    case 'PARTNER':
+                        navigate(`/partner`)
+                        break;
+                    default:
+                        break;
+                }
             }
 
         } catch (err) {
@@ -53,25 +68,25 @@ export const LoginPage = () => {
         <div className='bodyLogin conLogin text-center text-bg-dark'>
             <div className="d-flex p-3 flex-column"> {/* mx-auto */}
 
-                <NavbarHome/>
+                <NavbarHome />
 
 
 
-                <main className="px-3" style={{margin: 'auto'}}>
-                    
+                <main className="px-3" style={{ margin: 'auto' }}>
 
-                    
+
+
 
                     <h2 className="h2247 fs-1">Enter your credentials to continue.</h2>
 
-                    
+
 
                     <div className='form-group d-flex justify-content-center'>
                         <div className="form__group field me-3">
                             <input onChange={handleChange} type="text" className="form__field" placeholder="Username" name="username" maxLength='100' required />
                             <label htmlFor="name" className="form__label">Username</label>
                         </div>
-                        
+
                         <div className="form__group field ms-3">
                             <input onChange={handleChange} type="password" className="form__field" placeholder="Password" name="password" maxLength='100' required />
                             <label htmlFor="name" className="form__label">Password</label>
