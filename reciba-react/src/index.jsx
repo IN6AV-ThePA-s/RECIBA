@@ -9,6 +9,8 @@ import React, { createContext, useEffect, useState } from 'react'
 import { UserHomePage } from './pages/User/UserHomePage'
 import { RecyclerDashboard } from './pages/Recycler/RecyclerDashboard'
 import { PartnerDashboard } from './pages/Partner/PartnerDashboard'
+import { HomeRecycler } from './pages/Recyler/HomeRecycler'
+import { RecyclerPage } from './pages/Recyler/RecyclerPage'
 
 export const AuthContext = createContext()
 
@@ -55,7 +57,12 @@ export const Index = () => {
                 {
                     path: '/recycler',
                     element: loggedIn ? (dataUser?.role === 'RECYCLER' ? <RecyclerDashboard/> : <NotFound/>) : (<LoginPage/>),
-                    children: []
+                    children: [
+                        {
+                            path: 'home',
+                            element: <HomeRecycler/>,
+                        }
+                    ]
                 },
                 {
                     path: '/partner',

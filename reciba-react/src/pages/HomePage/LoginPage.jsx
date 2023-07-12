@@ -86,7 +86,6 @@ export const LoginPage = () => {
                             <input onChange={handleChange} type="text" className="form__field" placeholder="Username" name="username" maxLength='100' required />
                             <label htmlFor="name" className="form__label">Username</label>
                         </div>
-
                         <div className="form__group field ms-3">
                             <input onChange={handleChange} type="password" className="form__field" placeholder="Password" name="password" maxLength='100' required />
                             <label htmlFor="name" className="form__label">Password</label>
