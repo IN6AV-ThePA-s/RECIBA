@@ -97,6 +97,10 @@ export const LoginPage = () => {
 
                         <button className="btnLogin draw-border" onClick={login}>Login</button>
                     </div>
+
+                    <div className='form-group mt-5'>
+                        <p className='h2247 fs-6'>You have no account? <Link className='text-decoration-none text-success' to={'/register'}>Register</Link></p>
+                    </div>
                 </main>
             </div>
         </div>

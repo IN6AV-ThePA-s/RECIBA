@@ -9,6 +9,7 @@ import React, { createContext, useEffect, useState } from 'react'
 import { UserHomePage } from './pages/User/UserHomePage'
 import { RecyclerDashboard } from './pages/Recycler/RecyclerDashboard'
 import { PartnerDashboard } from './pages/Partner/PartnerDashboard'
+import { RegisterPage } from './pages/HomePage/RegisterPage'
 
 export const AuthContext = createContext()
 
@@ -37,6 +38,10 @@ export const Index = () => {
                 {
                     path: '/about',
                     element: <AboutUsPage/>
+                },
+                {
+                    path: '/register',
+                    element: <RegisterPage/>
                 },
                 {
                     path: '/login',
