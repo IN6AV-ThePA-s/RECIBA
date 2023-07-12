@@ -11,6 +11,7 @@ import { RecyclerDashboard } from './pages/Recycler/RecyclerDashboard'
 import { PartnerDashboard } from './pages/Partner/PartnerDashboard'
 import { HomeRecycler } from './pages/Recyler/HomeRecycler'
 import { RecyclerPage } from './pages/Recyler/RecyclerPage'
+import { RegisterPage } from './pages/HomePage/RegisterPage'
 
 export const AuthContext = createContext()
 
@@ -39,6 +40,10 @@ export const Index = () => {
                 {
                     path: '/about',
                     element: <AboutUsPage/>
+                },
+                {
+                    path: '/register',
+                    element: <RegisterPage/>
                 },
                 {
                     path: '/login',
