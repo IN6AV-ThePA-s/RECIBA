@@ -39,21 +39,39 @@ const userSchema = mongoose.Schema({
     points: {
         type: Number
     },
+    exp: {
+        type: Number,
+        default: 0
+    },
     range:{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Range',
     },
-    achievements:{
-        type: [{
-            achievement:{
-                type: mongoose.Schema.Types.ObjectId,
-                ref: 'Achievements',
-            }
-        }]
-    },
     photo:{
         type: String
-    }
+    },
+    cart:[{
+
+        material: {
+
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Material',
+
+        },
+
+        amountWeight: {
+
+            type: Number,
+
+        },
+
+        subtotal: {
+
+            type: Number
+
+        }
+
+    }]
 
 },{
     versionKey: false

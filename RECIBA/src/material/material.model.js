@@ -15,11 +15,11 @@ const materialSchema = mongoose.Schema({
     },
     price:{
         type:{
-            quantity:{
+            quantity:{ // COMPRA DE BASE
                 type:Number,
                 required:true
             },
-            amount:{
+            amount:{ // PRECIO POR ESA BASE
                 type:Number,
                 required:true
             }
@@ -32,7 +32,7 @@ const materialSchema = mongoose.Schema({
         required:true
     }
 },{
-    varsionKey:false
+    versionKey:false
 })
 
 module.exports = mongoose.model('Material',materialSchema) 
