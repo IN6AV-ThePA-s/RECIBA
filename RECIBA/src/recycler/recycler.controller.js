@@ -9,9 +9,11 @@ exports.addRecycler = async(req,res) =>{
         let userLogged = req.user
 
         let existsUser = await User.findOne({ _id: userLogged.sub, role:'MASTER' })
+        if(!existsUser) return res.status(404).send({message:'Account not found or role is not MASTER'})
 
-        if(!existsUser) return res.status(404).send({message:'Your account not found or role is not recycler'})
-
+        let existRecycler = await User.findOne({email: data.email})
+        if (existRecycler) return res.status(418).send({message: 'This email is already taken, please choose another one'})
+        
         let newRecycler = new Recycler(data)
         newRecycler.save()
 
@@ -25,7 +27,7 @@ exports.addRecycler = async(req,res) =>{
 exports.getRecyclers = async(req,res) =>{
     try{
         let userLogged = req.user
-        let recyclers = await Recycler.find({user:userLogged.sub})
+        let recyclers = await Recycler.find()
         return res.send({recyclers})
     }catch (err) {
         return res.status(500).send({message:'Error getting Recyclers'})
@@ -36,7 +38,7 @@ exports.getRecycler = async(req,res) =>{
     try{
         let userLogged = req.user
         let idRecycler = req.params.id
-        let recycler = await Recycler.findOne({_id:idRecycler,user:userLogged.sub})
+        let recycler = await Recycler.findOne({_id:idRecycler})
         if(!recycler) return res.status(404).send({message:'Recycler not found please check the id'})
         return res.send({recycler})
     }catch (err) {
