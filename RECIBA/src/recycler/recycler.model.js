@@ -15,7 +15,10 @@ const recycleSchema = mongoose.Schema({
         type:mongoose.Schema.Types.ObjectId,
         ref:'User',
         required:true
-    }
+    },
+    photos: {
+        type: [String]
+    },
 },{
     versionKey:false
 })
