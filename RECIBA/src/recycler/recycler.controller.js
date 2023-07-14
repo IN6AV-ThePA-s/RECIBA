@@ -65,7 +65,7 @@ exports.getImg = async(req, res) => {
 exports.uploadImgs = async(req, res) => {
     try {
         if (!req.files.images)
-            return res.status(400).send({ message: 'Have not sent an images' });
+            return res.status(400).send({ message: 'Have not sent images' });
         const imgs = req.files.images;
         let names = [];
         const reciclerId = req.params.id;
