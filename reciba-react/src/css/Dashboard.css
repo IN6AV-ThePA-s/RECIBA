@@ -40,3 +40,8 @@
     color: black;
     transition: 0s;
 }
+
+.optionUser {
+    display: inline-block;
+    vertical-align: bottom;
+}
