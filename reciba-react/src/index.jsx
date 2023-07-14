@@ -12,6 +12,8 @@ import { PartnerDashboard } from './pages/Partner/PartnerDashboard'
 import { HomeRecycler } from './pages/Recyler/HomeRecycler'
 import { RecyclerPage } from './pages/Recyler/RecyclerPage'
 import { RegisterPage } from './pages/HomePage/RegisterPage'
+import { RecyclerView } from './pages/User/RecyclerView'
+import { UserHome } from './pages/User/UserHome'
 
 export const AuthContext = createContext()
 
@@ -57,7 +59,16 @@ export const Index = () => {
                 {
                     path: '/home',
                     element: loggedIn ? (dataUser?.role === 'CLIENT' ? <UserHomePage/> : <NotFound/>) : (<LoginPage/>),
-                    children: []
+                    children: [
+                        {
+                            path: 'page',
+                            element: <UserHome/>
+                        },
+                        {
+                            path: 'recyclerview/:id',
+                            element: <RecyclerView/>
+                        },
+                    ]
                 },
                 {
                     path: '/recycler',
