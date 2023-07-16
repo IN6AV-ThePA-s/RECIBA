@@ -10,8 +10,13 @@ exports.addMaterial = async(req,res) =>{
     try {
         let data = req.body
         let userLogged = req.user
-        let existsRecycler = await Recycler.findOne({_id:data.recycle,user:userLogged.sub})
-        if(!existsRecycler) return res.status(404).send({message:'Recycler not found'})
+        console.log(data)
+
+        let existsRecycler = await Recycler.findOne({ _id:data.recycle })
+        
+        if (!existsRecycler || userLogged.role !== 'MASTER') 
+            return res.status(418).send({message:'Recycler not found or unauthorized role'})
+
         let newMaterial = new Material(data)
         await newMaterial.save()
         return res.send({message:'Material created successfully'})
@@ -21,11 +26,11 @@ exports.addMaterial = async(req,res) =>{
     }
 }
 
-exports.getMaterials = async (req, res) => {
-    try {
-        let materials = await Material.find()
+exports.getMaterials = async (req, res) =>{
+    try{
+        let materials = await Material.find().populate('recycle')
         return res.send({ materials })
-    } catch (err) {
+    }catch (err) {
         return res.status(500).send({ message: 'Error getting materials' })
     }
 }
@@ -41,7 +46,22 @@ exports.getMaterial = async (req, res) => {
     }
 }
 
-exports.getImg = async (req, res) => {
+exports.getRecyclerMaterial = async(req, res) => {
+    try {
+        let recycler = req.params.id
+
+        let materials = await Material.find({ recycle: recycler })
+        if (!materials) return res.status(404).send({ message: `The recycler's materials you are looking for does not exist` })
+        
+        return res.send({materials})
+        
+    } catch (err) {
+        console.error(err)
+        return res.status(500).send({ message: 'Error getting materials', error: err })
+    }
+}
+
+exports.getImg = async(req, res) => {
     try {
         const { file } = req.params;
         const url = `./src/uploads/materials/${file}`

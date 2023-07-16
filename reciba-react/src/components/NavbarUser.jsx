@@ -19,7 +19,7 @@ export const NavbarUser = () => {
                     <span className="navbar-toggler-icon"></span>
                 </button>
                 
-                <a className="navbar-brand fontReciba" href="#">RECIBA</a>
+                <Link className="navbar-brand fontReciba" to={'/home/page'}>RECIBA</Link>
 
                 <div className="offcanvas offcanvas-start" data-bs-backdrop="static" tabIndex="-1" id="staticBackdrop" aria-labelledby="staticBackdropLabel">
                     <div className="offcanvas-header">

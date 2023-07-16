@@ -3,7 +3,7 @@ import c1 from '../../assets/c1.jpg'
 import '../../css/UserHomePage.css'
 import { Link, useNavigate } from 'react-router-dom'
 
-export const CardRecycler = ({ name, direction, id, email, phone, startHour, endHour }) => {
+export const CardRecycler = ({ name, direction, id, email, phone, startHour, endHour, photos }) => {
 
     return (
         <div className='col'>
@@ -11,7 +11,8 @@ export const CardRecycler = ({ name, direction, id, email, phone, startHour, end
                 <div className="row g-0 align-items-center">
                     <div className="col-sm-5">
                         <img
-                            src={c1}
+                            src={`http://localhost:3033/recycler/getImage/${photos[0]}`}
+                            crossOrigin='anonymous' 
                             className="img-fluid rounded-start"
                             style={{
                                 objectFit: 'cover',
