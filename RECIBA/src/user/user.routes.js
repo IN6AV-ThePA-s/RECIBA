@@ -2,7 +2,7 @@
 
 const api = require('express').Router()
 const { ensureAdvance, isMaster, authImg } = require('../services/authenticated');
-const { test, login, register, update, del, updatePassword, save, updateUser, delUser, get, getUser, uploadImg, getImg } = require('./user.controller')
+const { test, login, register, update, del, updatePassword, save, updateUser, delUser, get, getUser, getUserByUsername, uploadImg, getImg } = require('./user.controller')
 const connectMultiparty = require('connect-multiparty')
 const upload = connectMultiparty({ uploadDir: './src/uploads/users/' })
 
@@ -21,8 +21,9 @@ api.put('/updatePassword', ensureAdvance, updatePassword)
 api.put('/uploadImg/:id', [ensureAdvance, authImg, upload], uploadImg)
 
 //ADMIN ROUTES
-api.get('/get', [ensureAdvance, isMaster], get)
-api.get('/get/:id', [ensureAdvance, isMaster], getUser)
+api.get('/get', [ensureAdvance], get)
+api.get('/get/:id', [ensureAdvance], getUser)
+api.get('/getByUsername/:username', [ensureAdvance], getUserByUsername)
 
 //MASTER ROUTES
 api.post('/save', [ensureAdvance, isMaster], save)

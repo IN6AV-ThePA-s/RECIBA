@@ -151,3 +151,19 @@ exports.deleteRecycler = async(req,res) =>{
         return res.status(500).send({message:'Error deleting Recycler'})
     }
 }
+
+/* ----- GET USER ----- */
+exports.getByUser = async(req, res) => {
+    try {
+        let user = req.params.user
+
+        let recycler = await Recycler.findOne({ user: user })
+        if(!recycler) return res.status(404).send({ message: 'Recycler not found :(' })
+
+        return res.send({ message: 'Recycler found!', recycler })
+
+    } catch (err) {
+        console.error(err)
+        return res.status(500).send({ message: 'Error getting user :(', error: err })
+    }
+}

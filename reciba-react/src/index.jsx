@@ -14,6 +14,9 @@ import { RecyclerPage } from './pages/Recyler/RecyclerPage'
 import { RegisterPage } from './pages/HomePage/RegisterPage'
 import { RecyclerView } from './pages/User/RecyclerView'
 import { UserHome } from './pages/User/UserHome'
+import { ViewMaterials } from './pages/Recycler/ViewMaterials'
+import { CreateBill } from './pages/Recycler/CreateBill'
+import { ViewBills } from './pages/Recycler/ViewBills'
 
 export const AuthContext = createContext()
 
@@ -77,6 +80,18 @@ export const Index = () => {
                         {
                             path: 'home',
                             element: <HomeRecycler/>,
+                        },
+                        {
+                            path: 'viewMaterials',
+                            element: <ViewMaterials/>
+                        },
+                        {
+                            path: 'createBill',
+                            element: <CreateBill/>
+                        },
+                        {
+                            path: 'viewBills',
+                            element: <ViewBills/>
                         }
                     ]
                 },

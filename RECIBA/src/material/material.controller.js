@@ -21,27 +21,27 @@ exports.addMaterial = async(req,res) =>{
     }
 }
 
-exports.getMaterials = async(req,res) =>{
-    try{
+exports.getMaterials = async (req, res) => {
+    try {
         let materials = await Material.find()
-        return res.send({materials})
-    }catch (err) {
-        return res.status(500).send({message:'Error getting materials'})
+        return res.send({ materials })
+    } catch (err) {
+        return res.status(500).send({ message: 'Error getting materials' })
     }
 }
 
-exports.getMaterial = async(req,res) =>{
-    try{
+exports.getMaterial = async (req, res) => {
+    try {
         let idMaterial = req.params.id
-        let material = await Material.findOne({_id:idMaterial})
-        if(!material) return res.status(404).send({message:'Material not found please check the id'})
-        return res.send({material})
-    }catch (err) {
-        return res.status(500).send({message:'Error getting materials'})
+        let material = await Material.findOne({ _id: idMaterial })
+        if (!material) return res.status(404).send({ message: 'Material not found please check the id' })
+        return res.send({ material })
+    } catch (err) {
+        return res.status(500).send({ message: 'Error getting materials' })
     }
 }
 
-exports.getImg = async(req, res) => {
+exports.getImg = async (req, res) => {
     try {
         const { file } = req.params;
         const url = `./src/uploads/materials/${file}`
@@ -55,7 +55,7 @@ exports.getImg = async(req, res) => {
     }
 }
 
-exports.uploadImgs = async(req, res) => {
+exports.uploadImgs = async (req, res) => {
     try {
         if (!req.files.image)
             return res.status(400).send({ message: 'Have not sent an images' });
@@ -66,22 +66,22 @@ exports.uploadImgs = async(req, res) => {
         const material = await Material.findOne({ _id: materialId });
         if (material) {
             if (material.photo) {
-                    fs.unlinkSync(`${url}${material.photo}`);
+                fs.unlinkSync(`${url}${material.photo}`);
             }
             let fP, fN, fE, fS, e;
-                fP = imgs.path;
-                fS = fP.split('\\');
-                fN = fS[3];
-                e = fN.split('\.');
-                fE = e[3];
-                if (isImg(e))
-                    fs.unlinkSync(fP);
-                names.push(fN)
+            fP = imgs.path;
+            fS = fP.split('\\');
+            fN = fS[3];
+            e = fN.split('\.');
+            fE = e[3];
+            if (isImg(e))
+                fs.unlinkSync(fP);
+            names.push(fN)
             await Material.updateOne({ _id: materialId }, { photo: names[0] });
             return res.send({ message: `Photos added successfully` });
         } else {
-                const fp = imgs.path;
-                fs.unlinkSync(fp);
+            const fp = imgs.path;
+            fs.unlinkSync(fp);
             return res.status(404).send({ message: `Recycler not found` });
         }
     } catch (err) {
@@ -90,32 +90,32 @@ exports.uploadImgs = async(req, res) => {
     }
 }
 
-exports.editMaterial = async(req,res) =>{
+exports.editMaterial = async (req, res) => {
     try {
         let idMaterial = req.params.id
         let data = req.body
-        if(data.recycle) data.recycle = undefined
+        if (data.recycle) data.recycle = undefined
         let materialUpdated = await Material.findOneAndUpdate(
-            {_id:idMaterial},
+            { _id: idMaterial },
             data,
-            {new:true}
+            { new: true }
         )
-        if(!materialUpdated) return res.status(404).send({message:'Material not found'})
-            return res.send({materialUpdated})
+        if (!materialUpdated) return res.status(404).send({ message: 'Material not found' })
+        return res.send({ materialUpdated })
     } catch (err) {
         console.error(err);
-        return res.status(500).send({message:'error setting material',error:err.message})
+        return res.status(500).send({ message: 'error setting material', error: err.message })
     }
 }
 
-exports.deleteMaterial = async(req,res) =>{
+exports.deleteMaterial = async (req, res) => {
     try {
         let idMaterial = req.params.id
-        let materialDeleted = await Material.findOneAndDelete({_id:idMaterial})
-        if(!materialDeleted) return res.status(404).send({message:'Material not found and not delete'})
-        return res.send({message:'Material deleted successfully:',materialDeleted})
+        let materialDeleted = await Material.findOneAndDelete({ _id: idMaterial })
+        if (!materialDeleted) return res.status(404).send({ message: 'Material not found and not delete' })
+        return res.send({ message: 'Material deleted successfully:', materialDeleted })
     } catch (err) {
         console.error(err);
-        return res.status(500).send({message:'Error deleting material'})
+        return res.status(500).send({ message: 'Error deleting material' })
     }
 }

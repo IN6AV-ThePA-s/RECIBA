@@ -13,5 +13,6 @@ api.put('/set/:id',[ensureAdvance,isRecycler],recyclerController.editRecycler)
 api.get('/getImage/:file',[ensureAdvance,isRecycler,upload],recyclerController.getImg)
 api.put('/uploadImage/:id',[ensureAdvance,isRecycler,upload],recyclerController.uploadImgs)
 api.delete('/delete/:id',[ensureAdvance,isMaster],recyclerController.deleteRecycler)
+api.get('/getByUser/:user', [ensureAdvance], recyclerController.getByUser)
 
 module.exports = api
