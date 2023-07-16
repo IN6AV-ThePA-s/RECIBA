@@ -22,15 +22,15 @@ export const NavbarOffcanvas = () => {
                             <h3 className='fw-bold' style={{color: '#086c3c'}}>My Recycler</h3>
 
                             <h3 className='fw-bold mt-3' style={{color: '#086c3c'}}>Bill</h3>
-                            <Link className='optionSidebar'>
+                            <Link to='viewBills' className='optionSidebar'>
                                 <h6>Created Bills</h6>
                             </Link>
-                            <Link className='optionSidebar'>
+                            <Link to='createBill' className='optionSidebar'>
                                 <h6>Add Bill</h6>
                             </Link>
 
                             <h3 className='fw-bold mt-3' style={{color: '#086c3c'}}>Material</h3>
-                            <Link className='optionSidebar'>
+                            <Link to='viewMaterials' className='optionSidebar'>
                                 <h6>Created Materials</h6>
                             </Link>
                             <Link className='optionSidebar'>

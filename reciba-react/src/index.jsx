@@ -9,9 +9,11 @@ import React, { createContext, useEffect, useState } from 'react'
 import { UserHomePage } from './pages/User/UserHomePage'
 import { RecyclerDashboard } from './pages/Recycler/RecyclerDashboard'
 import { PartnerDashboard } from './pages/Partner/PartnerDashboard'
-import { HomeRecycler } from './pages/Recyler/HomeRecycler'
-import { RecyclerPage } from './pages/Recyler/RecyclerPage'
+import { HomeRecycler } from './pages/Recycler/HomeRecycler'
 import { RegisterPage } from './pages/HomePage/RegisterPage'
+import { ViewMaterials } from './pages/Recycler/ViewMaterials'
+import { CreateBill } from './pages/Recycler/CreateBill'
+import { ViewBills } from './pages/Recycler/ViewBills'
 
 export const AuthContext = createContext()
 
@@ -66,6 +68,18 @@ export const Index = () => {
                         {
                             path: 'home',
                             element: <HomeRecycler/>,
+                        },
+                        {
+                            path: 'viewMaterials',
+                            element: <ViewMaterials/>
+                        },
+                        {
+                            path: 'createBill',
+                            element: <CreateBill/>
+                        },
+                        {
+                            path: 'viewBills',
+                            element: <ViewBills/>
                         }
                     ]
                 },

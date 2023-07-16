@@ -26,6 +26,9 @@ const materialSchema = mongoose.Schema({
         },
         required:true
     },
+    photo:{
+        type:String
+    },
     recycle:{
         type:mongoose.Schema.Types.ObjectId,
         ref:'Recycle',
