@@ -111,7 +111,7 @@ export const UserHome = () => {
 
                 <div className="row row-cols-1 row-cols-md-2 g-4">
                     {
-                        recyclers?.map(({ name, direction, _id, email, phone, startHour, endHour }, index) => {
+                        recyclers?.map(({ name, direction, _id, email, phone, startHour, endHour, photos }, index) => {
                             return (
                                 <CardRecycler
                                     key={index}
@@ -122,6 +122,7 @@ export const UserHome = () => {
                                     phone={phone}
                                     startHour={startHour}
                                     endHour={endHour}
+                                    photos={photos}
                                 />
                             )
                         })
