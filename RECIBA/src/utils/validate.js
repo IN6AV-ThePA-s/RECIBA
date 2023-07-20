@@ -55,3 +55,11 @@ exports.sensitiveData = (data) => {
 
     return list
 }
+
+exports.isImg = (extension) => {
+    if (
+        extension !== 'png' &&
+        extension !== 'jpg' &&
+        extension !== 'jpeg'
+    ) return false
+}

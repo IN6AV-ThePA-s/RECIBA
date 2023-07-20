@@ -11,6 +11,8 @@ import { RecyclerDashboard } from './pages/Recycler/RecyclerDashboard'
 import { PartnerDashboard } from './pages/Partner/PartnerDashboard'
 import { HomeRecycler } from './pages/Recycler/HomeRecycler'
 import { RegisterPage } from './pages/HomePage/RegisterPage'
+import { RecyclerView } from './pages/User/RecyclerView/RecyclerView'
+import { UserHome } from './pages/User/UserHome'
 import { ViewMaterials } from './pages/Recycler/ViewMaterials'
 import { CreateBill } from './pages/Recycler/CreateBill'
 import { ViewBills } from './pages/Recycler/ViewBills'
@@ -59,7 +61,16 @@ export const Index = () => {
                 {
                     path: '/home',
                     element: loggedIn ? (dataUser?.role === 'CLIENT' ? <UserHomePage/> : <NotFound/>) : (<LoginPage/>),
-                    children: []
+                    children: [
+                        {
+                            path: 'page',
+                            element: <UserHome/>
+                        },
+                        {
+                            path: 'recyclerview/:id',
+                            element: <RecyclerView/>
+                        },
+                    ]
                 },
                 {
                     path: '/recycler',

@@ -15,6 +15,30 @@ const recycleSchema = mongoose.Schema({
         type:mongoose.Schema.Types.ObjectId,
         ref:'User',
         required:true
+    },
+    photos: {
+        type: [String]
+    },
+    phone: {
+        type: String,
+        required: true
+    },
+    email: {
+        type: String,
+        required: true,
+        unique: true
+    },
+    startHour: {
+        type: Number,
+        required: true,
+        min: 0,
+        max: 23
+    },
+    endHour: {
+        type: Number,
+        required: true,
+        min: 0,
+        max: 23
     }
 },{
     versionKey:false

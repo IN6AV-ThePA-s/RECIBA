@@ -39,7 +39,7 @@ export const LoginPage = () => {
 
                 switch (data.user.role) {
                     case 'CLIENT':
-                        navigate(`/home`)
+                        navigate(`/home/page`)
                         break;
 
                     case 'MASTER':
