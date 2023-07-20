@@ -53,6 +53,23 @@ exports.getRewards = async (req, res) => {
     }
 }
 
+/* GET BY PARTNER */
+exports.getByPartner = async (req, res) => {
+    try {
+        const id = req.params.id
+        const rewards = await Reward.find({ partner: id }).populate('partner').populate('range')
+
+        if (rewards.length === 0) 
+            return res.status(404).send({ message: 'Rewards not found' })
+
+        return res.send({ message: 'Rewards founded', rewards })
+        
+    } catch (err) {
+        console.error(err)
+        return res.status(500).send({ message: 'Internal Server Error (GetByPartner)'})
+    }
+}
+
 /* FIND ONE REWARD */
 exports.getReward = async (req, res) => {
     try {

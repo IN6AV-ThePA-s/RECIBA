@@ -62,7 +62,8 @@ exports.login = async(req, res) => {
             let logged = {
                 name: user.name,
                 username: user.username,
-                role: user.role
+                role: user.role,
+                id: user._id
             }
 
             return res.send({ message: 'Logged!', token: token, user: logged })
@@ -87,8 +88,7 @@ exports.register = async(req, res) => {
             phone: data.phone,
             email: data.email,
             password: data.password,
-            username: data.username,
-            range: range._id
+            username: data.username
         }
 
         let msg = validateData(params)
@@ -96,9 +96,7 @@ exports.register = async(req, res) => {
 
         data.role = ROLES.client
         data.password = await encrypt(data.password)
-        
-        let achieves = await Achievement.find()
-        if (achieves) data.achievements = achieves
+        data.range = range._id.toString()
         
         let user = new User(data)
         await user.save()
@@ -139,6 +137,23 @@ exports.getUser = async(req, res) => {
 
         return res.send({ message: 'User found!', data })
 
+    } catch (err) {
+        console.error(err)
+        return res.status(500).send({ message: 'Error getting user :(', error: err })
+    }
+}
+
+exports.getOwn = async(req, res) => {
+    try {
+        let id = req.user.sub
+
+        let user = await User.findOne({ _id: id }).populate('range')
+        if (!user) return res.status(404).send({ message: 'User not found :(' })
+
+        let data = sensitiveData([user])
+
+        return res.send({ message: 'User found!', data })
+        
     } catch (err) {
         console.error(err)
         return res.status(500).send({ message: 'Error getting user :(', error: err })
@@ -240,6 +255,7 @@ exports.updatePassword = async(req, res) => {
 exports.save = async(req, res) => {
     try {
         let data = req.body
+        let range = await Range.findOne({name: 'JUNIOR'});
         let params = {
             name: data.name,
             surname: data.surname,
@@ -247,7 +263,8 @@ exports.save = async(req, res) => {
             email: data.email,
             password: data.password,
             username: data.username,
-            role: data.role
+            role: data.role,
+            range: range._id
         }
 
         let msg = validateData(params)
@@ -255,6 +272,7 @@ exports.save = async(req, res) => {
         
         data.password = await encrypt(data.password)
         data.role = data.role.toUpperCase()
+        data.range = range._id.toString()
 
         let user = new User(data)
         await user.save()

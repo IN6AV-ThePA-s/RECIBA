@@ -12,6 +12,7 @@ import { PartnerDashboard } from './pages/Partner/PartnerDashboard'
 import { HomeRecycler } from './pages/Recycler/HomeRecycler'
 import { RegisterPage } from './pages/HomePage/RegisterPage'
 import { RecyclerView } from './pages/User/RecyclerView/RecyclerView'
+import { PartnerView } from './pages/User/PartnerView/PartnerView'
 import { UserHome } from './pages/User/UserHome'
 import { ViewMaterials } from './pages/Recycler/ViewMaterials'
 import { CreateBill } from './pages/Recycler/CreateBill'
@@ -70,6 +71,10 @@ export const Index = () => {
                             path: 'recyclerview/:id',
                             element: <RecyclerView/>
                         },
+                        {
+                            path: 'partnerview/:id',
+                            element: <PartnerView/>
+                        }
                     ]
                 },
                 {

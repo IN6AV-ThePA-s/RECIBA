@@ -48,7 +48,7 @@ export const RegisterPage = () => {
             let formData = new FormData()
             formData.append('image', e.target.files[0])
             setPhoto(formData)
-
+            console.log(formData)
             setUPhoto(URL.createObjectURL(e.target.files[0]))
 
             setTimeout(() => {

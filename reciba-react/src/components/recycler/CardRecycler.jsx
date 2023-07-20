@@ -7,13 +7,13 @@ export const CardRecycler = ({ name, direction, id, email, phone, startHour, end
 
     return (
         <div className='col'>
-            <div className="rounded-3 shadow-lg transitionY">
+            <div className="rounded-5 shadow-lg transitionY">
                 <div className="row g-0 align-items-center">
                     <div className="col-sm-5">
                         <img
                             src={`http://localhost:3033/recycler/getImage/${photos[0]}`}
                             crossOrigin='anonymous' 
-                            className="img-fluid rounded-start"
+                            className="img-fluid rounded-5 shadow"
                             style={{
                                 objectFit: 'cover',
                                 width: '100%',
@@ -32,7 +32,7 @@ export const CardRecycler = ({ name, direction, id, email, phone, startHour, end
                             <p className="card-text"><small className="text-body-secondary">Phone: {phone}</small></p>
                             
                             <div className="d-grid gap-2">
-                                <Link type="button" className="btn btn-outline-success" to={`/home/recyclerview/${id}`}>
+                                <Link type="button" className="btn btn-outline-success rounded-pill" to={`/home/recyclerview/${id}`}>
                                     Visit
                                 </Link>
                             </div>

@@ -1,16 +1,17 @@
 import React from 'react'
 import c2 from '../../assets/c2.jpg'
 import '../../css/UserHomePage.css'
+import { Link } from 'react-router-dom'
 
 export const CardReward = ({ name, desc, partner, range, cantPoints, photo, _id }) => {
     return (
         <div className='col'>
-            <div className="rounded-3 shadow-lg transitionY">
+            <div className="rounded-5 shadow-lg transitionY">
                 <div className="row g-0 align-items-center">
                     <div className="col-sm-5">
                         <img
                             src={c2}
-                            className="img-fluid rounded-start"
+                            className="img-fluid rounded-5 shadow"
                             style={{
                                 objectFit: 'cover',
                                 width: '100%',
@@ -29,7 +30,7 @@ export const CardReward = ({ name, desc, partner, range, cantPoints, photo, _id 
                             <p className="card-text"><small className="text-body-secondary"></small></p>
 
                             <div className="d-grid gap-2">
-                                <button type="button" className="btn btn-outline-warning">Claim</button>
+                                <Link type="button" className="btn btn-outline-warning rounded-pill">Claim</Link>
                             </div>
                         </div>
                     </div>

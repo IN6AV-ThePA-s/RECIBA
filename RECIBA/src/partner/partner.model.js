@@ -23,6 +23,9 @@ const partnerSchema = mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
         required: true
+    },
+    photo: {
+        type: String
     }
 },{
     versionKey: false
