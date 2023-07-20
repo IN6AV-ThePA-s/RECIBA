@@ -82,7 +82,7 @@ export const PartnerView = () => {
 
           <div className='mb-5 col-auto text-center text-light'>
             <h6 className='bg-danger rounded-pill py-1 px-3'>
-              {rewards?.length} on FIRE!
+              {rewards?.length} available
             </h6>
           </div>
         </div>
