@@ -14,12 +14,12 @@ exports.addMaterial = async(req,res) =>{
 
         let existsRecycler = await Recycler.findOne({ _id:data.recycle })
         
-        if (!existsRecycler || userLogged.role !== 'MASTER') 
-            return res.status(418).send({message:'Recycler not found or unauthorized role'})
+        if (!existsRecycler) 
+            return res.status(418).send({message:'Recycler not found.'})
 
         let newMaterial = new Material(data)
         await newMaterial.save()
-        return res.send({message:'Material created successfully'})
+        return res.send({message:'Material created successfully', material: newMaterial})
     } catch (err) {
         console.error(err);
         return res.status(500).send({message:'Error creating Material',error:err.message})
@@ -28,7 +28,7 @@ exports.addMaterial = async(req,res) =>{
 
 exports.getMaterials = async (req, res) =>{
     try{
-        let materials = await Material.find().populate('recycle')
+        let materials = await Material.find({status: 'ENABLED'}).populate('recycle')
         return res.send({ materials })
     }catch (err) {
         return res.status(500).send({ message: 'Error getting materials' })
@@ -50,7 +50,7 @@ exports.getRecyclerMaterial = async(req, res) => {
     try {
         let recycler = req.params.id
 
-        let materials = await Material.find({ recycle: recycler })
+        let materials = await Material.find({ recycle: recycler, status: 'ENABLED' }).populate('recycle')
         if (!materials) return res.status(404).send({ message: `The recycler's materials you are looking for does not exist` })
         
         return res.send({materials})
@@ -131,7 +131,11 @@ exports.editMaterial = async (req, res) => {
 exports.deleteMaterial = async (req, res) => {
     try {
         let idMaterial = req.params.id
-        let materialDeleted = await Material.findOneAndDelete({ _id: idMaterial })
+        let materialDeleted = await Material.findOneAndUpdate(
+            { _id: idMaterial },
+            {status: 'DISABLED'},
+            {new: true}
+        )
         if (!materialDeleted) return res.status(404).send({ message: 'Material not found and not delete' })
         return res.send({ message: 'Material deleted successfully:', materialDeleted })
     } catch (err) {

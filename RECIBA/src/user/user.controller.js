@@ -132,7 +132,7 @@ exports.getUser = async(req, res) => {
     try {
         let id = req.params.id
 
-        let user = await User.findOne({ _id: id }).populate('cart.material')
+        let user = await User.findOne({ _id: id })
         if(!user) return res.status(404).send({ message: 'User not found :(' })
 
         let data = sensitiveData([user])
@@ -150,7 +150,7 @@ exports.getUserByUsername = async(req, res) => {
     try {
         let username = req.params.username
 
-        let user = await User.findOne({ username: username }).populate('cart.material')
+        let user = await User.findOne({ username: username })
         if(!user) return res.status(404).send({ message: 'User not found :(' })
 
         let data = sensitiveData([user])

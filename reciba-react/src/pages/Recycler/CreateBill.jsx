@@ -29,6 +29,7 @@ export const CreateBill = () => {
         { value: 'CASH', label: 'CASH' },
     ]
 
+    const localUser = JSON.parse(localStorage.getItem('user'))
     const navigate = useNavigate()
 
     const headers = {
@@ -56,7 +57,10 @@ export const CreateBill = () => {
     // Obtener todos los materiales para mostrarlos en el select
     const getMaterials = async () => {
         try {
-            const { data } = await axios('http://localhost:3033/material/get', { headers: headers });
+
+            const userData = await axios(`http://localhost:3033/user/getByUsername/${localUser.username}`, { headers: headers })
+            const recyclerData = await axios(`http://localhost:3033/recycler/getByUser/${userData.data.data[0].id}`, { headers: headers })
+            const { data } = await axios(`http://localhost:3033/material/getRecMaterials/${recyclerData.data.recycler._id}`, { headers: headers })
 
             const newList = data.materials.map(material => ({
                 value: material._id,
@@ -142,6 +146,8 @@ export const CreateBill = () => {
             const dataU = await axios(`http://localhost:3033/user/getByUsername/${userData?.username}`, { headers: headers });
             const dataR = await axios(`http://localhost:3033/recycler/getByUser/${dataU.data.data[0].id}`, { headers: headers });
 
+
+
             const newBill = {
                 user: form.user,
                 recycler: dataR.data.recycler._id,
@@ -153,15 +159,46 @@ export const CreateBill = () => {
             if (!(newBill.total <= 0)) {
 
                 const bill = await axios.post(`http://localhost:3033/bill/create`, newBill, { headers: headers })
+                const bByUser = await axios.get(`http://localhost:3033/bill/getByUser/${form.user}`, { headers: headers })
+                const billsByUser = bByUser.data.data
+                
+                const dateNow = Math.floor(new Date(Date.now()).getTime() / 1000)
+                let currentStreak = 0;
+                let maxStreak = 0;
+                let lastBillDate = null;
 
-                Swal.fire({
+                for (let bill of billsByUser) {
+
+                    // Calcular el tiempo transcurrido en horas desde la última factura
+                    const billDate = Math.floor(new Date(bill.date).getTime() / 1000);
+                    const hoursElapsed = (dateNow - billDate) / 3600;
+
+                    if (!lastBillDate || hoursElapsed >= 48) {
+                        // Si ha pasado más de 48 horas desde la última factura, se pierde la racha
+                        currentStreak = 0;
+                    } else if (hoursElapsed >= 24) {
+                        // Si ha pasado entre 24 y 48 horas desde la última factura, se suma 1% a la racha
+                        currentStreak += 1;
+                        maxStreak = Math.max(maxStreak, currentStreak);
+                    }
+
+                    lastBillDate = billDate;
+                }
+
+                const pts = parseInt(newBill.total, 10) * 1000
+                const exp = parseInt(pts * 0.40, 10)
+
+                console.log('Max streak: ' + maxStreak);
+                console.log('PTS: ' + pts, 'EXP: ' + exp);
+
+                /* Swal.fire({
                     icon: 'success',
                     title: bill.data.message
-                })
+                }) */
 
-                navigate('/recycler')
+                /* navigate('/recycler')
                 await delay(100)
-                navigate('/recycler/createBill')
+                navigate('/recycler/createBill') */
 
 
             } else {
@@ -249,7 +286,7 @@ export const CreateBill = () => {
 
     return (
         <>
-            
+
 
 
             <div className="card shadow">
@@ -399,7 +436,7 @@ export const CreateBill = () => {
                 </div>
             </div>
 
-            
+
         </>
     );
 };

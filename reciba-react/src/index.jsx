@@ -13,9 +13,12 @@ import { HomeRecycler } from './pages/Recycler/HomeRecycler'
 import { RegisterPage } from './pages/HomePage/RegisterPage'
 import { RecyclerView } from './pages/User/RecyclerView/RecyclerView'
 import { UserHome } from './pages/User/UserHome'
-import { ViewMaterials } from './pages/Recycler/ViewMaterials'
+import { ViewBillMaterials } from './pages/Recycler/ViewBillMaterials'
 import { CreateBill } from './pages/Recycler/CreateBill'
 import { ViewBills } from './pages/Recycler/ViewBills'
+import { ViewMaterials } from './pages/Recycler/ViewMaterials'
+import { CreateMaterial } from './pages/Recycler/CreateMaterial'
+import { UpdateMaterial } from './pages/Recycler/UpdateMaterial'
 
 export const AuthContext = createContext()
 
@@ -85,12 +88,24 @@ export const Index = () => {
                             element: <ViewMaterials/>
                         },
                         {
+                            path: 'createMaterial',
+                            element: <CreateMaterial/>
+                        },
+                        {
+                            path: 'updateMaterial/:id',
+                            element: <UpdateMaterial/>
+                        },
+                        {
                             path: 'createBill',
                             element: <CreateBill/>
                         },
                         {
                             path: 'viewBills',
                             element: <ViewBills/>
+                        },
+                        {
+                            path: 'viewBillMaterials/:id',
+                            element: <ViewBillMaterials/>
                         }
                     ]
                 },

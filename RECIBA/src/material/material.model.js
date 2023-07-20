@@ -30,6 +30,12 @@ const materialSchema = mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Recycle',
         required: true
+    },
+    status: {
+        type: String,
+        required: true,
+        enum: ['ENABLED', 'DISABLED'],
+        default: 'ENABLED'
     }
 }, {
     versionKey: false

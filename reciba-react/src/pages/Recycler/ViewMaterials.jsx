@@ -1,113 +1,134 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import Swal from 'sweetalert2';
+import { CadMaterial } from '../../components/material/CadMaterial'
 
 export const ViewMaterials = () => {
+
+    const [materials, setMaterials] = useState([{}])
+    const localUser = JSON.parse(localStorage.getItem('user'))
+
+    const headers = {
+        'Content-Type': 'application/json',
+        'Authorization': localStorage.getItem('token')
+    };
+
+    const getMaterials = async () => {
+        try {
+
+            const userData = await axios(`http://localhost:3033/user/getByUsername/${localUser.username}`, { headers: headers })
+            const recyclerData = await axios(`http://localhost:3033/recycler/getByUser/${userData.data.data[0].id}`, { headers: headers })
+            const { data } = await axios(`http://localhost:3033/material/getRecMaterials/${recyclerData.data.recycler._id}`, { headers: headers })
+
+            /* for(let i = 0; i < data.materials?.length; i++){
+                if(data.materials[i].photo) {
+                    let img = await axios(`http://localhost:3033/material/getImage/${data.materials[i].photo}`, {headers: headers})
+                    data.materials[i].photo = img.request.responseURL
+                }
+                continue
+            } */
+
+            setMaterials(data.materials)
+
+        } catch (err) {
+            Swal.fire(err.response.data.message, '', 'error');
+            console.error(err);
+        }
+    }
+
+    const deleteMaterial = async (id) => {
+        try {
+            Swal.fire({
+                title: 'Are you sure to delete this material?',
+                icon: 'question',
+                showConfirmButton: true,
+                showDenyButton: true,
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                    const { data } = await axios.delete(`http://localhost:3033/material/delete/${id}`, { headers: headers }).catch((err) => {
+                        Swal.fire(err.response.data.message, '', 'error')
+                    })
+                    console.log(data)
+                    getMaterials()
+                    Swal.fire(`${data.message}`, '', 'success')
+                } else {
+                    Swal.fire('No worries!', '', 'success')
+                }
+            })
+        } catch (err) {
+            Swal.fire(err.response.data.message, '', 'error');
+            console.error(err);
+        }
+    }
+
+
+    useEffect(() => {
+        getMaterials()
+    }, [])
+
+
     return (
         <>
-            <table className="table table-striped">
-                <thead>
-                    <tr>
-                        <th> User </th>
-                        <th> Material </th>
-                        <th> Price </th>
-                        <th> Amount </th>
-                        <th> Subtotal </th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td className="py-1">
+            <div className="card mb-4">
+                <div className="card-body">
 
-                        </td>
-                        <td> Herman Beck </td>
-                        <td>
-                            <div className="progress">
-                                <div className="progress-bar bg-success" role="progressbar" style={{width: '25%'}} aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                    <div className='row'>
+
+                        <div className='col-md-8'>
+                            <div className="input-group mb-8">
+                                <span className="bi bi-search input-group-text" id="basic-addon1"></span>
+                                <input
+                                    type="text"
+                                    className="form-control"
+                                    placeholder="Search"
+                                /* value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)} */
+                                />
                             </div>
-                        </td>
-                        <td> $ 77.99 </td>
-                        <td> May 15, 2015 </td>
-                    </tr>
-                    <tr>
-                        <td className="py-1">
+                        </div>
 
-                        </td>
-                        <td> Messsy Adam </td>
-                        <td>
-                            <div className="progress">
-                                <div className="progress-bar bg-danger" role="progressbar" style={{width: '75%'}} aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"></div>
+                        <div className='col-md-4'>
+                            <div className="input-group mb-4">
+                                <span className="bi bi-funnel input-group-text" id="basic-addon1"></span>
+                                <select className="form-select" id="selectOption" /* onChange={handleSelect} */>
+                                    <option value={null}>FILTER</option>
+                                    <option value="user">User</option>
+                                    <option value="recycler">Recycler</option>
+                                    <option value="paymethod">Pay Method</option>
+                                </select>
                             </div>
-                        </td>
-                        <td> $245.30 </td>
-                        <td> July 1, 2015 </td>
-                    </tr>
-                    <tr>
-                        <td className="py-1">
+                        </div>
 
-                        </td>
-                        <td> John Richards </td>
-                        <td>
-                            <div className="progress">
-                                <div className="progress-bar bg-warning" role="progressbar" style={{width: '90%'}} aria-valuenow="90" aria-valuemin="0" aria-valuemax="100"></div>
-                            </div>
-                        </td>
-                        <td> $138.00 </td>
-                        <td> Apr 12, 2015 </td>
-                    </tr>
-                    <tr>
-                        <td className="py-1">
 
-                        </td>
-                        <td> Peter Meggik </td>
-                        <td>
-                            <div className="progress">
-                                <div className="progress-bar bg-primary" role="progressbar" style={{width: '50%'}} aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
-                            </div>
-                        </td>
-                        <td> $ 77.99 </td>
-                        <td> May 15, 2015 </td>
-                    </tr>
-                    <tr>
-                        <td className="py-1">
 
-                        </td>
-                        <td> Edward </td>
-                        <td>
-                            <div className="progress">
-                                <div className="progress-bar bg-danger" role="progressbar" style={{width: '35%'}} aria-valuenow="35" aria-valuemin="0" aria-valuemax="100"></div>
-                            </div>
-                        </td>
-                        <td> $ 160.25 </td>
-                        <td> May 03, 2015 </td>
-                    </tr>
-                    <tr>
-                        <td className="py-1">
+                    </div>
 
-                        </td>
-                        <td> John Doe </td>
-                        <td>
-                            <div className="progress">
-                                <div className="progress-bar bg-info" role="progressbar" style={{width: '65%'}} aria-valuenow="65" aria-valuemin="0" aria-valuemax="100"></div>
-                            </div>
-                        </td>
-                        <td> $ 123.21 </td>
-                        <td> April 05, 2015 </td>
-                    </tr>
-                    <tr>
-                        <td className="py-1">
 
-                        </td>
-                        <td> Henry Tom </td>
-                        <td>
-                            <div className="progress">
-                                <div className="progress-bar bg-warning" role="progressbar" style={{width: '20%'}} aria-valuenow="20" aria-valuemin="0" aria-valuemax="100"></div>
-                            </div>
-                        </td>
-                        <td> $ 150.00 </td>
-                        <td> June 16, 2015 </td>
-                    </tr>
-                </tbody>
-            </table>
+                    <div className='row row-cols-1 row-cols-md-2 g-4 text-center'>
+                        {
+                            materials?.map(({ _id, type, price, unit, recycle, photo }, index) => (
 
+                                <CadMaterial
+                                    key={index}
+                                    _id={_id}
+                                    type={type}
+                                    price={price}
+                                    unit={unit}
+                                    photo={photo}
+                                    recycle={recycle}
+                                    butDel={()=>deleteMaterial(_id)}
+                                />
+
+                            ))
+                        }
+                    </div>
+
+
+                </div>
+            </div>
+
+
+            {/* <CadMaterial/> */}
         </>
     )
 }
