@@ -50,6 +50,10 @@ const userSchema = mongoose.Schema({
     },
     photo:{
         type: String
+    },
+    streakMaterial: {
+        type: Number,
+        default: 0
     }
 
 },{

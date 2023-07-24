@@ -9,6 +9,7 @@ import '../../css/Dashboard.css'
 
 export const CreateBill = () => {
 
+    // ----- START VARIABLES GENERALES -----
     const [optionListUser, setOptionListUser] = useState([]);
     const [optionListMaterial, setOptionListMaterial] = useState([]);
 
@@ -36,6 +37,9 @@ export const CreateBill = () => {
         'Content-Type': 'application/json',
         'Authorization': localStorage.getItem('token')
     };
+
+    // ----- END VARIABLES GENERALES -----
+
 
     // Obtener todos los usuarios para mostrarlos en el select
     const getUsers = async () => {
@@ -108,6 +112,7 @@ export const CreateBill = () => {
         }
     };
 
+    //Remover materiales a la lista de la factura
     const removeMaterialCart = async () => {
         try {
             const { data } = await axios(`http://localhost:3033/material/getOne/${form?.material}`, { headers: headers });
@@ -138,16 +143,19 @@ export const CreateBill = () => {
         return new Promise(resolve => setTimeout(resolve, time));
     }
 
+    //Crear factura con la lista de materiales
     const addBill = async () => {
         try {
 
             const userData = JSON.parse(localStorage.getItem('user'))
 
+            // Información del usuario al que se creará la factura
             const dataU = await axios(`http://localhost:3033/user/getByUsername/${userData?.username}`, { headers: headers });
+
+            // Informacion de la recicladora que está haciendo la factura
             const dataR = await axios(`http://localhost:3033/recycler/getByUser/${dataU.data.data[0].id}`, { headers: headers });
 
-
-
+            // Datos que se pondrán en la factura
             const newBill = {
                 user: form.user,
                 recycler: dataR.data.recycler._id,
@@ -156,49 +164,95 @@ export const CreateBill = () => {
                 total: total
             }
 
+            //Si el metodo de pago es de tipo ECOINS **FALTA HACER ESTA VALIDACIÓN**
+
+            // Si el total no es cero o menor es porque no esta vacia y se puede crear.
             if (!(newBill.total <= 0)) {
 
-                const bill = await axios.post(`http://localhost:3033/bill/create`, newBill, { headers: headers })
+                //Se obtienen las facturas por usuario en orden de la mas reciente a las mas antigua.
                 const bByUser = await axios.get(`http://localhost:3033/bill/getByUser/${form.user}`, { headers: headers })
                 const billsByUser = bByUser.data.data
-                
+
+                // Fecha y hora de ahora (Formato UNIX)
                 const dateNow = Math.floor(new Date(Date.now()).getTime() / 1000)
-                let currentStreak = 0;
-                let maxStreak = 0;
-                let lastBillDate = null;
 
-                for (let bill of billsByUser) {
+                // Fecha de la ultima factura creada (Formato UNIX)
+                const billDate = Math.floor(new Date(billsByUser[0].date).getTime() / 1000)
 
-                    // Calcular el tiempo transcurrido en horas desde la última factura
-                    const billDate = Math.floor(new Date(bill.date).getTime() / 1000);
-                    const hoursElapsed = (dateNow - billDate) / 3600;
+                // Diferencia de tiempo entre ultima factura y ahora
+                const hoursElapsed = (dateNow - billDate)
 
-                    if (!lastBillDate || hoursElapsed >= 48) {
-                        // Si ha pasado más de 48 horas desde la última factura, se pierde la racha
-                        currentStreak = 0;
-                    } else if (hoursElapsed >= 24) {
-                        // Si ha pasado entre 24 y 48 horas desde la última factura, se suma 1% a la racha
-                        currentStreak += 1;
-                        maxStreak = Math.max(maxStreak, currentStreak);
+                // Se crea la factura.
+                const createdbill = await axios.post(`http://localhost:3033/bill/create`, newBill, { headers: headers })
+
+                if (hoursElapsed >= 172800) {
+                    // Si ha pasado más de 48 horas desde la última factura, se pierde la racha
+
+                    const deleteStreak = {
+                        number: Math.abs(parseInt(dataU.data.data[0].streakMaterial)) * -1
                     }
 
-                    lastBillDate = billDate;
+                    const bill = await axios.put(
+                        `http://localhost:3033/bill/addStreak/${form.user}`,
+                        deleteStreak,
+                        { headers: headers }
+                    )
+
                 }
 
-                const pts = parseInt(newBill.total, 10) * 1000
+                // Si ha pasado entre 24 y 48 horas desde la última factura, se suma 1% a la racha
+                if (hoursElapsed >= 86400 && hoursElapsed <= 172800) {
+
+                    // Si no es mayor o igual a 7 (racha máxima) que aumente un 1% al porcentaje.
+                    if (!(dataU.data.data[0].streakMaterial >= 7)) {
+
+                        const plusStreak = {
+                            number: 1
+                        }
+
+                        const bill = await axios.put(
+                            `http://localhost:3033/bill/addStreak/${form.user}`,
+                            plusStreak,
+                            { headers: headers }
+                        )
+
+                    }
+
+                }
+
+                /* 
+                    Si ninguna se cumple, es primera vez que agrega material sin racha 
+                    o porque ha entregado varias veces material en el día.
+                */
+
+                const dataU2 = await axios(`http://localhost:3033/user/getByUsername/${userData?.username}`, { headers: headers });
+
+                const porcentStreak = dataU2.data.data[0].streakMaterial / 100
+                const porcentStreakPoints = parseInt(newBill.total * 1000 * porcentStreak)
+
+                const pts = parseInt((newBill.total * 1000) + porcentStreakPoints)
                 const exp = parseInt(pts * 0.40, 10)
 
-                console.log('Max streak: ' + maxStreak);
-                console.log('PTS: ' + pts, 'EXP: ' + exp);
+                const addExpPts = {
+                    points: pts,
+                    exp: exp
+                }
 
-                /* Swal.fire({
+                const updPtsExp = await axios.put(
+                    `http://localhost:3033/bill/expPts/${form.user}`,
+                    addExpPts,
+                    { headers: headers }
+                )
+
+                Swal.fire({
                     icon: 'success',
-                    title: bill.data.message
-                }) */
+                    title: 'Bill Created successfully',
+                    text: 'POINTS: ' + pts + ' EXP: ' + exp + 'STREAK: ' + dataU2.data.data[0].streakMaterial
+                })
 
-                /* navigate('/recycler')
-                await delay(100)
-                navigate('/recycler/createBill') */
+                navigate('/recycler')
+                await delay(10)
+                navigate('/recycler/createBill')
 
 
             } else {
@@ -216,17 +270,7 @@ export const CreateBill = () => {
         }
     }
 
-    const clearData = () => {
-        setForm({
-            material: '',
-            amountWeight: '',
-            subtotal: ''
-        })
-        setListCart([])
-        setTotal(0.00)
-    }
-
-    //Obtener el valor del material del Select
+    //Obtener el valor del user del Select
     const handleFormUser = (value, action) => {
         setForm({
             ...form,
@@ -250,7 +294,7 @@ export const CreateBill = () => {
         });
     };
 
-    //Obtener el valor del input
+    //Obtener el valor del select metodo de pago
     const handleFormPayment = (value, action) => {
         setForm({
             ...form,

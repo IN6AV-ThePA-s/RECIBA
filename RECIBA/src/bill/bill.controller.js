@@ -73,3 +73,18 @@ exports.updateExpPts = async (req, res) => {
 
     }
 }
+
+exports.addStreak = async (req, res) => {
+    try {
+        const idUser = req.params.id
+        const expPts = req.body
+        const data = await User.findOneAndUpdate(
+            { _id: idUser},
+            { $inc : { streakMaterial: expPts.number}},
+            { new: true}
+        )
+        return res.send({ message: 'The streak had been updated.', data })
+    } catch (error) {
+
+    }
+}
