@@ -55,7 +55,11 @@ const userSchema = mongoose.Schema({
     streakMaterial: {
         type: Number,
         default: 0
-    }
+    },
+    historyRewards: {
+        type: Array,
+        default: []
+    },
 
 },{
     versionKey: false

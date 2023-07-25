@@ -14,7 +14,7 @@ api.get('/getImage/:file', [upload], getImg)
 api.post('/add', [ensureAdvance, isMaster], add);
 api.put('/update/:id', [ensureAdvance, isPartner], edit);
 api.delete('/delete/:id', [ensureAdvance, isMaster], del);
-api.post('/uploadImage/:id', [ensureAdvance, isPartner, upload], uploadImg)
+api.put('/uploadImage/:id', [ensureAdvance, isPartner, upload], uploadImg)
 
 //Private routes
 api.get('/get/:id', [ensureAdvance], get);

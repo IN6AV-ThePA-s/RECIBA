@@ -20,6 +20,9 @@ import { ViewBills } from './pages/Recycler/ViewBills'
 import { ViewMaterials } from './pages/Recycler/ViewMaterials'
 import { CreateMaterial } from './pages/Recycler/CreateMaterial'
 import { UpdateMaterial } from './pages/Recycler/UpdateMaterial'
+import { BillView } from './pages/User/BillView/BillView'
+import { RewardView } from './pages/User/RewardView/RewardView'
+import { Settings } from './pages/User/Settings'
 
 export const AuthContext = createContext()
 
@@ -77,6 +80,18 @@ export const Index = () => {
                         {
                             path: 'partnerview/:id',
                             element: <PartnerView/>
+                        },
+                        {
+                            path: 'bills',
+                            element: <BillView/>
+                        },
+                        {
+                            path: 'claimers',
+                            element: <RewardView/>
+                        },
+                        {
+                            path: 'settings',
+                            element: <Settings/>
                         }
                     ]
                 },

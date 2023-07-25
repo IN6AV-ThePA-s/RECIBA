@@ -2,6 +2,7 @@
 
 const api = require('express').Router()
 
+const { ensureAdvance } = require('../services/authenticated')
 const rewardController = require('./reward.controller')
 const multiparty = require('connect-multiparty')
 const upload = multiparty({ uploadDir: './src/uploads/rewards/' })
@@ -20,5 +21,6 @@ api.put('/update/:id', rewardController.updateReward)
 api.get('/get', rewardController.getRewards)
 api.get('/getOne/:id', rewardController.getReward)
 api.get('/getByPartner/:id', rewardController.getByPartner)
+api.put('/claim/:id', ensureAdvance, rewardController.claim)
 
 module.exports = api

@@ -1,0 +1,161 @@
+import axios from 'axios'
+import React, { useContext, useEffect, useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import Swal from 'sweetalert2'
+import photoError from '../../assets/userDefault.png'
+import { AuthContext } from '../..'
+
+const HOST = Object.freeze({ url: 'http://localhost:3033' })
+
+export const Settings = () => {
+    const [user, setUser] = useState()
+    const [photo, setPhoto] = useState(false)
+    const [limitExp, setLimitExp] = useState()
+    const [exp, setExp] = useState()
+
+    const navigate = useNavigate()
+    const { setLoggedIn } = useContext(AuthContext)
+
+    const headers = {
+        'Content-Type': 'application/json',
+        'Authorization': localStorage.getItem('token')
+    }
+
+    const getOwn = async () => {
+        try {
+            const { data } = await axios(`${HOST.url}/user/getOwn`, { headers: headers })
+
+            if (data) {
+                if (data.data[0].photo) setPhoto(true)
+
+                let user = data.data[0]
+                let perc = 0
+
+                let limit = user.range.limitExp - user.range.initExp
+                setLimitExp(limit)
+
+                let actual = user.exp
+                perc = ((actual - user.range.initExp) * 100) / (limit)
+
+                setExp(perc)
+
+                return setUser(data.data[0])
+            }
+
+        } catch (err) {
+            console.error(err)
+            Swal.fire(err.response.data.message, '', 'error')
+        }
+    }
+
+    const logout = () => {
+        localStorage.clear()
+        setLoggedIn(false)
+
+        navigate('/login')
+
+        Swal.fire({
+            icon: 'success',
+            timer: 1000,
+            showConfirmButton: false
+        })
+    }
+
+    useEffect(() => {
+        getOwn()
+    }, [])
+
+    return (
+        <>
+            <div className='container mt-5'>
+
+                <div className='row align-items-center'>
+                    <h1 className='col'>{user?.name}'s account</h1>
+
+                    <div className='col-auto text-center'>
+                        <Link className='btn btn-outline-dark' onClick={logout}>Log out</Link>
+                    </div>
+                </div>
+
+                <hr />
+                <div className='row container'>
+                    <div className='col-auto'>
+                        <button type='button' className='btn btn-outline-warning' onClick={logout}>Edit</button>
+                    </div>
+                    <div className='col-auto'>
+                        <button type='button' className='btn btn-outline-danger' onClick={logout}>Delete your account</button>
+                    </div>
+                </div>
+                    
+                    
+                <div className='row g-0 align-items-center mb-5 my-4 rounded-4 shadow-lg p-5 bg-dark text-light'>
+                    <div className='col-sm-5 text-center'>
+                        <img
+                            src={photo ? `${HOST.url}/user/getImg/${user?.photo}` : photoError}
+                            crossOrigin='anonymous'
+                            className='img-fluid rounded-circle shadow'
+                            style={{
+                                objectFit: 'cover',
+                                width: '50%',
+
+                            }}
+                        />
+                        <br /><br />
+                        <Link className='fs-3 text-decoration-none text-success fw-bold'>Edit</Link>
+                    </div>
+                    <div className='col-sm-7 p-4'>
+                        <h2 className='fw-bold'>{user?.name} {user?.surname}</h2>
+                        <span class="badge rounded-pill text-bg-success text-light">E-mail</span>
+                        <h6 className=''>{user?.email}</h6>
+                        <span class="badge rounded-pill text-bg-success text-light">Username</span>
+                        <h6 className=''>{user?.username}</h6>
+                        <span class="badge rounded-pill text-bg-success text-light">Phone</span> 
+                        <h6 className=''>{user?.phone}</h6>
+                        <hr/>
+                        <h5>
+                            <Link to={'/home/bills'} className='text-warning text-decoration-none'>Bills</Link>
+                        </h5>
+                        <h5>
+                            <Link to={'/home/claimers'} className='text-warning text-decoration-none'>Rewards history</Link>
+                        </h5>
+                        
+                    </div>
+                </div>
+            </div>
+
+            <div className='container mt-3'>
+                <div className='container row'>
+                    <div className='col-6'>
+                        <div className="progress" role="progressbar" aria-label="Animated striped example" aria-valuenow={`${user?.exp}`} aria-valuemin='0' aria-valuemax={`${limitExp}`}>
+                            <div className="progress-bar progress-bar-striped progress-bar-animated bg-success" style={{ width: `${exp}%` }}>{exp}%</div>
+                        </div>
+                        <h6>{user?.exp} - {user?.range.limitExp} exp</h6>
+                    </div>
+
+                    <div className='col-6 p-0 text-end'>
+                        <h4>Ecoins: {user?.points}</h4>
+                    </div>
+                </div>
+            </div>
+
+            <div className='container'>
+                <div className='d-flex flex-column my-5'>
+                    <h1 className='align-self-center mb-3'>Range</h1>
+                    <h1 className='align-self-center mb-3'>{user?.range.name}</h1>
+                    <img
+                        src={`${HOST.url}/range/getImage/${user?.range.photo}`}
+                        crossOrigin='anonymous'
+                        className='img-fluid rounded-circle align-self-center'
+                        style={{
+                            objectFit: 'cover',
+                            width: '20%',
+                        }}
+                    />
+                    <br/>
+                    <h5 className='text-center'>{user?.range.initExp} - {user?.range.limitExp}</h5>
+                    <h5 className='text-center'>EXP</h5>
+                </div>
+            </div>
+        </>
+    )
+}
