@@ -36,7 +36,6 @@ export const RecyclerView = () => {
       const { data } = await axios(`http://localhost:3033/material/getRecMaterials/${id}`, { headers: headers })
 
       if (data) {
-        console.log(data.materials);
         return setMaterials(data.materials)
       }
 
