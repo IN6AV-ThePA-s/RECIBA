@@ -10,7 +10,7 @@ export const CadMaterial = ({ _id, type, price, unit, photo, recycle, butDel }) 
 
         <div className="col">
             <div className="p-4 rounded-4 h-100 shadow transitionY">
-                <div className="row g-0 align-items-center">
+                <div className="row g-0 align-items-center justify-content-center">
                     <div>
                         <img
                             src={`http://localhost:3033/material/getImage/${photo}`}
