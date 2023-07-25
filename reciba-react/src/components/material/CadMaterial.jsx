@@ -34,10 +34,12 @@ export const CadMaterial = ({ _id, type, price, unit, photo, recycle, butDel }) 
                             dataUser.role === 'CLIENT' || dataUser.role === 'PARTNER' ? (
                                 <></>
                             ) : (
-                                <button onClick={(e) => { e.preventDefault(), butDel() }} className="btn btn-outline-danger me-1 ms-1 mt-4">Delete Material</button>
-                                <Link to={`/recycler/updateMaterial/${_id}`}>
-                                    <button className="btn btn-outline-warning me-1 ms-1 mt-4">Update Material</button>
-                                </Link>
+                                <>
+                                    <button onClick={(e) => { e.preventDefault(), butDel() }} className="btn btn-outline-danger me-1 ms-1 mt-4">Delete Material</button>
+                                    <Link to={`/recycler/updateMaterial/${_id}`}>
+                                        <button className="btn btn-outline-warning me-1 ms-1 mt-4">Update Material</button>
+                                    </Link>
+                                </>
                             )
                         }
 
