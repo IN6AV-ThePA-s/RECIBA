@@ -50,7 +50,8 @@ exports.sensitiveData = (data) => {
             exp: a.exp,
             cart: a.cart,
             range: a.range,
-            points: a.points
+            points: a.points,
+            streakMaterial: a.streakMaterial
         }
         list.push(payload)
     }

@@ -1,7 +1,8 @@
 import React from 'react'
 import '../css/Dashboard.css'
+import { Link } from 'react-router-dom'
 
-export const RowTableBodyBill2 = ({ id, user, recycler, cantMaterials, payMethod, total, date }) => {
+export const RowTableBodyBill2 = ({ id, user, recycler, cantMaterials, payMethod, total, date, status, butCheck }) => {
 
     const formatDateTime = (timestamp) => {
         const date = new Date(timestamp);
@@ -20,15 +21,29 @@ export const RowTableBodyBill2 = ({ id, user, recycler, cantMaterials, payMethod
 
     return (
         <>
-            <tr>
+            <tr className='align-middle'>
                 <td className='fontBarcode'> { id } </td>
-                <td> { user } </td>
+                <td> { user }</td>
                 <td> { recycler } </td>
-                <td> Materiales </td>
                 <td style={{ color: payMethod === 'ECOINS' ? 'green' : '' }}>{payMethod}</td>
                 <td> { parseFloat(total).toFixed(2) } </td>
                 <td> { formatDateTime( date ) } </td>
-                <td> HABILITADO </td>
+                <td> 
+                    {
+                        status == 'COMPLETED' ? (
+                            <i className="bi bi-check-circle-fill text-success fs-4"></i>
+                        ) : (
+                            <i className="bi bi-x-circle-fill text-danger fs-4"></i>
+                        )
+                    }
+                    
+                </td>
+                <td>
+                    <Link to={butCheck}>
+                        <button type="button" className="btn btn-success">Check</button>
+                    </Link>
+                    
+                </td>
             </tr>
         </>
     )

@@ -33,7 +33,7 @@ export const NavbarOffcanvas = () => {
                             <Link to='viewMaterials' className='optionSidebar'>
                                 <h6>Created Materials</h6>
                             </Link>
-                            <Link className='optionSidebar'>
+                            <Link to='createMaterial' className='optionSidebar'>
                                 <h6>Add Material</h6>
                             </Link>
 

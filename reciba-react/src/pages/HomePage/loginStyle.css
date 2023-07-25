@@ -11,11 +11,11 @@
 
 
 .conLogin {
-    background-image: url('../../assets/bgLogin.jpg');
+    background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('../../assets/bgLogin.jpg');
     background-repeat: no-repeat;
     background-size: cover;
     animation:
-        pan 20s infinite alternate linear;
+        pan 30s infinite alternate linear;
 }
 
 .h2247 {

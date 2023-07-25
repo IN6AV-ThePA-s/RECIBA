@@ -33,6 +33,12 @@ const billSchema = mongoose.Schema({
         enum:['CREDIT CARD', 'DEBIT CARD', 'PAYPAL', 'BANK TRANSFER', 'CASH', 'ECOINS'],
         required: true
     },
+    status: {
+        type: String,
+        enum:['COMPLETED', 'DISABLED'],
+        required: true,
+        default: 'COMPLETED'
+    },
     total:{
         type: Number,
         required: true

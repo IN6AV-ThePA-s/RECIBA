@@ -62,7 +62,6 @@ export const NavbarUser = () => {
                 <button className="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#staticBackdrop" aria-controls="staticBackdrop">
                     <span className="navbar-toggler-icon"></span>
                 </button>
-
                 <Link className="navbar-brand fontReciba" to={'/home/page'}>RECIBA</Link>
 
                 <div className="offcanvas offcanvas-start" data-bs-backdrop="static" tabIndex="-1" id="staticBackdrop" aria-labelledby="staticBackdropLabel">
@@ -123,7 +122,6 @@ export const NavbarUser = () => {
                         </ul>
 
                     </div>
-
 
                 </div>
             </div>
