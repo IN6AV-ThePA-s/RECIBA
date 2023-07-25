@@ -52,6 +52,10 @@ const userSchema = mongoose.Schema({
     photo:{
         type: String
     },
+    historyRewards: {
+        type: Array,
+        default: []
+    },
     cart:[{
 
         material: {
