@@ -88,3 +88,18 @@ exports.addStreak = async (req, res) => {
 
     }
 }
+
+exports.getOwn = async (req, res) => {
+    try {
+        const user = req.user.sub
+
+        const data = await Bill.find({ user: user }).populate('user').populate('recycler').sort({ date: -1 })
+
+        if (!data) return res.status(404).send({ message: 'Could not find any bill' });
+        return res.send({ message: 'Bills by user found!', bills: data })
+        
+    } catch (err) {
+        console.error(err)
+        return res.status(500).send({ message: 'Error getting bills', error: err })
+    }
+}

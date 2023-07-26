@@ -12,5 +12,6 @@ api.post('/create', [ensureAdvance, isRecycler], billController.createBill)
 api.get('/getByUser/:id' , [ensureAdvance, isRecycler], billController.getBillsByUser)
 api.put('/expPts/:id', [ensureAdvance, isRecycler], billController.updateExpPts)
 api.put('/addStreak/:id', [ensureAdvance, isRecycler], billController.addStreak)
+api.get('/getOwn', [ensureAdvance], billController.getOwn)
 
 module.exports = api
