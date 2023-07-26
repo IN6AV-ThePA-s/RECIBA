@@ -1,15 +1,17 @@
-import React from 'react'
-import c3 from '../../assets/c3.jpg'
+import React, { useContext } from 'react'
 import '../../css/UserHomePage.css'
-import { Link } from 'react-router-dom'
+import { AuthContext } from '../..'
+import { Link } from "react-router-dom"
 
 export const CadMaterial = ({ _id, type, price, unit, photo, recycle, butDel }) => {
+    const { dataUser } = useContext(AuthContext)
+
     return (
 
         <div className="col">
             <div className="p-4 rounded-4 h-100 shadow transitionY">
-                <div className="row g-0 align-items-center">
-                    <div className="col-sm-5">
+                <div className="row g-0 align-items-center justify-content-center">
+                    <div>
                         <img
                             src={`http://localhost:3033/material/getImage/${photo}`}
                             crossOrigin='anonymous'
@@ -17,7 +19,7 @@ export const CadMaterial = ({ _id, type, price, unit, photo, recycle, butDel }) 
                             style={{
                                 objectFit: 'cover',
                                 width: '100%',
-                                height: '35vh'
+                                height: '25vh'
                             }}
                         />
                     </div>
@@ -27,19 +29,23 @@ export const CadMaterial = ({ _id, type, price, unit, photo, recycle, butDel }) 
                             <h1 className="card-title">{type}</h1>
                             <p className="card-text mt-3"><span className="badge bg-secondary">{price?.quantity} {unit}</span> - <span className="badge bg-success">Q{price?.amount}</span></p>
                         </div>
-                        <button onClick={(e) => { e.preventDefault(), butDel() }} className="btn btn-outline-danger me-1 ms-1 mt-4">Delete Material</button>
-                        <Link to={`/recycler/updateMaterial/${_id}`}>
-                            <button className="btn btn-outline-warning me-1 ms-1 mt-4">Update Material</button>
-                        </Link>
+
+                        {
+                            dataUser.role === 'CLIENT' || dataUser.role === 'PARTNER' ? (
+                                <></>
+                            ) : (
+                                <>
+                                    <button onClick={(e) => { e.preventDefault(), butDel() }} className="btn btn-outline-danger me-1 ms-1 mt-4">Delete Material</button>
+                                    <Link to={`/recycler/updateMaterial/${_id}`}>
+                                        <button className="btn btn-outline-warning me-1 ms-1 mt-4">Update Material</button>
+                                    </Link>
+                                </>
+                            )
+                        }
 
                     </div>
 
-
-
                 </div>
-
-
-
             </div>
         </div>
 
@@ -52,7 +58,7 @@ export const CadMaterial = ({ _id, type, price, unit, photo, recycle, butDel }) 
                     <div className="col-sm-5">
                         <img
                             src={`http://localhost:3033/material/getImage/${photo}`}
-                            crossOrigin='anonymous' 
+                            crossOrigin='anonymous'
                             className="img-fluid rounded-start"
                             style={{
                                 objectFit: 'cover',

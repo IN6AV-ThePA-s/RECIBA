@@ -48,7 +48,10 @@ exports.sensitiveData = (data) => {
             username: a.username,
             role: a.role,
             exp: a.exp,
-            streakMaterial: a.streakMaterial
+            range: a.range,
+            points: a.points,
+            streakMaterial: a.streakMaterial,
+            historyRewards: a.historyRewards
         }
         list.push(payload)
     }

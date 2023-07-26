@@ -4,7 +4,7 @@ import Swal from 'sweetalert2'
 import axios from 'axios'
 import { Link } from 'react-router-dom'
 
-export const ViewBillMaterials = () => {
+export const ViewDetails = () => {
 
     const { id } = useParams()
     const [bill, setBill] = useState({})
@@ -57,17 +57,7 @@ export const ViewBillMaterials = () => {
                             </div>
                             <div className="col-xl-3 float-end mb-2">
 
-                                {
-                                    bill.status == 'COMPLETED' ? (
-
-                                        <Link>
-                                            <button className="btn btn-outline-danger bi bi-x-square-fill fs-4 me-2"></button>
-                                        </Link>
-
-                                    ) : (null)
-                                }
-
-                                <Link to='/recycler/viewBills'>
+                                <Link to='/home/bills'>
                                     <button type="button" className="btn btn-outline-secondary bi bi-arrow-left-square-fill fs-4"></button>
                                 </Link>
 

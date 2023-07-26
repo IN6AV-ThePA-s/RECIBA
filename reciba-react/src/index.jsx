@@ -12,6 +12,7 @@ import { PartnerDashboard } from './pages/Partner/PartnerDashboard'
 import { HomeRecycler } from './pages/Recycler/HomeRecycler'
 import { RegisterPage } from './pages/HomePage/RegisterPage'
 import { RecyclerView } from './pages/User/RecyclerView/RecyclerView'
+import { PartnerView } from './pages/User/PartnerView/PartnerView'
 import { UserHome } from './pages/User/UserHome'
 import { ViewBillMaterials } from './pages/Recycler/ViewBillMaterials'
 import { CreateBill } from './pages/Recycler/CreateBill'
@@ -19,6 +20,10 @@ import { ViewBills } from './pages/Recycler/ViewBills'
 import { ViewMaterials } from './pages/Recycler/ViewMaterials'
 import { CreateMaterial } from './pages/Recycler/CreateMaterial'
 import { UpdateMaterial } from './pages/Recycler/UpdateMaterial'
+import { BillView } from './pages/User/BillView/BillView'
+import { RewardView } from './pages/User/RewardView/RewardView'
+import { Settings } from './pages/User/Settings'
+import { ViewDetails } from './components/bill/ViewDetails'
 
 export const AuthContext = createContext()
 
@@ -73,6 +78,26 @@ export const Index = () => {
                             path: 'recyclerview/:id',
                             element: <RecyclerView/>
                         },
+                        {
+                            path: 'partnerview/:id',
+                            element: <PartnerView/>
+                        },
+                        {
+                            path: 'bills',
+                            element: <BillView/>
+                        },
+                        {
+                            path: 'claimers',
+                            element: <RewardView/>
+                        },
+                        {
+                            path: 'settings',
+                            element: <Settings/>
+                        },
+                        {
+                            path: 'viewDetails/:id',
+                            element: <ViewDetails/>
+                        }
                     ]
                 },
                 {

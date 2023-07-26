@@ -36,7 +36,6 @@ export const RecyclerView = () => {
       const { data } = await axios(`http://localhost:3033/material/getRecMaterials/${id}`, { headers: headers })
 
       if (data) {
-        console.log(data.materials);
         return setMaterials(data.materials)
       }
 
@@ -61,7 +60,11 @@ export const RecyclerView = () => {
             recycler?.photos.map((p, index) => {
               return (
                 <div id={index} className="carousel-item active">
-                  <img src={`http://localhost:3033/recycler/getImage/${p}`} crossOrigin='anonymous' className="d-block" style={{ objectFit: 'cover', width: '100%', height: '60vh' }} />
+                  <img 
+                    src={`http://localhost:3033/recycler/getImage/${p}`} 
+                    crossOrigin='anonymous' 
+                    className="d-block" 
+                    style={{ objectFit: 'cover', width: '100%', height: '60vh' }} />
                 </div>
               )
             })

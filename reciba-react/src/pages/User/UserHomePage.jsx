@@ -10,6 +10,7 @@ import { CardRecycler } from '../../components/recycler/CardRecycler'
 import Swal from 'sweetalert2'
 import { CardReward } from '../../components/rewards/CardReward'
 import { Outlet } from 'react-router-dom'
+import { Footer } from '../../components/Footer'
 
 export const UserHomePage = () => {
 
@@ -21,6 +22,10 @@ export const UserHomePage = () => {
 
       <div>
         <Outlet/>
+      </div>
+
+      <div>
+        <Footer/>
       </div>
     </>
   )

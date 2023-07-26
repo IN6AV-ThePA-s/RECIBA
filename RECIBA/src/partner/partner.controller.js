@@ -2,6 +2,8 @@
 
 const Partner = require('./partner.model')
 const { validateData, sensitiveData } = require('../utils/validate')
+const fs = require('fs');
+const path = require('path');
 
 exports.test = (req,res)=>{
     res.send({message: 'Test partner'})
@@ -82,3 +84,61 @@ exports.del = async(req,res)=>{
         return res.status(500).send({messag: 'Error deleting partner'})
     }
 }
+
+exports.uploadImg = async (req, res) => {
+    try {
+
+        const id = req.params.id
+        const alreadyImg = await Partner.findOne({ _id: id })
+        let pathFile = './src/uploads/partners/'
+
+        if (alreadyImg.photo) fs.unlinkSync(`${pathFile}${alreadyImg.photo}`)
+        if (!req.files.image || !req.files.image.type) return res.status(400).send({ message: 'Have not sent an image :(' })
+
+        const filePath = req.files.image.path
+
+        const fileSplit = filePath.split('\\')
+        const fileName = fileSplit[3]
+
+        const extension = fileName.split('\.')
+        const fileExt = extension[1]
+
+        if (
+            fileExt !== 'png' &&
+            fileExt !== 'jpg' &&
+            fileExt !== 'jpeg'
+        ) {
+            fs.unlinkSync(filePath)
+            return res.status(400).send({ message: 'File extension not admited' })
+        } else {
+            const upPartner = await Partner.findOneAndUpdate(
+                { _id: id },
+                { photo: fileName },
+                { new: true }
+            )
+            if (!upPartner) return res.status(404).send({ message: 'Partner not found!' })
+            return res.send({ message: 'Logo added successfully', partner: upPartner })
+        }
+
+    } catch (err) {
+        console.error(err)
+        return res.status(500).send({ message: 'Error while uploading img :(', error: err })
+    }
+}
+
+exports.getImg = async (req, res) => {
+    try {
+        const fileName = req.params.file
+        const pathFile = `./src/uploads/partners/${fileName}`
+        const img = fs.existsSync(pathFile)
+
+        if (!img) return res.status(404).send({ message: 'Image not found :(' })
+
+        return res.sendFile(path.resolve(pathFile))
+
+    } catch (err) {
+        console.error(err)
+        return res.status(500).send({ message: 'Error getting img :(', error: err })
+    }
+}
+
