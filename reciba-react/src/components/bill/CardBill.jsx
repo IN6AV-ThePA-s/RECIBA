@@ -23,7 +23,7 @@ export const CardBill = ({ cantMaterials, date, payMethod, recycler, status, tot
           
           <p className='mb-0'><strong className='text-primary'>Extended by:</strong> {recycler.name}</p>
           <p><strong className='text-primary'>To:</strong> {user.username}</p>
-          <Link href="#" className="btn btn-outline-dark rounded-pill">View details</Link>
+          <Link to={`/home/viewDetails/${id}`} className="btn btn-outline-dark rounded-pill">View details</Link>
         </div>
       </div>
     </>

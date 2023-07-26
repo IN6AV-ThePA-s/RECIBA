@@ -23,6 +23,7 @@ import { UpdateMaterial } from './pages/Recycler/UpdateMaterial'
 import { BillView } from './pages/User/BillView/BillView'
 import { RewardView } from './pages/User/RewardView/RewardView'
 import { Settings } from './pages/User/Settings'
+import { ViewDetails } from './components/bill/ViewDetails'
 
 export const AuthContext = createContext()
 
@@ -92,6 +93,10 @@ export const Index = () => {
                         {
                             path: 'settings',
                             element: <Settings/>
+                        },
+                        {
+                            path: 'viewDetails/:id',
+                            element: <ViewDetails/>
                         }
                     ]
                 },
