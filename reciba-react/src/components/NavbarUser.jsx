@@ -105,10 +105,10 @@ export const NavbarUser = () => {
                                 <h6>Rewards history</h6>
                             </Link>
 
-                            <h3 className='fw-bold mt-3' style={{ color: '#086c3c' }}>Statistics</h3>
+                            {/* <h3 className='fw-bold mt-3' style={{ color: '#086c3c' }}>Statistics</h3>
                             <Link className='optionSidebar'>
                                 <h6>Watch my stats</h6>
-                            </Link>
+                            </Link> */}
 
                         </div>
                     </div>
