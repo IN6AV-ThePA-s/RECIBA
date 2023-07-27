@@ -8,7 +8,6 @@ import { CardRecycler } from '../../components/recycler/CardRecycler'
 import Swal from 'sweetalert2'
 import { CardReward } from '../../components/rewards/CardReward'
 import { CardPartner } from '../../components/partner/CardPartner'
-import { ModalClaimReward } from '../../components/rewards/ModalClaimReward'
 
 const HOST = Object.freeze({ url: 'http://localhost:3033' })
 
@@ -93,11 +92,29 @@ export const UserHome = () => {
         }
     }
 
+    const checkRange = async () => {
+        try {
+            const { data } = await axios(`${HOST.url}/user/checkRange`, { headers: headers })
+
+            if (data) {
+                console.log(data.promoted);
+                if (data.promoted) Swal.fire('You have been promoted', '', 'info')
+            }
+
+            return
+
+        } catch (err) {
+            console.error(err)
+            Swal.fire(err.response.data.message, '', 'error')
+        }
+    }
+
     useEffect(() => {
         getRecyclers()
         getRewards()
         getPartners()
         getOwn()
+        checkRange()
     }, [])
 
 
@@ -176,7 +193,7 @@ export const UserHome = () => {
                     </div>
                 </div>
 
-                <hr className='mb-5'/>
+                <hr className='mb-5' />
 
                 <div className="row row-cols-1 row-cols-md-2 g-4">
                     {
@@ -214,7 +231,7 @@ export const UserHome = () => {
                     </div>
                 </div>
 
-                <hr className='mb-5'/>
+                <hr className='mb-5' />
 
                 <div className='row row-cols-1 row-cols-md-2 g-4 text-center'>
                     {
@@ -245,7 +262,7 @@ export const UserHome = () => {
                     Our Partners
                 </h1>
 
-                <hr className='mb-5'/>
+                <hr className='mb-5' />
 
                 <div className="row row-cols-1 row-cols-md-3 g-4 text-center">
                     {

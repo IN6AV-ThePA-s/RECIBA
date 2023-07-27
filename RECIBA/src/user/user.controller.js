@@ -224,6 +224,7 @@ exports.del = async(req, res) => {
 /* -----UPDATE PASSWORD ----- */
 exports.updatePassword = async(req, res) => {
     try {
+        let id = req.user.sub
         let data = req.body
         let form = {
             password: data.password,
@@ -388,5 +389,29 @@ exports.getImg = async(req, res) => {
     } catch (err) {
         console.error(err)
         return res.status(500).send({ message: 'Error getting img :(', error: err })
+    }
+}
+
+/* ----- CHECK RANGE ----- */
+exports.checkRange = async (req, res) => {
+    try {
+        const id = req.user.sub
+
+        const user = await User.findOne({ _id: id }).populate('range')
+
+        let limitExp = user.range.limitExp
+
+        if (user.exp >= limitExp) {
+            let range = await Range.findOne({ initExp: limitExp })
+            await User.findOneAndUpdate({ _id: id }, { range: range._id })
+
+            return res.send({ message: `You have been promoted to "${range.name}"`, promoted: true })
+        }
+
+        return res.send({ promoted: false })
+        
+    } catch (err) {
+        console.error(err)
+        return res.status(500).send({ message: 'Error checking range', error: err })
     }
 }
