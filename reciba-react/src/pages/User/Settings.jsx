@@ -4,6 +4,10 @@ import { Link, useNavigate } from 'react-router-dom'
 import Swal from 'sweetalert2'
 import photoError from '../../assets/userDefault.png'
 import { AuthContext } from '../..'
+import { ModalEditImg } from '../../components/user/ModalEditImg'
+import { ModalDelAccount } from '../../components/user/ModalDelAccount'
+import { ModalEditUser } from '../../components/user/ModalEditUser'
+import { ModalChangePass } from '../../components/user/ModalChangePass'
 
 const HOST = Object.freeze({ url: 'http://localhost:3033' })
 
@@ -61,6 +65,10 @@ export const Settings = () => {
         })
     }
 
+    const handleImageError = (e) => {
+        e.target.src = photoError
+    }
+
     useEffect(() => {
         getOwn()
     }, [])
@@ -80,28 +88,51 @@ export const Settings = () => {
                 <hr />
                 <div className='row container'>
                     <div className='col-auto'>
-                        <button type='button' className='btn btn-outline-warning' onClick={logout}>Edit</button>
+                        <button 
+                            type='button' 
+                            className='btn btn-outline-warning' 
+                            data-bs-toggle="modal" data-bs-target={`#modalEditAccount`}
+                        >
+                            Edit
+                        </button>
                     </div>
                     <div className='col-auto'>
-                        <button type='button' className='btn btn-outline-danger' onClick={logout}>Delete your account</button>
+                        <button
+                            type='button'
+                            className='btn btn-outline-danger'
+                            data-bs-toggle="modal" data-bs-target={`#modalDeleteAccount`}
+                        >
+                            Delete your account
+                        </button>
                     </div>
                 </div>
-                    
-                    
+
+
                 <div className='row g-0 align-items-center mb-5 my-4 rounded-4 shadow-lg p-5 bg-dark text-light'>
                     <div className='col-sm-5 text-center'>
-                        <img
-                            src={photo ? `${HOST.url}/user/getImg/${user?.photo}` : photoError}
-                            crossOrigin='anonymous'
-                            className='img-fluid rounded-circle shadow'
-                            style={{
-                                objectFit: 'cover',
-                                width: '50%',
+                        <div>
+                            <img
+                                src={photo ? `${HOST.url}/user/getImg/${user?.photo}` : photoError}
+                                onError={handleImageError}
+                                crossOrigin='anonymous'
+                                className='img-fluid rounded-circle shadow'
+                                style={{
+                                    objectFit: 'cover',
+                                    width: '30vh',
+                                    height: '30vh'
+                                }}
+                            />
+                        </div>
 
-                            }}
-                        />
                         <br /><br />
-                        <Link className='fs-3 text-decoration-none text-success fw-bold'>Edit</Link>
+
+                        {/* Edit img */}
+                        <Link
+                            className='fs-3 text-decoration-none text-success fw-bold'
+                            data-bs-toggle="modal" data-bs-target={`#modal${user?.id}`}
+                        >Edit
+                        </Link>
+
                     </div>
                     <div className='col-sm-7 p-4'>
                         <h2 className='fw-bold'>{user?.name} {user?.surname}</h2>
@@ -109,16 +140,18 @@ export const Settings = () => {
                         <h6 className=''>{user?.email}</h6>
                         <span class="badge rounded-pill text-bg-success text-light">Username</span>
                         <h6 className=''>{user?.username}</h6>
-                        <span class="badge rounded-pill text-bg-success text-light">Phone</span> 
+                        <span class="badge rounded-pill text-bg-success text-light">Phone</span>
                         <h6 className=''>{user?.phone}</h6>
-                        <hr/>
+                        <hr />
                         <h5>
                             <Link to={'/home/bills'} className='text-warning text-decoration-none'>Bills</Link>
                         </h5>
                         <h5>
                             <Link to={'/home/claimers'} className='text-warning text-decoration-none'>Rewards history</Link>
                         </h5>
-                        
+                        <h5>
+                            <a data-bs-toggle="modal" data-bs-target={`#modalChangePass`} className='text-warning text-decoration-none'>Change password</a>
+                        </h5>
                     </div>
                 </div>
             </div>
@@ -151,11 +184,27 @@ export const Settings = () => {
                             width: '20%',
                         }}
                     />
-                    <br/>
+                    <br />
                     <h5 className='text-center'>{user?.range.initExp} - {user?.range.limitExp}</h5>
                     <h5 className='text-center'>EXP</h5>
                 </div>
             </div>
+
+            <ModalEditImg
+                user={user}
+            />
+
+            <ModalDelAccount
+                user={user}
+            />
+
+            <ModalEditUser
+                user={user}
+            />
+
+            <ModalChangePass 
+                user={user}
+            />
         </>
     )
 }

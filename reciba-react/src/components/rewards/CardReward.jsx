@@ -1,7 +1,5 @@
 import React from 'react'
-import c2 from '../../assets/c2.jpg'
 import '../../css/UserHomePage.css'
-import { Link } from 'react-router-dom'
 import { ModalClaimReward } from './ModalClaimReward'
 
 export const CardReward = ({ name, desc, partner, range, cantPoints, photo, id, claims }) => {

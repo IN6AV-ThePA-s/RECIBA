@@ -45,6 +45,11 @@ exports.add = async(req, res) => {
         let msg = validateData(params)
         if (msg) return res.status(400).send({ msg })
 
+        if (data.initExp >= data.limitExp) return res.status(400).send({ message: 'Please select a coherent exp range' })
+
+        let existRange = await Range.findOne({ initExp: params.initExp })
+        if (existRange) return res.status(400).send({ message: 'Another range has been initialized with that initial exp' })
+        
         let range = new Range(data)
         await range.save()
 

@@ -117,7 +117,7 @@ export const NavbarUser = () => {
 
                         <div className="dropdown d-grip gap-2">
                             <a className="btn btn-dark dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <img src={photo || photoError} onError={handleImageError} crossOrigin='anonymous' alt="userFoto" width="35" height="35" className="rounded-circle me-1" />
+                                <img src={photo || photoError} onError={handleImageError} crossOrigin='anonymous' alt="userFoto" style={{objectFit: 'cover', width: '4vh', height: '4vh'}} className="rounded-circle me-1" />
                                 <span className="d-none d-sm-inline mx-1 fs-5">{dataUser.username}</span>
                             </a>
                             <ul className="dropdown-menu dropdown-menu-dark text-lg shadow">
