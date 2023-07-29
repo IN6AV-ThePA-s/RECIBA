@@ -121,7 +121,7 @@ export const UserHome = () => {
     return (
         <>
             {/* Carousel */}
-            <div id="carruselImagenes" className="carousel container slide mt-4" data-bs-ride="carousel" style={{ height: '65vh', width: '100%' }}>
+            <div id="carruselImagenes" className="carousel container slide mt-4 p-0" data-bs-ride="carousel" style={{ height: '65vh', width: '100%' }}>
                 <div className="carousel-inner rounded-4">
                     <div id="uno" className="carousel-item active">
                         <img src={c1} className="d-block" style={{ objectFit: 'cover', width: '100%', height: '65vh' }} />
@@ -136,10 +136,10 @@ export const UserHome = () => {
                     </div>
                 </div>
 
-                <button className="carousel-control-prev" type="button" data-bs-target="#carruselImagenes" data-bs-slide="prev">
+                <button className="carousel-control-prev rounded-4" type="button" data-bs-target="#carruselImagenes" data-bs-slide="prev">
                     <span className="carousel-control-prev-icon"></span>
                 </button>
-                <button className="carousel-control-next" type="button" data-bs-target="#carruselImagenes" data-bs-slide="next">
+                <button className="carousel-control-next rounded-4" type="button" data-bs-target="#carruselImagenes" data-bs-slide="next">
                     <span className="carousel-control-next-icon"></span>
                 </button>
             </div>

@@ -228,6 +228,9 @@ exports.claim = async (req, res) => {
             return res.send({ message: 'Reward claimed successfully', upHistory })
         }
 
+        let diff = userInfo.points - reward.cantPoints
+        if (diff < 0) return res.status(400).send({ message: `Insuficient points :( you need at least '${reward.cantPoints}pts' to claim this reward` })
+
         let rewardClaimed = {
             _id: reward._id,
             name: reward.name,
@@ -239,9 +242,14 @@ exports.claim = async (req, res) => {
             claims: 1
         }
 
+        let exp = reward.cantPoints * 0.10
+
         let upHistory = await User.findOneAndUpdate(
             { _id: user },
-            { $push: { historyRewards: rewardClaimed } },
+            { 
+                $push: { historyRewards: rewardClaimed },
+                $inc: { points: -(reward.cantPoints), exp: exp }
+            },
             { new: true }
         )
 
