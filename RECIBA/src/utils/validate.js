@@ -46,10 +46,23 @@ exports.sensitiveData = (data) => {
             phone: a.phone,
             email: a.email,
             username: a.username,
-            role: a.role
+            role: a.role,
+            photo: a.photo,
+            exp: a.exp,
+            range: a.range,
+            points: a.points,
+            cart: a.cart
         }
         list.push(payload)
     }
 
     return list
+}
+
+exports.isImg = (extension) => {
+    if (
+        extension !== 'png' &&
+        extension !== 'jpg' &&
+        extension !== 'jpeg'
+    ) return false
 }
