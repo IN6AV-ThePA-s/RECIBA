@@ -15,15 +15,15 @@ export const MasterRecyclerUpdate = () => {
     'Authorization': localStorage.getItem('token')
   }
 
-  
+
 
   const handlePhoto = (e) => {
     let formData = new FormData()
     for (let img of e.target.files) {
-        formData.append('images', img)
+      formData.append('images', img)
     }
     setPhoto(formData)
-}
+  }
 
 
   const getRecycler = async () => {
@@ -32,7 +32,7 @@ export const MasterRecyclerUpdate = () => {
       let dU = data
       if (dU.recycler) {
         setRecycler(dU.recycler)
-        const {data}= await axios.get(`http://localhost:3033/user/get/${dU.recycler.user}`, { headers: headers });
+        const { data } = await axios.get(`http://localhost:3033/user/get/${dU.recycler.user}`, { headers: headers });
         setUser(`${data.data[0].name} ${data.data[0].surname}`)
       }
 
@@ -55,7 +55,16 @@ export const MasterRecyclerUpdate = () => {
       const { data } = await axios.put(`http://localhost:3033/recycler/set/${id}`, form, { headers: headers })
 
       if (data.recycler) {
-        if (photo) await axios.put(`http://localhost:3033/recycler/uploadImage/${id}`, photo, {
+        if (!photo) 
+          return Swal.fire({
+            title: 'IMAGE REQUIRED',
+            text: `You need to choose one photo at least`,
+            icon: 'warning',
+            iconColor: 'orange',
+            showConfirmButton: true
+          })
+
+        await axios.put(`http://localhost:3033/recycler/uploadImage/${id}`, photo, {
           headers: { 'Content-type': 'multipart/form-data', 'Authorization': localStorage.getItem('token') }
         })
         Swal.fire({
@@ -116,7 +125,7 @@ export const MasterRecyclerUpdate = () => {
 
 
                   <h5 className="mr-2 mt-3">Photo</h5>
-                  <input onChange={handlePhoto} type="file" className="form-control" />
+                  <input onChange={(e) => handlePhoto(e)} name='images' type="file" className="form-control" multiple accept='image/png, image/jpg, image/jpeg' />
 
 
 
