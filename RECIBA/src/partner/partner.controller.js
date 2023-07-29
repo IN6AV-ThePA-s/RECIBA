@@ -1,5 +1,6 @@
 'use strict'
 
+const User = require('../user/user.model')
 const Partner = require('./partner.model')
 const { validateData, sensitiveData } = require('../utils/validate')
 const fs = require('fs');
@@ -20,6 +21,8 @@ exports.add = async(req, res)=>{
             admin: data.admin
         }
 
+        let user = User.findOne({_id: data.admin})
+        if(user.role =! 'PARTNER') return res.status(404).send({message: 'This admin is not partner'})
         let msg = validateData(params)
         if(msg) return res.status(404).send({message: msg})
 

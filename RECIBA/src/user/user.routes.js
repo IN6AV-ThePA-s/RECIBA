@@ -15,6 +15,7 @@ api.get('/getImg/:file', upload, getImg)
 api.put('/registerImg/:id', [upload], uploadImg)
 
 //PRIVATE ROUTES
+api.get('/getOwn', ensureAdvance, getOwn)
 api.put('/update', ensureAdvance, update)
 api.delete('/delete', ensureAdvance, del)
 api.put('/updatePassword', ensureAdvance, updatePassword)

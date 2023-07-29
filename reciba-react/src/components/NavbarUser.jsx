@@ -86,30 +86,55 @@ export const NavbarUser = () => {
                     </div>
                     <div className="offcanvas-body fontTextReciba">
                         <div>
-                            <h6>Range: {user?.range.name}</h6>
-                            <div className="progress" role="progressbar" aria-label="Animated striped example" aria-valuenow={`${user?.exp}`} aria-valuemin='0' aria-valuemax={`${limitExp}`}>
-                                <div className="progress-bar progress-bar-striped progress-bar-animated bg-success" style={{ width: `${exp}%` }}>{exp}%</div>
-                            </div>
-                            <h6>{user?.exp} - {user?.range.limitExp} exp</h6>
-                            <br/>
-
                             <h3 className='fw-bold' style={{ color: '#086c3c' }}>Actions</h3>
+                            {
+                                user?.role === 'MASTER' ? (
+                                    <>
+                                        <h3 className='fw-bold mt-3' style={{ color: '#086c3c' }}>User{' '}<i className="fa-sharp fa-solid fa-user"></i></h3>
+                                        <Link className='optionSidebar'></Link>
+                                        <Link to={'/master/users'} className='optionSidebar'>
+                                            <h6><i className="fa-solid fa-list"></i>{' '}Users</h6>
+                                        </Link>
+                                        <Link to={'/master/addUser'} className='optionSidebar'>
+                                            <h6><i className="fa-solid fa-plus"></i>{' '}Add User</h6>
+                                        </Link>
+                                        <h3 className='fw-bold mt-3' style={{ color: '#086c3c' }}>Recycler{' '}<i className="fa-solid fa-recycle"></i></h3>
+                                        <Link className='optionSidebar'></Link>
+                                        <Link to={'/master/recyclerview'} className='optionSidebar'>
+                                            <h6><i className="fa-solid fa-list"></i>{' '}Recyclers</h6>
+                                        </Link>
+                                        <Link to={'/master/addRecycler'} className='optionSidebar'>
+                                            <h6><i className="fa-solid fa-plus"></i>{' '}Add Recycler</h6>
+                                        </Link>
+                                    </>
+                                ) : (
+                                    <>
+                                        <h6>Range: {user?.range.name}</h6>
+                                        <div className="progress" role="progressbar" aria-label="Animated striped example" aria-valuenow={`${user?.exp}`} aria-valuemin='0' aria-valuemax={`${limitExp}`}>
+                                            <div className="progress-bar progress-bar-striped progress-bar-animated bg-success" style={{ width: `${exp}%` }}>{exp}%</div>
+                                        </div>
+                                        <h6>{user?.exp} - {user?.range.limitExp} exp</h6>
+                                        <br/>
 
-                            <h3 className='fw-bold mt-3' style={{ color: '#086c3c' }}>Bill</h3>
-                            <Link to={'/home/bills'} className='optionSidebar'>
-                                <h6>Bills</h6>
-                            </Link>
+                                        <h3 className='fw-bold' style={{ color: '#086c3c' }}>Actions</h3>
 
-                            <h3 className='fw-bold mt-3' style={{ color: '#086c3c' }}>Rewards</h3>
-                            <Link to={'/home/claimers'} className='optionSidebar'>
-                                <h6>Rewards history</h6>
-                            </Link>
+                                        <h3 className='fw-bold mt-3' style={{ color: '#086c3c' }}>Bill</h3>
+                                        <Link to={'/home/bills'} className='optionSidebar'>
+                                            <h6>Bills</h6>
+                                        </Link>
 
-                            {/* <h3 className='fw-bold mt-3' style={{ color: '#086c3c' }}>Statistics</h3>
-                            <Link className='optionSidebar'>
-                                <h6>Watch my stats</h6>
-                            </Link> */}
+                                        <h3 className='fw-bold mt-3' style={{ color: '#086c3c' }}>Rewards</h3>
+                                        <Link to={'/home/claimers'} className='optionSidebar'>
+                                            <h6>Rewards history</h6>
+                                        </Link>
 
+                                        {/* <h3 className='fw-bold mt-3' style={{ color: '#086c3c' }}>Statistics</h3>
+                                        <Link className='optionSidebar'>
+                                            <h6>Watch my stats</h6>
+                                        </Link> */}
+                                    </>
+                                )
+                            }
                         </div>
                     </div>
 

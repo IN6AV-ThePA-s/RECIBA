@@ -24,6 +24,13 @@ import { BillView } from './pages/User/BillView/BillView'
 import { RewardView } from './pages/User/RewardView/RewardView'
 import { Settings } from './pages/User/Settings'
 import { ViewDetails } from './components/bill/ViewDetails'
+import { Example } from './pages/Master/Example'
+import { UserPage } from './pages/Master/MasterUserView/UserPage'
+import { AddUserPage } from './pages/Master/MasterUserView/AddUserPage'
+import { UpdateUserPage } from './pages/Master/MasterUserView/UpdateUserPage'
+import { MasterRecyclerView } from './pages/Master/MasterRecyclerView/MasterRecyclerView'
+import { MasterRecyclerUpdate } from './pages/Master/MasterRecyclerView/MasterRecyclerUpdate'
+import { MasterRecyclerAdd } from './pages/Master/MasterRecyclerView/MasterRecyclerAdd'
 
 export const AuthContext = createContext()
 
@@ -64,7 +71,36 @@ export const Index = () => {
                 {
                     path: '/master',
                     element: loggedIn ? (dataUser?.role === 'MASTER' ? <MasterDashboard/> : <NotFound/>) : (<LoginPage/>),
-                    children: []
+                    children: [
+                        {
+                            path: 'page',
+                            element: <Example />
+                        },
+                        {
+                            path: 'users',
+                            element: <UserPage/>
+                        },
+                        {
+                            path: 'addUser',
+                            element: <AddUserPage/>
+                        },
+                        {
+                            path: 'updateUser/:id',
+                            element: <UpdateUserPage/>
+                        },
+                        {
+                            path: 'recyclerview',
+                            element: <MasterRecyclerView/>
+                        },
+                        {
+                            path: 'addRecycler',
+                            element: <MasterRecyclerAdd/>
+                        },
+                        {
+                            path: 'updateRecycler/:id',
+                            element: <MasterRecyclerUpdate/>
+                        }
+                    ]
                 },
                 {
                     path: '/home',
@@ -136,7 +172,7 @@ export const Index = () => {
                 },
                 {
                     path: '/partner',
-                    element: loggedIn ? (dataUser?.role === 'PARTNER' ? <PartnerDashboard/> : <NotFound/>) : (<LoginPage/>),
+                    element: loggedIn ? (dataUser?.role === 'PARTNER' ? <PartnerDashboard /> : <NotFound />) : (<LoginPage />),
                     children: []
                 }
             ]

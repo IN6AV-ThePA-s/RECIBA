@@ -103,3 +103,14 @@ exports.getOwn = async (req, res) => {
         return res.status(500).send({ message: 'Error getting bills', error: err })
     }
 }
+
+exports.getBills = async(req,res)=>{
+    try {
+        let data = await Bill.find().populate('user').populate('recycler').populate('cantMaterials.material');
+        if(!data) return res.status(404).send({message: 'Couldnt find any bill'});
+        return res.send({message: 'Bills found!', data})
+    } catch (err) {
+        console.error(err);
+        return res.status(500).send({message: 'Error gettitng parnters'})
+    }
+}
