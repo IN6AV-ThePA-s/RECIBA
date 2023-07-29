@@ -147,13 +147,14 @@ export const CreateBill = () => {
     const addBill = async () => {
         try {
 
+            //Datos del usuario logueado (TRABAJADOR DE LA RECICLADORA)
             const userData = JSON.parse(localStorage.getItem('user'))
 
             // Información del usuario al que se creará la factura
-            const dataU = await axios(`http://localhost:3033/user/getByUsername/${userData?.username}`, { headers: headers });
+            const dataU = await axios(`http://localhost:3033/user/get/${form.user}`, { headers: headers });
 
             // Informacion de la recicladora que está haciendo la factura
-            const dataR = await axios(`http://localhost:3033/recycler/getByUser/${dataU.data.data[0].id}`, { headers: headers });
+            const dataR = await axios(`http://localhost:3033/recycler/getByUser/${userData.id}`, { headers: headers });
 
             // Datos que se pondrán en la factura
             const newBill = {
@@ -161,7 +162,8 @@ export const CreateBill = () => {
                 recycler: dataR.data.recycler._id,
                 cantMaterials: listCart,
                 payMethod: form.payMethod,
-                total: total
+                total: total,
+                date: Date.now()
             }
 
             //Si el metodo de pago es de tipo ECOINS **FALTA HACER ESTA VALIDACIÓN**
@@ -171,61 +173,67 @@ export const CreateBill = () => {
 
                     //Se obtienen las facturas por usuario en orden de la mas reciente a las mas antigua.
                     const bByUser = await axios.get(`http://localhost:3033/bill/getByUser/${form.user}`, { headers: headers })
-                    const billsByUser = bByUser.data.data
 
-                    // Fecha y hora de ahora (Formato UNIX)
-                    const dateNow = Math.floor(new Date(Date.now()).getTime() / 1000)
+                    if (!(bByUser.data.data.length === 0)) {
 
-                    // Fecha de la ultima factura creada (Formato UNIX)
-                    const billDate = Math.floor(new Date(billsByUser[0].date).getTime() / 1000)
+                        const billsByUser = bByUser.data.data
 
-                    // Diferencia de tiempo entre ultima factura y ahora
-                    const hoursElapsed = (dateNow - billDate)
+                        // Fecha y hora de ahora (Formato UNIX)
+                        const dateNow = Math.floor(new Date(Date.now()).getTime() / 1000)
 
-                    // Se crea la factura.
-                    const createdbill = await axios.post(`http://localhost:3033/bill/create`, newBill, { headers: headers })
+                        // Fecha de la ultima factura creada (Formato UNIX)
+                        const billDate = Math.floor(new Date(billsByUser[0].date).getTime() / 1000)
 
-                    if (hoursElapsed >= 172800) {
-                        // Si ha pasado más de 48 horas desde la última factura, se pierde la racha
+                        // Diferencia de tiempo entre ultima factura y ahora
+                        const hoursElapsed = (dateNow - billDate)
 
-                        const deleteStreak = {
-                            number: Math.abs(parseInt(dataU.data.data[0].streakMaterial)) * -1
-                        }
+                        if (hoursElapsed >= 172800) {
+                            // Si ha pasado más de 48 horas desde la última factura, se pierde la racha
 
-                        const bill = await axios.put(
-                            `http://localhost:3033/bill/addStreak/${form.user}`,
-                            deleteStreak,
-                            { headers: headers }
-                        )
-
-                    }
-
-                    // Si ha pasado entre 24 y 48 horas desde la última factura, se suma 1% a la racha
-                    if (hoursElapsed >= 86400 && hoursElapsed <= 172800) {
-
-                        // Si no es mayor o igual a 7 (racha máxima) que aumente un 1% al porcentaje.
-                        if (!(dataU.data.data[0].streakMaterial >= 7)) {
-
-                            const plusStreak = {
-                                number: 1
+                            const deleteStreak = {
+                                number: Math.abs(parseInt(dataU.data.data[0].streakMaterial)) * -1
                             }
 
                             const bill = await axios.put(
                                 `http://localhost:3033/bill/addStreak/${form.user}`,
-                                plusStreak,
+                                deleteStreak,
                                 { headers: headers }
                             )
 
                         }
 
+                        // Si ha pasado entre 24 y 48 horas desde la última factura, se suma 1% a la racha
+                        if (hoursElapsed >= 86400 && hoursElapsed <= 172800) {
+
+                            // Si no es mayor o igual a 7 (racha máxima) que aumente un 1% al porcentaje.
+                            if (!(dataU.data.data[0].streakMaterial >= 7)) {
+
+                                const plusStreak = {
+                                    number: 1
+                                }
+
+                                const bill = await axios.put(
+                                    `http://localhost:3033/bill/addStreak/${form.user}`,
+                                    plusStreak,
+                                    { headers: headers }
+                                )
+
+                            }
+
+                        }
+
                     }
+
+                    // Se crea la factura.
+                    const createdbill = await axios.post(`http://localhost:3033/bill/create`, newBill, { headers: headers })
 
                     /* 
                         Si ninguna se cumple, es primera vez que agrega material sin racha 
                         o porque ha entregado varias veces material en el día.
                     */
 
-                    const dataU2 = await axios(`http://localhost:3033/user/getByUsername/${userData?.username}`, { headers: headers });
+                    // Información del usuario al que se creará la factura
+                    const dataU2 = await axios(`http://localhost:3033/user/get/${form.user}`, { headers: headers });
 
                     const porcentStreak = dataU2.data.data[0].streakMaterial / 100
                     const porcentStreakPoints = parseInt(newBill.total * 110 * porcentStreak)
@@ -263,7 +271,7 @@ export const CreateBill = () => {
                     })
 
                 }
-            }else{
+            } else {
                 // Cuando la factura es de otro tipo de pago que no sea ECOINS.
                 if (!(newBill.total <= 0)) {
 
@@ -273,7 +281,7 @@ export const CreateBill = () => {
                         title: 'Bill Created successfully',
                     })
 
-                }else {
+                } else {
 
                     Swal.fire({
                         icon: 'error',

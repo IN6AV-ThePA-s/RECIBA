@@ -50,7 +50,7 @@ exports.getBill = async (req, res) => {
 exports.getBillsByUser = async (req, res) => {
     try {
         const idUser = req.params.id
-        const data = await Bill.find({ user: idUser }).sort({ date: -1 }).select('_id date')
+        const data = await Bill.find({ user: idUser, payMethod: 'ECOINS' }).sort({ date: -1 }).select('_id date')
         if (!data) return res.status(404).send({ message: 'Couldnt find any bill by usel' });
         return res.send({ message: 'Bills by user found!', data })
     } catch (err) {
@@ -83,7 +83,7 @@ exports.addStreak = async (req, res) => {
             { $inc : { streakMaterial: expPts.number}},
             { new: true}
         )
-        return res.send({ message: 'The streak had been updated.', data })
+        return res.send({ message: 'The streak has been updated.', data })
     } catch (error) {
 
     }
@@ -101,5 +101,20 @@ exports.getOwn = async (req, res) => {
     } catch (err) {
         console.error(err)
         return res.status(500).send({ message: 'Error getting bills', error: err })
+    }
+}
+
+exports.disableBill = async(req,res)=>{
+    try {
+        const idBill = req.params.id
+        const data = await Bill.findOneAndUpdate(
+            {_id: idBill},
+            {status: 'DISABLED'},
+            {new: true}
+        )
+        return res.send({ message: 'The bill has been disabled.', data })
+    } catch (err) {
+        console.error(err)
+        return res.status(500).send({ message: 'Error disabled bill', error: err })
     }
 }

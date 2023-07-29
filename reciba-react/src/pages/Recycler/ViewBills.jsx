@@ -118,6 +118,7 @@ export const ViewBills = () => {
                                             date={date}
                                             status={status}
                                             butCheck={`/recycler/viewBillMaterials/${_id}`}
+                                            butDisable={()=> deleteMaterial(_id)}
                                         />
 
                                     ))

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 import Swal from 'sweetalert2'
 import axios from 'axios'
 import { Link } from 'react-router-dom'
@@ -8,6 +8,7 @@ export const ViewBillMaterials = () => {
 
     const { id } = useParams()
     const [bill, setBill] = useState({})
+    const navigate = useNavigate();
 
     const headers = {
         'Content-Type': 'application/json',
@@ -40,6 +41,30 @@ export const ViewBillMaterials = () => {
         }
     }
 
+    const deleteMaterial = async (id) => {
+        try {
+            Swal.fire({
+                title: 'Are you sure to disable this bill?',
+                icon: 'question',
+                showConfirmButton: true,
+                showDenyButton: true,
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                    const { data } = await axios.put(`http://localhost:3033/bill/disableBill/${id}`, '', { headers: { 'Content-Type': 'multipart/form-data', 'Authorization': localStorage.getItem('token') } }).catch((err) => {
+                        Swal.fire(err.response.data.message, '', 'error')
+                    })
+                    navigate('/recycler/viewBills');
+                    Swal.fire(`${data.message}`, '', 'success')
+                } else {
+                    Swal.fire('No worries!', '', 'success')
+                }
+            })
+        } catch (err) {
+            Swal.fire(err.response.data.message, '', 'error');
+            console.error(err);
+        }
+    }
+
     useEffect(() => {
         getBill()
     }, [])
@@ -59,11 +84,9 @@ export const ViewBillMaterials = () => {
 
                                 {
                                     bill.status == 'COMPLETED' ? (
-
-                                        <Link>
-                                            <button className="btn btn-outline-danger bi bi-x-square-fill fs-4 me-2"></button>
-                                        </Link>
-
+                                        
+                                        <button onClick={()=>deleteMaterial(id)} className="btn btn-outline-danger bi bi-x-square-fill fs-4 me-2"></button>
+                                        
                                     ) : (null)
                                 }
 
