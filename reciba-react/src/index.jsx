@@ -36,6 +36,7 @@ import { RecyclerStats } from './pages/Recycler/Stadistics/RecyclerStats'
 import { AddReward } from './pages/Partner/AddReward'
 import { ViewReward } from './pages/Partner/ViewReward'
 import { EditReward } from './pages/Partner/EditReward'
+import { MasterStats } from './pages/Master/Stadistics/MasterStats'
 
 export const AuthContext = createContext()
 
@@ -108,6 +109,10 @@ export const Index = () => {
                         {
                             path: 'recyclerview/:id',
                             element: <RecyclerView/>
+                        },
+                        {
+                            path: 'stats',
+                            element: <MasterStats/>
                         }
                     ]
                 },

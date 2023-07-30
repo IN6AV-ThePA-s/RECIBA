@@ -167,13 +167,26 @@ export const UserHome = () => {
                 <div className='container row'>
                     <div className='col-6'>
                         <div className="progress" role="progressbar" aria-label="Animated striped example" aria-valuenow={`${user?.exp}`} aria-valuemin='0' aria-valuemax={`${limitExp}`}>
-                            <div className="progress-bar progress-bar-striped progress-bar-animated bg-success" style={{ width: `${exp}%` }}>{exp}%</div>
+                            <div className="progress-bar progress-bar-striped progress-bar-animated bg-success" style={{ width: `${user?.role === 'CLIENT' ? exp : '100'}%` }}>{user?.role === 'CLIENT' ? exp : 'Infinite '}%</div>
                         </div>
-                        <h6>{user?.exp} - {user?.range.limitExp} exp</h6>
+                        {
+                            user?.role === 'CLIENT' ? (
+                                <h6>{user?.exp} - {user?.range.limitExp} exp</h6>
+                            ) : (
+                                <h6>Infinite - Infinite exp</h6>
+                            )
+                        }
+                        
                     </div>
 
                     <div className='col-6 p-0 text-end'>
-                        <h4>Ecoins: {user?.points}</h4>
+                        {
+                            user?.role === 'CLIENT' ? (
+                                <h4>Ecoins: {user?.points}</h4>
+                            ) : (
+                                <h4>Ecoins: Infinite</h4>
+                            )
+                        }
                     </div>
                 </div>
             </div>
