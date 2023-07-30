@@ -51,7 +51,7 @@ export const LoginPage = () => {
                         break;
 
                     case 'PARTNER':
-                        navigate(`/partner`)
+                        navigate(`/partner/viewReward`)
                         break;
                     default:
                         break;

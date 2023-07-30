@@ -107,6 +107,11 @@ export const NavbarUser = () => {
                                         <Link to={'/master/addRecycler'} className='optionSidebar'>
                                             <h6><i className="fa-solid fa-plus"></i>{' '}Add Recycler</h6>
                                         </Link>
+
+                                        <h3 className='fw-bold mt-3' style={{ color: '#086c3c' }}>Statistics</h3>
+                                        <Link to={'/master/stats'} className='optionSidebar'>
+                                            <h6>Watch my stats</h6>
+                                        </Link>
                                     </>
                                 ) : (
                                     <>

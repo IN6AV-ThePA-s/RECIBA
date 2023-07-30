@@ -1,0 +1,124 @@
+import React, { useEffect, useState } from 'react'
+import { BarChart } from '../../../components/charts/BarChart'
+import Swal from 'sweetalert2'
+import axios from 'axios'
+
+export const MasterStats = () => {
+  const [recyclerData, setRecyclerData] = useState({
+    labels: undefined,
+    datasets: [
+      {
+        label: undefined,
+        data: null
+      }
+    ]
+  })
+  const [month, setMonth] = useState(`${new Date().getMonth() + 1}`)
+  const [cantOfBills, setCantOfBills] = useState(0)
+  const headers = {
+    'Content-Type': 'application/json',
+    'Authorization': localStorage.getItem('token')
+  }
+  const handleSelect = (e) => {
+    setMonth(e.target.value)
+  }
+
+  const getRecyclers = async () => {
+    try {
+      const { data } = await axios(`http://localhost:3033/bill/get`, { headers: headers })
+      const { data: recyclers } = await axios(`http://localhost:3033/recycler/get`, { headers: headers })
+
+      if (data) {
+        //Obtener fecha actual
+        let date = new Date()
+
+        //Filtrar facturas por su status, metodo de pago, mes y año actual
+        const filterBills = data.data.filter((b) =>
+          b.date.split('\-')[1].includes(month) &&
+          b.date.split('\-')[0].includes(date.getFullYear()) &&
+          b.status?.includes('COMPLETED')
+        )
+
+        setCantOfBills(filterBills.length)
+        
+        let filterRecycler = []
+
+        //Contar cuantas facturas ha hecho cada recicladora
+        for (let item of recyclers.recyclers) {
+
+          //Obtener todas las facturas que se hayan hecho en la recicladora en ciclo
+          const f = filterBills.filter((b) => 
+            b.recycler._id.includes(item._id)
+          )
+
+          //Ingresar los datos
+          filterRecycler.push({
+            name: item.name,
+            bills: f.length
+          })
+        }
+
+        setRecyclerData({
+          labels: filterRecycler.map((data) => data.name),
+          datasets: [
+            {
+              label: 'Recyclers',
+              data: filterRecycler.map((data) => data.bills)
+            }
+          ]
+        })
+
+      }
+
+    } catch (err) {
+      console.error(err)
+      Swal.fire(err.response.data.message, '', 'error')
+    }
+  }
+
+  useEffect(() => {
+    getRecyclers()
+  }, [month])
+  
+
+  return (
+    <div className='container my-5'>
+
+      <div className='row align-items-center'>
+        <h1 className='col py-1 px-4 text-success'>
+          Stats
+        </h1>
+
+        <div className='col-auto text-center text-light'>
+          <select defaultValue={month} onChange={handleSelect} id='selectOption' name="state" className='form-select'>
+            <option value={1}>January</option>
+            <option value={2}>February</option>
+            <option value={3}>March</option>
+            <option value={4}>April</option>
+            <option value={5}>May</option>
+            <option value={6}>June</option>
+            <option value={7}>July</option>
+            <option value={8}>August</option>
+            <option value={9}>September</option>
+            <option value={10}>October</option>
+            <option value={11}>November</option>
+            <option value={12}>December</option>
+          </select>
+        </div>
+      </div>
+
+      <hr className='mb-5' />
+
+      <h1 className='py-1 text-secondary'>
+        Most popular recyclers
+      </h1>
+
+      <h3 className='d-flex justify-content-end'>Total of bills: {cantOfBills}</h3>
+
+      <div className='container mb-5'>
+        <BarChart chartData={recyclerData} />
+      </div>
+
+    </div>
+  )
+}

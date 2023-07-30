@@ -31,7 +31,7 @@ export const NavbarPartner = () => {
                                 </Link>
 
                                 <h3 className='fw-bold mt-3' style={{ color: '#086c3c' }}>Statistics</h3>
-                                <Link className='optionSidebar'>
+                                <Link to='rewardStats' className='optionSidebar'>
                                     <h6>Watch my rewards stats</h6>
                                 </Link>
 
