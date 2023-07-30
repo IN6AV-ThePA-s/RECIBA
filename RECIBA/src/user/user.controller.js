@@ -489,10 +489,15 @@ exports.checkRange = async (req, res) => {
 
         const user = await User.findOne({ _id: id }).populate('range')
 
+        if (user.role !== 'CLIENT') return res.send()
+
         let limitExp = user.range.limitExp
 
         if (user.exp >= limitExp) {
             let range = await Range.findOne({ initExp: limitExp })
+
+            if (!range) return res.send()
+            
             await User.findOneAndUpdate({ _id: id }, { range: range._id })
 
             return res.send({ message: `You have been promoted to "${range.name}"`, promoted: true })
