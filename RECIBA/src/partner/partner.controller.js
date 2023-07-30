@@ -59,6 +59,18 @@ exports.get = async(req,res)=>{
     }
 }
 
+exports.getByUser = async(req,res)=>{
+    try {
+       let userId = req.params.id 
+       let partner = await Partner.findOne({admin: userId})
+       if(!partner) return res.status(404).send({message: 'Couldnt find that partner, please contact to admin to create your partner'})
+       return res.send({partner: partner});
+    } catch (err) {
+        console.error(err);
+        return res.status(500).send({message: 'Error getting partner'});
+    }
+}
+
 exports.edit = async(req, res)=>{
     try {
         let partnerId = req.params.id

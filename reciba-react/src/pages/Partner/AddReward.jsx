@@ -11,7 +11,7 @@ export const AddReward = () => {
   const [form, setForm] = useState({
     name: '',
     description: '',
-    partner: dataUser.sub,
+    partner: '',
     range: '',
     cantPoints: ''
   })
@@ -40,13 +40,33 @@ export const AddReward = () => {
     setPhoto(formData)
   }
 
+  const getPartner = async () => {
+    try {
+      const { data } = await axios.get(`http://localhost:3033/partner/getByUser/${dataUser.sub}`, { headers: headers })
+      if (data) {
+        setForm({
+          ...form,
+          'partner': data.partner._id
+        })
+      }
+    } catch (err) {
+      console.error(err);
+      Swal.fire(err.response.data?.message, '', 'error')
+      navigate('/partner')
+    }
+  }
+
   const getRanges = async () => {
     try {
       const { data } = await axios.get(`http://localhost:3033/range/get`, { headers: headers })
-      setRange(data.range)
+      setRange([])
+      for (let i = 0; i < data.range?.length; i++) {
+        if (data.range[i].name != 'ADMIN')
+          setRange(range => range.concat([data.range[i]]))
+      }
     } catch (err) {
       console.log(err)
-      Swal.fire(err.response.data.message, '', 'error')
+      Swal.fire(err.response.data?.message, '', 'error')
     }
   }
 
@@ -73,14 +93,19 @@ export const AddReward = () => {
 
   useEffect(() => {
     getRanges()
+    getPartner()
   }, [])
 
-  useEffect(()=>{
+  useEffect(() => {
     setForm({
       ...form,
-      'range':range[0]?._id
+      'range': range[0]?._id
     })
-  },[range])
+  }, [range])
+
+  useEffect(()=>{
+    console.log(form);
+  },[form])
 
   return (
     <div className="main-content">
