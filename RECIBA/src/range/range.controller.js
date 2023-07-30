@@ -16,7 +16,6 @@ exports.defaultRange = async(req, res) => {
     try {
         let range = await Range.findOne({ name: 'JUNIOR' })
         if (range) return console.log('Range default already created in db')
-
         let data = {
             name: 'JUNIOR',
             initExp: 0,
@@ -25,6 +24,25 @@ exports.defaultRange = async(req, res) => {
         let defRange = new Range(data)
         await defRange.save()
         return console.log('Range default created successfully')
+        
+    } catch (err) {
+        console.error(err)
+        return res.status(500).send({ message: 'Error creating range default', error: err })
+    }
+}
+
+exports.defaultRangeAdmin = async(req, res) => {
+    try {
+        let range = await Range.findOne({ name: 'ADMIN' })
+        if (range) return console.log('Range admin default already created in db')
+        let data = {
+            name: 'ADMIN',
+            initExp: 0,
+            limitExp: 0
+        }
+        let defRange = new Range(data)
+        await defRange.save()
+        return console.log('Range admin default created successfully')
         
     } catch (err) {
         console.error(err)
@@ -127,6 +145,7 @@ exports.getRange = async(req, res) => {
 exports.get = async(req, res) => {
     try {
         let ranges = await Range.find()
+        
         if (ranges.length === 0) return res.status(404).send({ message: 'Ranges not found :(' })
 
         return res.send({ message: 'Ranges found!', range: ranges })

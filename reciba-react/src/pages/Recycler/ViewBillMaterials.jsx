@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 import Swal from 'sweetalert2'
 import axios from 'axios'
 import { Link } from 'react-router-dom'
@@ -8,6 +8,8 @@ export const ViewBillMaterials = () => {
 
     const { id } = useParams()
     const [bill, setBill] = useState({})
+    const [bills, setBills] = useState([])
+    const navigate = useNavigate();
 
     const headers = {
         'Content-Type': 'application/json',
@@ -40,6 +42,115 @@ export const ViewBillMaterials = () => {
         }
     }
 
+    const deleteMaterial = async (id) => {
+        try {
+            Swal.fire({
+                title: 'Are you sure to disable this bill?',
+                icon: 'question',
+                showConfirmButton: true,
+                showDenyButton: true,
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+
+                    // Están en segundos
+                    const billTime = parseInt((new Date(bill.date).getTime() / 1000).toFixed(0))
+                    const currentTime = parseInt((new Date(Date.now()).getTime() / 1000).toFixed(0))
+                    const difference = currentTime - billTime
+                    console.log(difference);
+
+
+                    /* ***********CAMBIAR A 300 DESPUES DE PRUEBAS************  */
+                    if (difference >= 60000) {
+                        return (
+                            Swal.fire({
+                                title: 'The invoice cannot be disabled after 5 minutes of being created.',
+                                icon: 'error',
+                                timer: 2000,
+                                showConfirmButton: false
+                            })
+                        )
+                    }
+
+                    if (!(bill.payMethod == 'ECOINS')) {
+
+                        const { data } = await axios.put(`http://localhost:3033/bill/disableBill/${id}`, '', { headers: { 'Content-Type': 'multipart/form-data', 'Authorization': localStorage.getItem('token') } }).catch((err) => {
+                            Swal.fire(err.response.data.message, '', 'error')
+                        })
+                        Swal.fire(`${data.message}`, '', 'success')
+                        navigate('/recycler/viewBills');
+
+                    } else {
+
+                        const aBills = await axios(`http://localhost:3033/bill/getByUser/${bill.user._id}`, { headers: headers })
+                        const allBills = aBills.data.data
+
+                        const filterBills = []
+
+                        console.log(allBills);
+
+                        const dataUser = await axios(`http://localhost:3033/user/get/${bill.user._id}`, { headers: headers })
+
+                        //Deshabilitar la factura
+                        const { data } = await axios.put(`http://localhost:3033/bill/disableBill/${id}`, '', { headers: { 'Content-Type': 'multipart/form-data', 'Authorization': localStorage.getItem('token') } }).catch((err) => {
+                            Swal.fire(err.response.data.message, '', 'error')
+                        })
+
+                        for (const bill of allBills) {
+                            let billDate = parseInt((new Date(bill.date).getTime() / 1000).toFixed(0))
+                            let diff = currentTime - billDate
+                            console.log(billDate);
+                            console.log(diff);
+
+                            // Si las ultimas facturas creadas son de hace menos de 24 horas
+                            if (diff <= 86400) {
+                                filterBills.push(bill)
+                            }
+                        }
+
+                        if (dataUser.data.data.streakMaterial != 0) {
+                            if (filterBills.length == 1) { //Si esta vacío o sea igual a uno porque no se cuenta la misma factura
+                                console.log('RESTAR -1 A STREAK Y QUITAR PUNTOS Y EXP');
+
+                                const minusStreak = {
+                                    number: -1
+                                }
+
+                                const streak = await axios.put(
+                                    `http://localhost:3033/bill/addStreak/${data.data.user}`,
+                                    minusStreak,
+                                    { headers: headers }
+                                )
+
+                            }else{
+                                console.log('SOLAMENTE QUITAR PUNTOS Y EXP');
+                            }
+                        }else{
+                            console.log('SI LA RACHA ES CERO QUE SIMPLEMENTE SE QUITEN LOS PUNTOS Y EXP');
+                        }
+
+                        const minusExpPts = {
+                            points: -data.data.points,
+                            exp: -(parseInt(data.data.points * 0.40))
+                        }
+
+                        const updExpPts = await axios.put(`http://localhost:3033/bill//expPts/${data.data.user}`, minusExpPts, { headers: headers })
+
+                        navigate('/recycler/viewBills');
+                        Swal.fire(`${data.message}`, '', 'success')
+
+                    }
+
+
+                } else {
+                    Swal.fire('No worries!', '', 'success')
+                }
+            })
+        } catch (err) {
+            Swal.fire(err.response.data.message, '', 'error');
+            console.error(err);
+        }
+    }
+
     useEffect(() => {
         getBill()
     }, [])
@@ -60,9 +171,7 @@ export const ViewBillMaterials = () => {
                                 {
                                     bill.status == 'COMPLETED' ? (
 
-                                        <Link>
-                                            <button className="btn btn-outline-danger bi bi-x-square-fill fs-4 me-2"></button>
-                                        </Link>
+                                        <button onClick={() => deleteMaterial(id)} className="btn btn-outline-danger bi bi-x-square-fill fs-4 me-2"></button>
 
                                     ) : (null)
                                 }
@@ -130,7 +239,7 @@ export const ViewBillMaterials = () => {
                                                 <td>{material.type}</td>
                                                 <td>{material.price.quantity} x {material.price.amount}</td>
                                                 <td>{amountWeight}</td>
-                                                <td>{subtotal}</td>
+                                                <td>Q. {parseFloat(subtotal).toFixed(2)}</td>
                                             </tr>
                                         ))}
 
@@ -144,12 +253,30 @@ export const ViewBillMaterials = () => {
 
                                 </div>
                                 <div className="col-xl-3">
-                                    {/* <ul className="list-unstyled">
-                                        <li className="text-muted ms-3"><span className="text-black me-4">SubTotal</span>$1110</li>
-                                        <li className="text-muted ms-3 mt-2"><span className="text-black me-4">Tax(15%)</span>$111</li>
-                                    </ul> */}
-                                    <p className="text-black float-start"><span className="text-black me-3"> Total Amount</span><span
-                                        style={{ fontSize: '25px' }}>Q. {parseFloat(bill.total).toFixed(2)}</span></p>
+                                    {
+                                        bill.payMethod == 'ECOINS' ? (
+                                            <>
+                                                <ul className="list-unstyled">
+                                                    <li className="text-muted ms-3"><span className="text-black me-4">Total</span>Q. {parseFloat(bill.total).toFixed(2)}</li>
+                                                    <li className="text-muted ms-3 mt-2"><span className="text-black me-4">Points</span>{parseInt(bill.total * 110)}  (+10%)</li>
+                                                    <li className="text-muted ms-3 mt-2"><span className="text-black me-4">Bonus</span>{bill.bonus} %</li>
+                                                </ul>
+                                                <p className="text-black float-start"><span className="text-black me-3"> Total Points</span><span
+                                                    style={{ fontSize: '25px', color: 'green' }}>{bill.points}</span>
+                                                </p>
+                                            </>
+
+
+                                        ) : (
+                                            <>
+                                                <p className="text-black float-start"><span className="text-black me-3"> Total Amount:</span><span
+                                                    style={{ fontSize: '25px' }}>Q. {parseFloat(bill.total).toFixed(2)}</span>
+                                                </p>
+                                            </>
+
+                                        )
+                                    }
+
                                 </div>
                             </div>
                             <hr />

@@ -51,6 +51,7 @@ const userSchema = mongoose.Schema({
     range:{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Range',
+        required: true
     },
     photo:{
         type: String

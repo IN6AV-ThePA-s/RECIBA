@@ -19,7 +19,12 @@ export const ViewBills = () => {
     // Obtener todas las facturas para la tabla
     const getBills = async () => {
         try {
-            const { data } = await axios('http://localhost:3033/bill/get', { headers: headers });
+
+            //Datos del usuario logueado (TRABAJADOR DE LA RECICLADORA)
+            const userData = JSON.parse(localStorage.getItem('user'))
+            const recycler = await axios(`http://localhost:3033/recycler/getByUser/${userData.id}`, { headers: headers })
+
+            const { data } = await axios(`http://localhost:3033/bill/getByRecycler/${recycler.data.recycler._id}`, { headers: headers })
             setBills(data.data);
 
         } catch (err) {
@@ -118,6 +123,7 @@ export const ViewBills = () => {
                                             date={date}
                                             status={status}
                                             butCheck={`/recycler/viewBillMaterials/${_id}`}
+                                            butDisable={()=> deleteMaterial(_id)}
                                         />
 
                                     ))

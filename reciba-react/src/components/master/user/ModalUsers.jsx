@@ -17,19 +17,17 @@ export const ModalUsers = ({ id }) => {
     const getUser = async () => {
         try {
             const { data } = await axios(`http://localhost:3033/user/get/${id}`, { headers: headers })
-            if (data.data[0].photo || data.data[0].range) {
-                if (data.data[0].range) {
-                    let range = await axios(`http://localhost:3033/range/get/${data.data[0].range}`)
-                    let img = await axios(`http://localhost:3033/user/getImg/${data.data[0].photo}`)
-                    data.data[0].photo = img.request.responseURL
-                    data.data[0].range = range.data.range.name
-                    setUser(data.data[0])
-                } else {
-                    let img = await axios(`http://localhost:3033/user/getImg/${data.data[0].photo}`)
-                    data.data[0].photo = img.request.responseURL
-                    setUser(data.data[0])
-                }
+
+            if (data.data[0].photo) {
+                let img = await axios(`http://localhost:3033/user/getImg/${data.data[0].photo}`)
+                data.data[0].photo = img.request.responseURL
             }
+
+            if (data.data[0].range) {
+                let range = await axios(`http://localhost:3033/range/get/${data.data[0].range}`)
+                data.data[0].range = range.data.range.name
+            }
+
             setUser(data.data[0])
         } catch (err) {
             console.error(err);
@@ -122,7 +120,7 @@ export const ModalUsers = ({ id }) => {
                                     </div>
                                 </div>
                                 {
-                                    user.range ? (
+                                    user.range != 'ADMIN' ? (
                                         <div className='d-flex flex-row justify-content-evenly'>
                                             <div className="mb-3 ">
                                                 <span className="text-success fs-5">Exp: </span>

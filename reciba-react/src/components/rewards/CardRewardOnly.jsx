@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 import Swal from 'sweetalert2'
 import axios from 'axios'
 
-export const CardRewardOnly = ({ name, desc, range, cantPoints, photo, id, reload }) => {
+export const CardRewardOnly = ({ name, desc, range, cantPoints, partner, photo, id, reload }) => {
     const headers = {
         'Content-Type': 'application/json',
         'Authorization': localStorage.getItem('token')
@@ -62,6 +62,8 @@ export const CardRewardOnly = ({ name, desc, range, cantPoints, photo, id, reloa
                                 <p className="card-text"><small className="text-body-secondary"></small></p>
                                 <span className="badge bg-warning">Range</span>
                                 <h5 className="card-text">{range}</h5>
+                                <span className="badge bg-warning">Partner</span>
+                                <h5 className="card-text">{partner.name}</h5>
                                 <span className="badge bg-warning">Points</span>
                                 <h5 className="card-text">{cantPoints} pts</h5>
                                 <span className="card-text"></span>

@@ -2,7 +2,7 @@ import React, { useEffect, useState, useContext, useRef } from 'react';
 import Select from "react-select";
 import axios from 'axios';
 import Swal from 'sweetalert2';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import '../../css/Dashboard.css'
 import exampleImage from '../../assets/exampleimage.png'
 import { useParams } from 'react-router-dom';
@@ -209,8 +209,11 @@ export const UpdateMaterial = () => {
 
                         <div className="container text-center mt-4">
 
-                            <button onClick={updateMaterial} className='btn btn-warning fs-5 rounded'>Update Material</button>
-
+                            <button onClick={updateMaterial} className='btn btn-warning fs-5 rounded'>Update</button>
+                            <Link to='/recycler/viewMaterials'>
+                                <button className='btn btn-danger fs-5 ms-2 rounded'>Cancel</button>
+                            </Link>
+                            
                         </div>
 
                     </div>

@@ -35,7 +35,8 @@ export const NavbarUser = () => {
                 setPhoto(`${HOST.url}/user/getImg/${data.data[0].photo}`)
                 let user = data.data[0]
                 let perc = 0
-                console.log(user)
+
+                if (!(user.role === 'CLIENT')) return setUser(user)
 
                 let limit = user.range.limitExp - user.range.initExp
                 setLimitExp(limit)
@@ -50,7 +51,7 @@ export const NavbarUser = () => {
 
         } catch (err) {
             console.error(err)
-            Swal.fire(err.response.data.message, '', 'error')
+            Swal.fire(err.response?.data.message, '', 'error')
         }
     }
 
@@ -68,21 +69,16 @@ export const NavbarUser = () => {
 
     useEffect(() => {
         getOwn()
-        
     }, [])
 
-    useEffect(()=>{
-        if(user != undefined){
-            console.log(user.role);
-        }
-    },[])
+
     return (
         <nav className="navbar bg-light navbar-light border-bottom" aria-label="Dark offcanvas navbar">
             <div className="container-fluid">
                 <button className="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#staticBackdrop" aria-controls="staticBackdrop">
                     <span className="navbar-toggler-icon"></span>
                 </button>
-                <Link className="navbar-brand fontReciba" to={'/home/page'}>RECIBA</Link>
+                <Link className="navbar-brand fontReciba" to={`/${dataUser.role === 'CLIENT' ? 'home' : 'master'}/page`}>RECIBA</Link>
 
                 <div className="offcanvas offcanvas-start" data-bs-backdrop="static" tabIndex="-1" id="staticBackdrop" aria-labelledby="staticBackdropLabel">
                     <div className="offcanvas-header">
@@ -93,7 +89,7 @@ export const NavbarUser = () => {
                         <div>
                             <h3 className='fw-bold' style={{ color: '#086c3c' }}>Actions</h3>
                             {
-                                user?.role === 'MASTER' ? (
+                                user?.role === "MASTER" ? (
                                     <>
                                         <h3 className='fw-bold mt-3' style={{ color: '#086c3c' }}>User{' '}<i className="fa-sharp fa-solid fa-user"></i></h3>
                                         <Link className='optionSidebar'></Link>
@@ -112,9 +108,6 @@ export const NavbarUser = () => {
                                             <h6><i className="fa-solid fa-plus"></i>{' '}Add Recycler</h6>
                                         </Link>
                                     </>
-                                ) : 
-                                user?.role === 'PARTNER' ? (
-                                    <h1>hola</h1>
                                 ) : (
                                     <>
                                         <h6>Range: {user?.range.name}</h6>
@@ -136,10 +129,10 @@ export const NavbarUser = () => {
                                             <h6>Rewards history</h6>
                                         </Link>
 
-                                        {/* <h3 className='fw-bold mt-3' style={{ color: '#086c3c' }}>Statistics</h3>
-                                        <Link className='optionSidebar'>
+                                        <h3 className='fw-bold mt-3' style={{ color: '#086c3c' }}>Statistics</h3>
+                                        <Link to={'/home/stats'} className='optionSidebar'>
                                             <h6>Watch my stats</h6>
-                                        </Link> */}
+                                        </Link>
                                     </>
                                 )
                             }

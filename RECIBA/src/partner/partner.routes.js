@@ -2,13 +2,14 @@
 
 const api = require('express').Router()
 const {ensureAdvance, isPartner, isMaster} = require('../services/authenticated')
-const {test, add, getAll, get, edit, del, uploadImg, getImg} = require('./partner.controller')
+const {test, add, getAll, get, edit, del, uploadImg, getImg, getByUser} = require('./partner.controller')
 const multiparty = require('connect-multiparty')
 const upload = multiparty({uploadDir:'./src/uploads/partners/'})
 
 //Public routes
 api.get('/test', test)
 api.get('/getImage/:file', [upload], getImg)
+
 
 //Admin routes
 api.post('/add', [ensureAdvance, isMaster], add);
@@ -19,6 +20,6 @@ api.put('/uploadImage/:id', [ensureAdvance, isPartner, upload], uploadImg)
 //Private routes
 api.get('/get/:id', [ensureAdvance], get);
 api.get('/get', [ensureAdvance], getAll);
-
+api.get('/getByUser/:id',[ensureAdvance], getByUser)
 
 module.exports = api
