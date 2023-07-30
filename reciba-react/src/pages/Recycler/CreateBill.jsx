@@ -44,7 +44,7 @@ export const CreateBill = () => {
     // Obtener todos los usuarios para mostrarlos en el select
     const getUsers = async () => {
         try {
-            const { data } = await axios('http://localhost:3033/user/get', { headers: headers });
+            const { data } = await axios('http://localhost:3033/user/getClients', { headers: headers });
 
             const newList = data.data.map(user => ({
                 value: user.id,
@@ -82,6 +82,14 @@ export const CreateBill = () => {
     const addMaterialCart = async () => {
         try {
 
+            if (!(form?.material)) {
+                return Swal.fire({title: 'You need to select a material', icon: 'error', timer: 1000, showConfirmButton: false});
+            }
+
+            if (!(form.amountWeight || form.amountWeight == undefined)) {
+                return Swal.fire({title: 'You need to put a valid number', icon: 'error', timer: 1000, showConfirmButton: false});
+            }
+
             const { data } = await axios(`http://localhost:3033/material/getOne/${form?.material}`, { headers: headers })
             const { quantity, amount } = data.material.price
 
@@ -107,7 +115,7 @@ export const CreateBill = () => {
             }
 
         } catch (err) {
-            Swal.fire(err.response.data.message, '', 'error');
+            Swal.fire(err.message, '', 'error');
             console.error(err);
         }
     };
@@ -115,6 +123,15 @@ export const CreateBill = () => {
     //Remover materiales a la lista de la factura
     const removeMaterialCart = async () => {
         try {
+
+            if (!(form?.material)) {
+                return Swal.fire({title: 'You need to select a material', icon: 'error', timer: 1000, showConfirmButton: false});
+            }
+
+            if (!(form.amountWeight || form.amountWeight == undefined)) {
+                return Swal.fire({title: 'You need to put a valid number', icon: 'error', timer: 1000, showConfirmButton: false});
+            }
+
             const { data } = await axios(`http://localhost:3033/material/getOne/${form?.material}`, { headers: headers });
             const { quantity, amount } = data.material.price;
 
@@ -166,7 +183,7 @@ export const CreateBill = () => {
                 date: Date.now()
             }
 
-            //Si el metodo de pago es de tipo ECOINS **FALTA HACER ESTA VALIDACIÓN**
+            //Si el metodo de pago es de tipo ECOINS
             if (newBill.payMethod == 'ECOINS') {
                 // Si el total no es cero o menor es porque no esta vacia y se puede crear.
                 if (!(newBill.total <= 0)) {
@@ -236,17 +253,29 @@ export const CreateBill = () => {
                     const dataU2 = await axios(`http://localhost:3033/user/get/${form.user}`, { headers: headers });
 
                     const porcentStreak = dataU2.data.data[0].streakMaterial / 100
-                    const porcentStreakPoints = parseInt(newBill.total * 110 * porcentStreak)
 
-                    const pts = parseInt((newBill.total * 110) + porcentStreakPoints)
-                    const exp = parseInt(pts * 0.40, 10)
+                    const pts = parseInt(( newBill.total * 110 ) + ((newBill.total * 110) * porcentStreak))
+                    const exp = parseInt(pts * 0.40)
 
                     const addExpPts = {
                         points: pts,
                         exp: exp
                     }
 
-                    const updPtsExp = await axios.put(
+                    const addBonusPts = {
+                        bonus: (porcentStreak*100),
+                        points: pts
+                    }
+
+                    // Agregar los puntos y el bonus a la factura
+                    await axios.put(
+                        `http://localhost:3033/bill/bonusPoints/${createdbill?.data.bill._id}`,
+                        addBonusPts,
+                        {headers: headers}
+                    )
+
+                    // Agregar los puntos y la experiencia al usuario
+                    await axios.put(
                         `http://localhost:3033/bill/expPts/${form.user}`,
                         addExpPts,
                         { headers: headers }
@@ -290,8 +319,6 @@ export const CreateBill = () => {
 
                 }
             }
-
-
 
         } catch (err) {
             Swal.fire(err.response.data.message, '', 'error');

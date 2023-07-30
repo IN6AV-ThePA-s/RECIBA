@@ -47,6 +47,15 @@ const billSchema = mongoose.Schema({
         type: Date,
         required: true,
         default: Date.now()
+    },
+    /* ESTOS SE UTILIZARA EN CASO DE QUE EL METODO DE PAGO SEA DE TIPO 'ECOINS' */
+    bonus: {
+        type: Number,
+        default: 0
+    },
+    points: {
+        type: Number,
+        default: 0
     }
 },{
     versionKey: false
