@@ -160,6 +160,22 @@ exports.getOwn = async(req, res) => {
     }
 }
 
+/* ----- GET CLIENT USERS ----- */
+exports.getClients = async(req, res) => {
+    try {
+        let users = await User.find({role: 'CLIENT'})
+
+        if(!users) return res.status(404).send({ message: 'Users not found :(' })
+
+        let data = sensitiveData(users)
+        return res.send({ message: 'Users found!', data })
+
+    } catch (err) {
+        console.error(err)
+        return res.status(500).send({ message: 'Error getting users :(', error: err })
+    }
+}
+
 /* ----- GET USERBYUSERNAME ----- */
 exports.getUserByUsername = async(req, res) => {
     try {

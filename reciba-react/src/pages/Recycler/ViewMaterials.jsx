@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import { CadMaterial } from '../../components/material/CadMaterial'
+import { CartMaterialRecycler } from '../../components/material/CardMaterialRecycler';
 
 export const ViewMaterials = () => {
 
@@ -108,7 +109,7 @@ export const ViewMaterials = () => {
                         {
                             materials?.map(({ _id, type, price, unit, recycle, photo }, index) => (
 
-                                <CadMaterial
+                                <CartMaterialRecycler
                                     key={index}
                                     _id={_id}
                                     type={type}

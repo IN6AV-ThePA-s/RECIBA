@@ -35,7 +35,7 @@ export const RowTableBodyBill = ({ number, materialid, amountWeight, subtotal })
                 <td scope="col">{materialData?.type} </td>
                 <td>{materialData?.price.quantity} x {materialData?.price.amount}</td>
                 <td >{amountWeight}</td>
-                <td >{parseFloat(subtotal).toFixed(2)}</td>
+                <td >Q. {parseFloat(subtotal).toFixed(2)}</td>
             </tr>
         </>
     )
