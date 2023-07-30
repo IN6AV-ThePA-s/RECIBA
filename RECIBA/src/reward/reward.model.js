@@ -25,6 +25,10 @@ const rewardSchema = mongoose.Schema({
         type: Number,
         required: true
     },
+    claims:{
+        type:Number,
+        default:0
+    },
     photo: {
         type: String
     }
