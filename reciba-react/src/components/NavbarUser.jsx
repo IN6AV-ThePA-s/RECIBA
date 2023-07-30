@@ -36,6 +36,8 @@ export const NavbarUser = () => {
                 let user = data.data[0]
                 let perc = 0
 
+                if (!(user.role === 'CLIENT')) return setUser(user)
+
                 let limit = user.range.limitExp - user.range.initExp
                 setLimitExp(limit)
 
@@ -87,7 +89,7 @@ export const NavbarUser = () => {
                         <div>
                             <h3 className='fw-bold' style={{ color: '#086c3c' }}>Actions</h3>
                             {
-                                user?.role === 'MASTER' ? (
+                                user?.role === "MASTER" ? (
                                     <>
                                         <h3 className='fw-bold mt-3' style={{ color: '#086c3c' }}>User{' '}<i className="fa-sharp fa-solid fa-user"></i></h3>
                                         <Link className='optionSidebar'></Link>
