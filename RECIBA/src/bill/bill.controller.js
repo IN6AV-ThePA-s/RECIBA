@@ -12,113 +12,105 @@ exports.test = (req, res) => {
     return res.send({ message: 'Test range' })
 }
 
-// (CARRITO DE COMPRAS - LISTA DE MATERIALES) PERMITE AGREGAR MATERIAL PARA POSTERIORMENTE EMITIR LA FACTURA CON DICHOS MATERIALES
-exports.addMaterialBill = async (req, res) => {
+exports.createBill = async (req, res) => {
     try {
-
-        const data = req.body;
-        const idUser = req.user.sub;
-        const params = {
-            material: data.material,
-            amountWeight: parseInt(data.amountWeight, 10)
-        }
-        const msg = validateData(params)
-        if (msg) {
-            return res.status(404).send(msg)
-        }
-        const findMaterial = await Material.findOne({ _id: data.material })
-        if (!findMaterial) {
-            return res.status(404).send({ message: 'Material not found.' })
-        }
-        const findUser = await User.findOne({_id: idUser}).lean()
-        let carrito = findUser.cart
-
-        for (let item of carrito) {
-            
-            if (item.material.toString() !== data.material) continue
-
-            const upAveragePrice = (data.amountWeight/findMaterial.price.quantity)
-
-            const updateMaterialCart = await User.findOneAndUpdate(
-                {_id: idUser, cart:{ $elemMatch: {material: item.material}}},
-                {$inc: {"cart.$.amountWeight": parseInt(data.amountWeight, 10), "cart.$.subtotal": parseInt(findMaterial.price.amount * upAveragePrice, 10)}},
-                {new: true}
-            )
-
-            return res.send({message: 'Se actualizo el producto', updateMaterialCart})
-            
-            
-        }
-
-        const averagePrice = (data.amountWeight/findMaterial.price.quantity)
-
-        const materialCart = {
-            material: data.material,
-            amountWeight: data.amountWeight,
-            subtotal: findMaterial.price.amount * averagePrice
-        }
-        const newProductCart = await User.findOneAndUpdate(
-            {_id: idUser},
-            {$push: {cart: materialCart}},
-            {new: true}
-        )
-
-        return res.send({message: 'Product added successfully', newProductCart})
-
+        const data = req.body
+        const bill = new Bill(data)
+        await bill.save()
+        return res.send({ message: 'Bill created successfully' })
     } catch (err) {
-        console.error(err)
-        return res.status(500).send({ message: 'Internal Server Error (AddMaterialBill)' })
+        console.error(err);
+        return res.status(500).send({ message: 'Error creating the bill' })
     }
 }
 
-/* exports.addMaterialBill = async (req, res) => {
+exports.getBills = async (req, res) => {
     try {
-        const data = req.body;
-        const params = {
-            material: data.material,
-            amountWeight: data.amountWeight
-        }
-        const msg = validateData(params)
-        if (msg) {
-            return res.status(404).send(msg)
-        }
-        const findMaterial = await Material.findOne({ _id: data.material })
-        if (!findMaterial) {
-            return res.status(404).send({ message: 'Material not found.' })
-        }
+        let data = await Bill.find().populate('user').populate('recycler').populate('cantMaterials.material');
+        if (!data) return res.status(404).send({ message: 'Couldnt find any bill' });
+        return res.send({ message: 'Bills found!', data })
+    } catch (err) {
+        console.error(err);
+        return res.status(500).send({ message: 'Error gettitng parnters' })
+    }
+}
 
-        let materialExists = false;
-        for (let i = 0; i < materials.length; i++) {
-            if (materials[i].material === data.material) {
-                materials[i].amountWeight += parseInt(data.amountWeight)
-                const findMaterial = await Material.findOne({ _id: data.material })
-                const averagePrice = materials[i].amountWeight / findMaterial.price.quantity
-                materials[i].subtotal = findMaterial.price.amount * averagePrice
-                materialExists = true
-                break;
-            }
-        }
+exports.getBill = async (req, res) => {
+    try {
+        const idBill = req.params.id
+        let data = await Bill.findOne({ _id: idBill }).populate('user').populate('recycler').populate('cantMaterials.material');
+        if (!data) return res.status(404).send({ message: 'Couldnt find any bill' });
+        return res.send({ message: 'Bill found!', data })
+    } catch (err) {
+        console.error(err);
+        return res.status(500).send({ message: 'Error gettitng parnters' })
+    }
+}
 
-        if (!materialExists) {
-            const findMaterial = await Material.findOne({ _id: data.material })
-            const averagePrice = parseInt(data.amountWeight) / findMaterial.price.quantity
-            materials.push({
-                material: data.material,
-                amountWeight: parseInt(data.amountWeight),
-                subtotal: findMaterial.price.amount * averagePrice
-            });
-        }
+exports.getBillsByUser = async (req, res) => {
+    try {
+        const idUser = req.params.id
+        const data = await Bill.find({ user: idUser }).sort({ date: -1 }).select('_id date')
+        if (!data) return res.status(404).send({ message: 'Couldnt find any bill by usel' });
+        return res.send({ message: 'Bills by user found!', data })
+    } catch (err) {
+        console.error(err);
+        return res.status(500).send({ message: 'Error getting bills by user' })
+    }
+}
 
-        return res.send({ message: 'Material added successfully.', materials })
+exports.updateExpPts = async (req, res) => {
+    try {
+        const idUser = req.params.id
+        const expPts = req.body
+        const data = await User.findOneAndUpdate(
+            { _id: idUser},
+            { $inc : { points: expPts.points, exp: expPts.exp}},
+            { new: true}
+        )
+        return res.send({ message: 'The Experience and Points had been updated.', data })
+    } catch (error) {
+
+    }
+}
+
+exports.addStreak = async (req, res) => {
+    try {
+        const idUser = req.params.id
+        const expPts = req.body
+        const data = await User.findOneAndUpdate(
+            { _id: idUser},
+            { $inc : { streakMaterial: expPts.number}},
+            { new: true}
+        )
+        return res.send({ message: 'The streak had been updated.', data })
+    } catch (error) {
+
+    }
+}
+
+exports.getOwn = async (req, res) => {
+    try {
+        const user = req.user.sub
+
+        const data = await Bill.find({ user: user }).populate('user').populate('recycler').sort({ date: -1 })
+
+        if (!data) return res.status(404).send({ message: 'Could not find any bill' });
+        return res.send({ message: 'Bills by user found!', bills: data })
+        
     } catch (err) {
         console.error(err)
-        return res.status(500).send({ message: 'Internal Server Error (AddMaterialBill)' })
+        return res.status(500).send({ message: 'Error getting bills', error: err })
     }
-} */
+}
 
-/*const averagePrice = data.amountWeight/findMaterial.price.quantity
-    materials.push({
-        material: data.material,
-        amountWeight: data.amountWeight,
-        subtotal: findMaterial.price.amount * averagePrice
-}); */
+exports.getBills = async(req,res)=>{
+    try {
+        let data = await Bill.find().populate('user').populate('recycler').populate('cantMaterials.material');
+        if(!data) return res.status(404).send({message: 'Couldnt find any bill'});
+        return res.send({message: 'Bills found!', data})
+    } catch (err) {
+        console.error(err);
+        return res.status(500).send({message: 'Error gettitng parnters'})
+    }
+}

@@ -37,7 +37,12 @@ const userSchema = mongoose.Schema({
         enum: ['MASTER', 'PARTNER','RECYCLER', 'CLIENT']
     },
     points: {
-        type: Number
+        type: Number,
+        default: 0
+    },
+    exp: {
+        type: Number,
+        default: 0
     },
     exp: {
         type: Number,
@@ -50,28 +55,14 @@ const userSchema = mongoose.Schema({
     photo:{
         type: String
     },
-    cart:[{
-
-        material: {
-
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'Material',
-
-        },
-
-        amountWeight: {
-
-            type: Number,
-
-        },
-
-        subtotal: {
-
-            type: Number
-
-        }
-
-    }]
+    streakMaterial: {
+        type: Number,
+        default: 0
+    },
+    historyRewards: {
+        type: Array,
+        default: []
+    },
 
 },{
     versionKey: false

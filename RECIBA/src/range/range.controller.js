@@ -1,6 +1,8 @@
 'use strict'
 
 const Range = require('./range.model')
+const fs = require('fs')
+const path = require('path')
 
 const { validateData } = require('../utils/validate')
 
@@ -43,6 +45,11 @@ exports.add = async(req, res) => {
         let msg = validateData(params)
         if (msg) return res.status(400).send({ msg })
 
+        if (data.initExp >= data.limitExp) return res.status(400).send({ message: 'Please select a coherent exp range' })
+
+        let existRange = await Range.findOne({ initExp: params.initExp })
+        if (existRange) return res.status(400).send({ message: 'Another range has been initialized with that initial exp' })
+        
         let range = new Range(data)
         await range.save()
 
@@ -127,5 +134,65 @@ exports.get = async(req, res) => {
     } catch (err) {
         console.error(err)
         return res.status(500).send({ message: 'Error getting range :(', error: err })
+    }
+}
+
+/* GET IMAGE */
+exports.getImg = async (req, res) => {
+    try {
+        const fileName = req.params.file
+        const pathFile = `./src/uploads/ranges/${fileName}`
+        const img = fs.existsSync(pathFile)
+
+        if (!img) return res.status(404).send({ message: 'Image not found :(' })
+
+        return res.sendFile(path.resolve(pathFile))
+
+    } catch (err) {
+        console.error(err)
+        return res.status(500).send({ message: 'Error getting img :(', error: err })
+    }
+}
+
+/* UPLOAD IMAGE */
+exports.uploadImg = async (req, res) => {
+    try {
+        const id = req.params.id
+        const alreadyImg = await Range.findOne({ _id: id })
+
+        let pathFile = './src/uploads/rages/'
+
+        if (alreadyImg.photo) fs.unlinkSync(`${pathFile}${alreadyImg.photo}`)
+        if (!req.files.image || !req.files.image.type) return res.status(400).send({ message: 'Have not sent an image :(' })
+
+        const filePath = req.files.image.path
+
+        const fileSplit = filePath.split('\\')
+        const fileName = fileSplit[3]
+
+        const extension = fileName.split('\.')
+        const fileExt = extension[1]
+
+        if (
+            fileExt !== 'png' &&
+            fileExt !== 'jpg' &&
+            fileExt !== 'jpeg'
+        ) {
+            fs.unlinkSync(filePath)
+            return res.status(400).send({ message: 'File extension not admited' })
+        } else {
+            const upRange = await Range.findOneAndUpdate(
+                { _id: id },
+                { photo: fileName },
+                { new: true }
+            )
+
+            if (!upRange) return res.status(404).send({ message: 'Range not found!' })
+            return res.send({ message: 'Logo added successfully', range: upRange })
+        }
+        
+    } catch (err) {
+        console.error(err)
+        return res.status(500).send({ message: 'Error while updating img :(', error: err })
     }
 }

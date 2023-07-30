@@ -46,7 +46,13 @@ exports.sensitiveData = (data) => {
             phone: a.phone,
             email: a.email,
             username: a.username,
-            role: a.role
+            role: a.role,
+            exp: a.exp,
+            range: a.range,
+            points: a.points,
+            streakMaterial: a.streakMaterial,
+            historyRewards: a.historyRewards,
+            photo: a.photo
         }
         list.push(payload)
     }

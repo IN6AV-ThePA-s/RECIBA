@@ -2,6 +2,7 @@
 
 const User = require('./user.model')
 const Range = require('../range/range.model')
+const Recycle = require('../recycler/recycler.model')
 const Achievement = require('../achievements/achievements.model')
 const { encrypt, validateData, check, sensitiveData } = require('../utils/validate')
 const { createToken } = require('../services/jwt')
@@ -15,9 +16,9 @@ exports.test = (req, res) => {
 }
 
 /* ----- DEFAULT MASTER ----- */
-exports.defaultMaster = async() => {
+exports.defaultMaster = async () => {
     try {
-        if(!(await User.findOne({ username: 'admin' }))) {
+        if (!(await User.findOne({ username: 'admin' }))) {
 
             let data = {
                 name: 'admin',
@@ -43,7 +44,7 @@ exports.defaultMaster = async() => {
 }
 
 /* ----- LOGIN ----- */
-exports.login = async(req, res) => {
+exports.login = async (req, res) => {
     try {
         let data = req.body
         let params = {
@@ -52,17 +53,21 @@ exports.login = async(req, res) => {
         }
 
         let msg = validateData(params)
-        if(msg) return res.status(400).send({ message: msg })
+        if (msg) return res.status(400).send({ message: msg })
 
         let user = await User.findOne({ username: data.username })
-        if(!user) return res.status(401).send({ message: 'Invalid credentials :(' })
+        if (!user) return res.status(401).send({ message: 'Invalid credentials :(' })
 
-        if(user && await check(data.password, user.password)) {
+        if (user && await check(data.password, user.password)) {
             let token = await createToken(user)
             let logged = {
-                name: user.name,
+                sub: user._id,
                 username: user.username,
-                role: user.role
+                role: user.role,
+                id: user._id,
+                photo: user.photo,
+                exp: user.exp,
+
             }
 
             return res.send({ message: 'Logged!', token: token, user: logged })
@@ -77,28 +82,25 @@ exports.login = async(req, res) => {
 }
 
 /* ----- REGISTER USER ----- */
-exports.register = async(req, res) => {
+exports.register = async (req, res) => {
     try {
         let data = req.body
-        let range = await Range.findOne({name: 'JUNIOR'});
+        let range = await Range.findOne({ name: 'JUNIOR' });
         let params = {
             name: data.name,
             surname: data.surname,
             phone: data.phone,
             email: data.email,
             password: data.password,
-            username: data.username,
-            range: range._id
+            username: data.username
         }
 
         let msg = validateData(params)
-        if(msg) return res.status(400).send({ message: msg })
+        if (msg) return res.status(400).send({ message: msg })
 
         data.role = ROLES.client
         data.password = await encrypt(data.password)
-        
-        let achieves = await Achievement.find()
-        if (achieves) data.achievements = achieves
+        data.range = range._id.toString()
         
         let user = new User(data)
         await user.save()
@@ -112,11 +114,11 @@ exports.register = async(req, res) => {
 }
 
 /* ----- GET USERS ----- */
-exports.get = async(req, res) => {
+exports.get = async (req, res) => {
     try {
         let users = await User.find()
 
-        if(!users) return res.status(404).send({ message: 'Users not found :(' })
+        if (!users) return res.status(404).send({ message: 'Users not found :(' })
 
         let data = sensitiveData(users)
         return res.send({ message: 'Users found!', data })
@@ -128,11 +130,81 @@ exports.get = async(req, res) => {
 }
 
 /* ----- GET USER ----- */
-exports.getUser = async(req, res) => {
+exports.getUser = async (req, res) => {
     try {
         let id = req.params.id
 
         let user = await User.findOne({ _id: id })
+        if (!user) return res.status(404).send({ message: 'User not found :(' })
+
+        let data = sensitiveData([user])
+
+        return res.send({ message: 'User found!', data })
+
+    } catch (err) {
+        console.error(err)
+        return res.status(500).send({ message: 'Error getting user :(', error: err })
+    }
+}
+
+exports.getOwn = async (req, res) => {
+    try {
+        let id = req.user.sub
+
+        let user = await User.findOne({ _id: id }).populate('range')
+        if (!user) return res.status(404).send({ message: 'User not found :(' })
+
+        let data = sensitiveData([user])
+
+        return res.send({ message: 'User found!', data })
+
+    } catch (err) {
+        console.error(err)
+        return res.status(500).send({ message: 'Error getting user :(', error: err })
+    }
+}
+
+/* ----- GET USERBYUSERNAME ----- */
+exports.getUserByUsername = async (req, res) => {
+    try {
+        let username = req.params.username
+
+        let user = await User.findOne({ username: username }).populate('cart.material')
+        if (!user) return res.status(404).send({ message: 'User not found :(' })
+
+        let data = sensitiveData([user])
+
+        return res.send({ message: 'User found!', data })
+
+    } catch (err) {
+        console.error(err)
+        return res.status(500).send({ message: 'Error getting user :(', error: err })
+    }
+}
+
+exports.getOwn = async(req, res) => {
+    try {
+        let id = req.user.sub
+
+        let user = await User.findOne({ _id: id }).populate('range')
+        if (!user) return res.status(404).send({ message: 'User not found :(' })
+
+        let data = sensitiveData([user])
+
+        return res.send({ message: 'User found!', data })
+        
+    } catch (err) {
+        console.error(err)
+        return res.status(500).send({ message: 'Error getting user :(', error: err })
+    }
+}
+
+/* ----- GET USERBYUSERNAME ----- */
+exports.getUserByUsername = async(req, res) => {
+    try {
+        let username = req.params.username
+
+        let user = await User.findOne({ username: username })
         if(!user) return res.status(404).send({ message: 'User not found :(' })
 
         let data = sensitiveData([user])
@@ -146,17 +218,18 @@ exports.getUser = async(req, res) => {
 }
 
 /* -----UPDATE ----- */
-exports.update = async(req, res) => {
+exports.update = async (req, res) => {
     try {
         let data = req.body
 
-        if(data.password) return res.status(400).send({ message: 'Cannot update password here :(' })
-        if(data.role || data.achievements || data.range || data.points) return res.status(400).send({ message: 'Can not update some params' })
-
+        if (data.password) return res.status(400).send({ message: 'Cannot update password here :(' })
+        if (data.role || data.achievements || data.range || data.points || data.email) return res.status(400).send({ message: 'Can not update some params' })
+        let recyclerEmail = await Recycle.findOne({email: data.email})
+        if(recyclerEmail) res.status(418).send({message: 'Can not update the email because is already linked with a recycler'})
         let upUser = await User.findOneAndUpdate(
-            {_id: req.user.sub},
+            { _id: req.user.sub },
             data,
-            {new: true}
+            { new: true }
         )
 
         return res.send({ message: 'Updated!', user: upUser })
@@ -168,18 +241,23 @@ exports.update = async(req, res) => {
 }
 
 /* -----DELETE ----- */
-exports.del = async(req, res) => {
+exports.del = async (req, res) => {
     try {
         let id = req.user.sub
 
         let user = await User.findOne({ _id: id })
         if (!user) return res.status(404).send({ message: 'User not found to be deleted :(' })
+        if (user.role == ROLES.recycler) {
+            if (
+                await Recycle.findOne({ user: user._id })
+            ) return res.status(401).send({ message: 'Can not delete user because is linked with recycler' });
+        }
         if (user.username === 'admin') return res.status(403).send({ message: 'User MASTER default cannot be deleted' })
         if (user.role === ROLES.admin || user.role === ROLES.master || user.role === ROLES.partner) return res.status(403).send({ message: `User with role "${user.role}" cannot be deleted` })
+        
+        let delUser = await User.findOneAndDelete({ _id: id })
 
-        let delUser = await User.findOneAndDelete({_id: id})
-
-        if(!delUser) return res.status(404).send({ message: 'Account could not be deleted :(' })
+        if (!delUser) return res.status(404).send({ message: 'Account could not be deleted :(' })
         return res.send({ message: 'Account deleted successfully!', error: err })
 
     } catch (err) {
@@ -189,15 +267,16 @@ exports.del = async(req, res) => {
 }
 
 /* -----UPDATE PASSWORD ----- */
-exports.updatePassword = async(req, res) => {
+exports.updatePassword = async (req, res) => {
     try {
+        let id = req.user.sub
         let data = req.body
         let form = {
             password: data.password,
             newPassword: data.newPass
         }
         let msg = validateData(form)
-        if(msg) return res.status(400).send({ message: msg })
+        if (msg) return res.status(400).send({ message: msg })
 
         let user = await User.findOne({ _id: id })
 
@@ -219,9 +298,10 @@ exports.updatePassword = async(req, res) => {
 }
 
 /* -----SAVE ACCOUNT ----- */
-exports.save = async(req, res) => {
+exports.save = async (req, res) => {
     try {
         let data = req.body
+        let range = await Range.findOne({name: 'JUNIOR'});
         let params = {
             name: data.name,
             surname: data.surname,
@@ -229,15 +309,24 @@ exports.save = async(req, res) => {
             email: data.email,
             password: data.password,
             username: data.username,
-            role: data.role
+            role: data.role,
+            range: range._id
         }
 
         let msg = validateData(params)
         if (msg) return res.status(400).send({ message: msg })
-        
+
         data.password = await encrypt(data.password)
         data.role = data.role.toUpperCase()
-
+        if (data.range) {
+            let range = await Range.findOne({ _id: data.range })
+            data.exp = range.initExp
+            let user = new User(data)
+            await user.save()
+            return res.send({ message: 'Account created successfully!', user: user })
+        }
+        data.range = null
+        data.exp = null
         let user = new User(data)
         await user.save()
 
@@ -250,19 +339,43 @@ exports.save = async(req, res) => {
 }
 
 /* -----UPDATE ACCOUNT ----- */
-exports.updateUser = async(req, res) => {
+exports.updateUser = async (req, res) => {
     try {
         let id = req.params.id
         let data = req.body
         let user = await User.findOne({ _id: id })
+        let recycler = await Recycle.findOne({ user: user._id})
+        
 
         if (!user) return res.status(404).send({ message: 'User not found!' })
+        if (user.role == 'RECYCLER' && recycler) {
+            if (
+                (data.role != user.role)
+            ) return res.status(401).send({ message: 'Can not update role because is linked with recycler' });
+            if(
+                data.email != recycler.email
+            )return res.status(401).send({ message: 'Can not update email because is linked with recycler' });
+        }
         if (data.password) return res.status(401).send({ message: 'Cannot update password!' })
         if (user.role === ROLES.master) return res.status(401).send({ message: 'Cannot update "MASTER"' })
-
-        data.role = data.role.toUpperCase()
-        if (data.role !== ROLES.admin && data.role !== ROLES.client) return res.status(400).send({ message: 'Role not authorized :(' })
         
+        data.role = data.role.toUpperCase()
+        //if (data.role !== ROLES.admin && data.role !== ROLES.client) return res.status(400).send({ message: 'Role not authorized :(' })
+        if (data.role != 'CLIENT') {
+            data.exp = null
+            data.range = null
+            let upUser = await User.findOneAndUpdate(
+                { _id: id },
+                data,
+                { new: true }
+            )
+
+            return res.send({ message: 'Account updated successfully!', user: upUser })
+        }
+        if(data.range == null || data.range == undefined) return res.status(400).send({message: `Can not select that range  ${data.range}`})
+        let range = await Range.findOne({ _id: data.range })
+        
+        data.exp = range.initExp
         let upUser = await User.findOneAndUpdate(
             { _id: id },
             data,
@@ -270,7 +383,7 @@ exports.updateUser = async(req, res) => {
         )
 
         return res.send({ message: 'Account updated successfully!', user: upUser })
-        
+
     } catch (err) {
         console.error(err)
         return res.status(500).send({ message: 'Error while updating account :(', error: err })
@@ -278,16 +391,20 @@ exports.updateUser = async(req, res) => {
 }
 
 /* -----DELETE ACCOUNT ----- */
-exports.delUser = async(req, res) => {
+exports.delUser = async (req, res) => {
     try {
         let id = req.params.id
 
         let user = await User.findOne({ _id: id })
         if (!user) return res.status(404).send({ message: 'User not found' })
+        if (user.role == ROLES.recycler) {
+            if (
+                await Recycle.findOne({ user: user._id })
+            ) return res.status(401).send({ message: 'Can not delete user because is linked with recycler' });
+        }
         if (user.role === ROLES.master) return res.status(401).send({ message: 'Cannot delete user "MASTER"' })
 
         let delUser = await User.findOneAndDelete({ _id: id })
-
         return res.send({ message: 'Account deleted successfully!', user: delUser })
 
     } catch (err) {
@@ -297,7 +414,7 @@ exports.delUser = async(req, res) => {
 }
 
 /* -----UPLOAD PHOTO ----- */
-exports.uploadImg = async(req, res) => {
+exports.uploadImg = async (req, res) => {
     try {
         const user = req.user
         const id = req.params.id
@@ -322,7 +439,7 @@ exports.uploadImg = async(req, res) => {
         ) {
             fs.unlinkSync(filePath)
             return res.status(400).send({ message: 'File extension not admited' })
-        } 
+        }
 
         const upUser = await User.findOneAndUpdate(
             { _id: id },
@@ -331,7 +448,7 @@ exports.uploadImg = async(req, res) => {
         )
         if (!upUser) return res.status(404).send({ message: 'User not found!' })
         return res.send({ message: 'Photo added successfully' })
-        
+
     } catch (err) {
         console.error(err)
         return res.status(500).send({ message: 'Error while uploading img :(', error: err })
@@ -339,7 +456,7 @@ exports.uploadImg = async(req, res) => {
 }
 
 /* -----GET PHOTO ----- */
-exports.getImg = async(req, res) => {
+exports.getImg = async (req, res) => {
     try {
         const fileName = req.params.file
         const pathFile = `./src/uploads/users/${fileName}`
@@ -352,5 +469,29 @@ exports.getImg = async(req, res) => {
     } catch (err) {
         console.error(err)
         return res.status(500).send({ message: 'Error getting img :(', error: err })
+    }
+}
+
+/* ----- CHECK RANGE ----- */
+exports.checkRange = async (req, res) => {
+    try {
+        const id = req.user.sub
+
+        const user = await User.findOne({ _id: id }).populate('range')
+
+        let limitExp = user.range.limitExp
+
+        if (user.exp >= limitExp) {
+            let range = await Range.findOne({ initExp: limitExp })
+            await User.findOneAndUpdate({ _id: id }, { range: range._id })
+
+            return res.send({ message: `You have been promoted to "${range.name}"`, promoted: true })
+        }
+
+        return res.send({ promoted: false })
+        
+    } catch (err) {
+        console.error(err)
+        return res.status(500).send({ message: 'Error checking range', error: err })
     }
 }

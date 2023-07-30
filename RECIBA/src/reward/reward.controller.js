@@ -1,6 +1,7 @@
 'use strict'
 
 const Reward = require('./reward.model')
+const User = require('../user/user.model')
 
 const { validateData } = require('../utils/validate')
 const fs = require('fs')
@@ -50,6 +51,23 @@ exports.getRewards = async (req, res) => {
     } catch (err) {
         console.error(err)
         return res.status(500).send({ message: 'Internal Server Error (GetRewards)' })
+    }
+}
+
+/* GET BY PARTNER */
+exports.getByPartner = async (req, res) => {
+    try {
+        const id = req.params.id
+        const rewards = await Reward.find({ partner: id }).populate('partner').populate('range')
+
+        if (rewards.length === 0) 
+            return res.status(404).send({ message: 'Rewards not found' })
+
+        return res.send({ message: 'Rewards founded', rewards })
+        
+    } catch (err) {
+        console.error(err)
+        return res.status(500).send({ message: 'Internal Server Error (GetByPartner)'})
     }
 }
 
@@ -173,3 +191,73 @@ exports.getImg = async (req, res) => {
     }
 }
 
+/* ----- CLAIM REWARD ----- */
+exports.claim = async (req, res) => {
+    try {
+        const id = req.params.id
+        const user = req.user.sub
+
+        const userInfo = await User.findOne({ _id: user })
+
+        const reward = await Reward.findOne({ _id: id }).populate('partner').populate('range').lean()
+        if (!reward) return res.status(404).send({ message: 'Reward not found :(' })
+
+        const userHistory = await User.findOne({ _id: user }).lean()
+
+        let history = userHistory.historyRewards
+        
+        for (let item of history) {
+            //Si el id del item que se va a reclamar no esta en los que ya estan en el array, continuar
+            if (item._id.toString() !== id) continue
+
+            //Verificar que tenga los puntos necesarios
+            let diff = userInfo.points - reward.cantPoints
+            if (diff < 0) return res.status(400).send({ message: `Insuficient points :( you need at least '${item.cantPoints}pts' to claim this reward` })
+            
+            //Calcular exp
+            let exp = reward.cantPoints * 0.10
+            
+            let upHistory = await User.findOneAndUpdate(
+                { _id: user, historyRewards: { $elemMatch: { _id: item._id } } },
+                { $inc: { 'historyRewards.$.claims': 1, points: -(reward.cantPoints), exp: exp } },
+                { new: true }
+            )
+
+            if (!upHistory) return res.status(404).send({ message: 'Error, item not found' })
+                
+            return res.send({ message: 'Reward claimed successfully', upHistory })
+        }
+
+        let diff = userInfo.points - reward.cantPoints
+        if (diff < 0) return res.status(400).send({ message: `Insuficient points :( you need at least '${reward.cantPoints}pts' to claim this reward` })
+
+        let rewardClaimed = {
+            _id: reward._id,
+            name: reward.name,
+            description: reward.description,
+            partner: reward.partner,
+            range: reward.range,
+            cantPoints: reward.cantPoints,
+            photo: reward.photo,
+            claims: 1
+        }
+
+        let exp = reward.cantPoints * 0.10
+
+        let upHistory = await User.findOneAndUpdate(
+            { _id: user },
+            { 
+                $push: { historyRewards: rewardClaimed },
+                $inc: { points: -(reward.cantPoints), exp: exp }
+            },
+            { new: true }
+        )
+
+        if (!upHistory) return res.status(404).send({ message: 'User not found :(', error: err })
+        return res.send({ message: 'Reward claimed successfully', upHistory })
+        
+    } catch (err) {
+        console.error(err)
+        return res.status(500).send({ message: 'Error claiming reward :(', error: err })
+    }
+}
