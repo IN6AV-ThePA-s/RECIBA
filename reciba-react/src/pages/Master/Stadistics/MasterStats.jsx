@@ -27,6 +27,8 @@ export const MasterStats = () => {
     try {
       const { data } = await axios(`http://localhost:3033/bill/get`, { headers: headers })
       const { data: recyclers } = await axios(`http://localhost:3033/recycler/get`, { headers: headers })
+      const { data: partners } = await axios(`http://localhost:3033/partner/get`, { headers: headers })
+      const { data: rewards } = await axios(`http://localhost:3033/reward/get`, { headers: headers })
 
       if (data) {
         //Obtener fecha actual
@@ -67,6 +69,10 @@ export const MasterStats = () => {
             }
           ]
         })
+
+
+        //Grafica por partners con recompensas mas reclamadas
+
 
       }
 
