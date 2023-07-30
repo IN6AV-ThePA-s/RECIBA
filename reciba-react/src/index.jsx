@@ -33,6 +33,9 @@ import { MasterRecyclerUpdate } from './pages/Master/MasterRecyclerView/MasterRe
 import { MasterRecyclerAdd } from './pages/Master/MasterRecyclerView/MasterRecyclerAdd'
 import { Stats } from './pages/User/stadistics/Stats'
 import { RecyclerStats } from './pages/Recycler/Stadistics/RecyclerStats'
+import { AddReward } from './pages/Partner/AddReward'
+import { ViewReward } from './pages/Partner/ViewReward'
+import { EditReward } from './pages/Partner/EditReward'
 
 export const AuthContext = createContext()
 
@@ -183,7 +186,20 @@ export const Index = () => {
                 {
                     path: '/partner',
                     element: loggedIn ? (dataUser?.role === 'PARTNER' ? <PartnerDashboard /> : <NotFound />) : (<LoginPage />),
-                    children: []
+                    children: [
+                        {
+                            path:'addReward',
+                            element:<AddReward/>
+                        },
+                        {
+                            path:'viewReward',
+                            element:<ViewReward/>
+                        },
+                        {
+                            path:'editReward/:id',
+                            element:<EditReward/>
+                        }
+                    ]
                 }
             ]
         }

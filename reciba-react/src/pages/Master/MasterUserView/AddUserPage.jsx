@@ -41,10 +41,6 @@ export const AddUserPage = () => {
         setPhoto(formData)
     }
 
-    /*useEffect(() => {
-        console.log(photo);
-      }, [photo])*/
-
     const getRanges = async () =>{
         try {
             const { data } = await axios.get(`http://localhost:3033/range/get`, {headers: headers})
