@@ -61,7 +61,7 @@ export const MasterRecyclerView = () => {
                     <div style={{ backgroundColor: '#44AF41', borderRadius: '15px' }} className='sticky-top text-white'>
                         <h1 className='h1TE text-center'>Recyclers</h1>
                     </div>
-                    <div className="d-flex justify-content-center flex-wrap mb-3 mt-3 mx-3">
+                    <div className="mb-3 mt-3 mx-3 row row-cols-1 row-cols-md-2 g-4">
                         {
                             recycler.map(({ _id, name, direction, email, phone, startHour, endHour, photos, user }, index) => {
                                 return (

@@ -79,7 +79,7 @@ export const Index = () => {
                     children: [
                         {
                             path: 'page',
-                            element: <Example />
+                            element: <UserHome />
                         },
                         {
                             path: 'users',
@@ -104,6 +104,10 @@ export const Index = () => {
                         {
                             path: 'updateRecycler/:id',
                             element: <MasterRecyclerUpdate/>
+                        },
+                        {
+                            path: 'recyclerview/:id',
+                            element: <RecyclerView/>
                         }
                     ]
                 },
