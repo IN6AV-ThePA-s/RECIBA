@@ -35,7 +35,6 @@ export const NavbarUser = () => {
                 setPhoto(`${HOST.url}/user/getImg/${data.data[0].photo}`)
                 let user = data.data[0]
                 let perc = 0
-                console.log(user)
 
                 let limit = user.range.limitExp - user.range.initExp
                 setLimitExp(limit)
@@ -128,10 +127,10 @@ export const NavbarUser = () => {
                                             <h6>Rewards history</h6>
                                         </Link>
 
-                                        {/* <h3 className='fw-bold mt-3' style={{ color: '#086c3c' }}>Statistics</h3>
-                                        <Link className='optionSidebar'>
+                                        <h3 className='fw-bold mt-3' style={{ color: '#086c3c' }}>Statistics</h3>
+                                        <Link to={'/home/stats'} className='optionSidebar'>
                                             <h6>Watch my stats</h6>
-                                        </Link> */}
+                                        </Link>
                                     </>
                                 )
                             }

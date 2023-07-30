@@ -46,7 +46,7 @@ const billSchema = mongoose.Schema({
     date:{
         type: Date,
         required: true,
-        default: Date.now()
+        default: new Date(Date.now())
     }
 },{
     versionKey: false

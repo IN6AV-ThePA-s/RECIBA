@@ -193,7 +193,9 @@ export const UserHome = () => {
                     </div>
                 </div>
 
-                <hr className='mb-5' />
+                <h1 className='col py-1 px-4 text-success'>
+                        Most popular recyclers
+                    </h1>
 
                 <div className="row row-cols-1 row-cols-md-2 g-4">
                     {

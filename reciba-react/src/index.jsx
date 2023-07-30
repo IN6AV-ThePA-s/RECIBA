@@ -31,6 +31,8 @@ import { UpdateUserPage } from './pages/Master/MasterUserView/UpdateUserPage'
 import { MasterRecyclerView } from './pages/Master/MasterRecyclerView/MasterRecyclerView'
 import { MasterRecyclerUpdate } from './pages/Master/MasterRecyclerView/MasterRecyclerUpdate'
 import { MasterRecyclerAdd } from './pages/Master/MasterRecyclerView/MasterRecyclerAdd'
+import { Stats } from './pages/User/stadistics/Stats'
+import { RecyclerStats } from './pages/Recycler/Stadistics/RecyclerStats'
 
 export const AuthContext = createContext()
 
@@ -133,6 +135,10 @@ export const Index = () => {
                         {
                             path: 'viewDetails/:id',
                             element: <ViewDetails/>
+                        },
+                        {
+                            path: 'stats',
+                            element: <Stats/>
                         }
                     ]
                 },
@@ -167,6 +173,10 @@ export const Index = () => {
                         {
                             path: 'viewBillMaterials/:id',
                             element: <ViewBillMaterials/>
+                        },
+                        {
+                            path: 'stats',
+                            element: <RecyclerStats/>
                         }
                     ]
                 },
