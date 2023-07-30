@@ -20,7 +20,6 @@ export const ViewBills = () => {
     const getBills = async () => {
         try {
             const { data } = await axios('http://localhost:3033/bill/get', { headers: headers });
-            console.log(data.data);
             setBills(data.data);
 
         } catch (err) {
@@ -33,37 +32,23 @@ export const ViewBills = () => {
         setSelect(e.target.value)
     }
 
-    const filteredBills = bills.filter((b)=>
-
-        /* if (select === 'user') {
-            b.user?.username?.toLowerCase().includes(searchTerm.toLowerCase())
-        }
-
-        if (select === 'recycler') {
-            b.recycler?.name?.toLowerCase().includes(searchTerm.toLowerCase())
-        }
-
-        if (select === 'paymethod') {
-            b.payMethod?.toLowerCase().includes(searchTerm.toLowerCase())
-        }else{
-            b.user?.username?.toLowerCase().includes(searchTerm.toLowerCase())
-        } */
+    const filteredBills = bills.filter((b) =>
 
         select === 'user' ? (
             b.user?.username?.toLowerCase().includes(searchTerm.toLowerCase())
         ) : select === 'recycler' ? (
             b.recycler?.name?.toLowerCase().includes(searchTerm.toLowerCase())
-        ) : select === 'paymethod'? (
+        ) : select === 'paymethod' ? (
             b.payMethod?.toLowerCase().includes(searchTerm.toLowerCase())
         ) : (
             b.user?.username?.toLowerCase().includes(searchTerm.toLowerCase())
         )
     )
-    
+
 
     useEffect(() => {
         getBills()
-        
+
     }, [])
 
     return (
@@ -109,18 +94,18 @@ export const ViewBills = () => {
                                     <th>ID</th>
                                     <th>User</th>
                                     <th>Recycler </th>
-                                    <th>Materials</th>
                                     <th>Pay Method</th>
                                     <th>Total</th>
                                     <th>Date</th>
                                     <th>Status</th>
+                                    <th>Materials</th>
                                 </tr>
                             </thead>
 
                             <tbody>
 
                                 {
-                                    filteredBills.map(({ _id, user, recycler, cantMaterials, payMethod, total, date }, index) => (
+                                    filteredBills.map(({ _id, user, recycler, cantMaterials, payMethod, total, date, status }, index) => (
 
                                         <RowTableBodyBill2
                                             key={index}
@@ -131,6 +116,8 @@ export const ViewBills = () => {
                                             payMethod={payMethod}
                                             total={total}
                                             date={date}
+                                            status={status}
+                                            butCheck={`/recycler/viewBillMaterials/${_id}`}
                                         />
 
                                     ))

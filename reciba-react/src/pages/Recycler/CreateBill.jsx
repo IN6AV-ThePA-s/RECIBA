@@ -9,6 +9,7 @@ import '../../css/Dashboard.css'
 
 export const CreateBill = () => {
 
+    // ----- START VARIABLES GENERALES -----
     const [optionListUser, setOptionListUser] = useState([]);
     const [optionListMaterial, setOptionListMaterial] = useState([]);
 
@@ -29,12 +30,16 @@ export const CreateBill = () => {
         { value: 'CASH', label: 'CASH' },
     ]
 
+    const localUser = JSON.parse(localStorage.getItem('user'))
     const navigate = useNavigate()
 
     const headers = {
         'Content-Type': 'application/json',
         'Authorization': localStorage.getItem('token')
     };
+
+    // ----- END VARIABLES GENERALES -----
+
 
     // Obtener todos los usuarios para mostrarlos en el select
     const getUsers = async () => {
@@ -56,7 +61,10 @@ export const CreateBill = () => {
     // Obtener todos los materiales para mostrarlos en el select
     const getMaterials = async () => {
         try {
-            const { data } = await axios('http://localhost:3033/material/get', { headers: headers });
+
+            const userData = await axios(`http://localhost:3033/user/getByUsername/${localUser.username}`, { headers: headers })
+            const recyclerData = await axios(`http://localhost:3033/recycler/getByUser/${userData.data.data[0].id}`, { headers: headers })
+            const { data } = await axios(`http://localhost:3033/material/getRecMaterials/${recyclerData.data.recycler._id}`, { headers: headers })
 
             const newList = data.materials.map(material => ({
                 value: material._id,
@@ -104,6 +112,7 @@ export const CreateBill = () => {
         }
     };
 
+    //Remover materiales a la lista de la factura
     const removeMaterialCart = async () => {
         try {
             const { data } = await axios(`http://localhost:3033/material/getOne/${form?.material}`, { headers: headers });
@@ -134,14 +143,19 @@ export const CreateBill = () => {
         return new Promise(resolve => setTimeout(resolve, time));
     }
 
+    //Crear factura con la lista de materiales
     const addBill = async () => {
         try {
 
             const userData = JSON.parse(localStorage.getItem('user'))
 
+            // Información del usuario al que se creará la factura
             const dataU = await axios(`http://localhost:3033/user/getByUsername/${userData?.username}`, { headers: headers });
+
+            // Informacion de la recicladora que está haciendo la factura
             const dataR = await axios(`http://localhost:3033/recycler/getByUser/${dataU.data.data[0].id}`, { headers: headers });
 
+            // Datos que se pondrán en la factura
             const newBill = {
                 user: form.user,
                 recycler: dataR.data.recycler._id,
@@ -150,28 +164,126 @@ export const CreateBill = () => {
                 total: total
             }
 
-            if (!(newBill.total <= 0)) {
+            //Si el metodo de pago es de tipo ECOINS **FALTA HACER ESTA VALIDACIÓN**
+            if (newBill.payMethod == 'ECOINS') {
+                // Si el total no es cero o menor es porque no esta vacia y se puede crear.
+                if (!(newBill.total <= 0)) {
 
-                const bill = await axios.post(`http://localhost:3033/bill/create`, newBill, { headers: headers })
+                    //Se obtienen las facturas por usuario en orden de la mas reciente a las mas antigua.
+                    const bByUser = await axios.get(`http://localhost:3033/bill/getByUser/${form.user}`, { headers: headers })
+                    const billsByUser = bByUser.data.data
 
-                Swal.fire({
-                    icon: 'success',
-                    title: bill.data.message
-                })
+                    // Fecha y hora de ahora (Formato UNIX)
+                    const dateNow = Math.floor(new Date(Date.now()).getTime() / 1000)
 
-                navigate('/recycler')
-                await delay(100)
-                navigate('/recycler/createBill')
+                    // Fecha de la ultima factura creada (Formato UNIX)
+                    const billDate = Math.floor(new Date(billsByUser[0].date).getTime() / 1000)
+
+                    // Diferencia de tiempo entre ultima factura y ahora
+                    const hoursElapsed = (dateNow - billDate)
+
+                    // Se crea la factura.
+                    const createdbill = await axios.post(`http://localhost:3033/bill/create`, newBill, { headers: headers })
+
+                    if (hoursElapsed >= 172800) {
+                        // Si ha pasado más de 48 horas desde la última factura, se pierde la racha
+
+                        const deleteStreak = {
+                            number: Math.abs(parseInt(dataU.data.data[0].streakMaterial)) * -1
+                        }
+
+                        const bill = await axios.put(
+                            `http://localhost:3033/bill/addStreak/${form.user}`,
+                            deleteStreak,
+                            { headers: headers }
+                        )
+
+                    }
+
+                    // Si ha pasado entre 24 y 48 horas desde la última factura, se suma 1% a la racha
+                    if (hoursElapsed >= 86400 && hoursElapsed <= 172800) {
+
+                        // Si no es mayor o igual a 7 (racha máxima) que aumente un 1% al porcentaje.
+                        if (!(dataU.data.data[0].streakMaterial >= 7)) {
+
+                            const plusStreak = {
+                                number: 1
+                            }
+
+                            const bill = await axios.put(
+                                `http://localhost:3033/bill/addStreak/${form.user}`,
+                                plusStreak,
+                                { headers: headers }
+                            )
+
+                        }
+
+                    }
+
+                    /* 
+                        Si ninguna se cumple, es primera vez que agrega material sin racha 
+                        o porque ha entregado varias veces material en el día.
+                    */
+
+                    const dataU2 = await axios(`http://localhost:3033/user/getByUsername/${userData?.username}`, { headers: headers });
+
+                    const porcentStreak = dataU2.data.data[0].streakMaterial / 100
+                    const porcentStreakPoints = parseInt(newBill.total * 110 * porcentStreak)
+
+                    const pts = parseInt((newBill.total * 110) + porcentStreakPoints)
+                    const exp = parseInt(pts * 0.40, 10)
+
+                    const addExpPts = {
+                        points: pts,
+                        exp: exp
+                    }
+
+                    const updPtsExp = await axios.put(
+                        `http://localhost:3033/bill/expPts/${form.user}`,
+                        addExpPts,
+                        { headers: headers }
+                    )
+
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Bill Created successfully',
+                        text: 'POINTS: ' + pts + ' EXP: ' + exp + ' STREAK: ' + dataU2.data.data[0].streakMaterial
+                    })
+
+                    navigate('/recycler')
+                    await delay(10)
+                    navigate('/recycler/createBill')
 
 
-            } else {
+                } else {
 
-                Swal.fire({
-                    icon: 'error',
-                    title: 'The bill cannot be empty!'
-                })
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'The bill cannot be empty!'
+                    })
 
+                }
+            }else{
+                // Cuando la factura es de otro tipo de pago que no sea ECOINS.
+                if (!(newBill.total <= 0)) {
+
+                    const createdbill = await axios.post(`http://localhost:3033/bill/create`, newBill, { headers: headers })
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Bill Created successfully',
+                    })
+
+                }else {
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'The bill cannot be empty!'
+                    })
+
+                }
             }
+
+
 
         } catch (err) {
             Swal.fire(err.response.data.message, '', 'error');
@@ -179,17 +291,7 @@ export const CreateBill = () => {
         }
     }
 
-    const clearData = () => {
-        setForm({
-            material: '',
-            amountWeight: '',
-            subtotal: ''
-        })
-        setListCart([])
-        setTotal(0.00)
-    }
-
-    //Obtener el valor del material del Select
+    //Obtener el valor del user del Select
     const handleFormUser = (value, action) => {
         setForm({
             ...form,
@@ -213,7 +315,7 @@ export const CreateBill = () => {
         });
     };
 
-    //Obtener el valor del input
+    //Obtener el valor del select metodo de pago
     const handleFormPayment = (value, action) => {
         setForm({
             ...form,
@@ -249,7 +351,7 @@ export const CreateBill = () => {
 
     return (
         <>
-            
+
 
 
             <div className="card shadow">
@@ -399,7 +501,7 @@ export const CreateBill = () => {
                 </div>
             </div>
 
-            
+
         </>
     );
 };

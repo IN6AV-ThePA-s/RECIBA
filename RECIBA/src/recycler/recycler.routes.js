@@ -15,7 +15,7 @@ api.put('/set/:id',[ensureAdvance,isRecycler],recyclerController.editRecycler)
 api.put('/uploadImage/:id',[ensureAdvance,isRecycler,upload],recyclerController.uploadImgs)
 
 api.post('/add',[ensureAdvance,isMaster],recyclerController.addRecycler)
-api.delete('/delete/:id',[ensureAdvance,isRecycler],recyclerController.deleteRecycler)
+api.delete('/delete/:id',[ensureAdvance,isMaster],recyclerController.deleteRecycler)
 api.get('/getByUser/:user', [ensureAdvance], recyclerController.getByUser)
 
 module.exports = api

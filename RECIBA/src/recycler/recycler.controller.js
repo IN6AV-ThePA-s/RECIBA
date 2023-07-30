@@ -13,9 +13,10 @@ exports.addRecycler = async (req, res) => {
 
         let existsUser = await User.findOne({ _id: userLogged.sub, role: 'MASTER' })
         if (!existsUser) return res.status(404).send({ message: 'Account not found or role is not MASTER' })
-
-        let existRecycler = await Recycler.findOne({ email: data.email })
-        if (existRecycler) return res.status(418).send({ message: 'This email is already taken, please choose another one' })
+        let existEmail = await Recycler.findOne({ email: data.email })
+        if (existEmail) return res.status(418).send({ message: 'This email is already taken, please choose another one' })
+        let existRecycler = await Recycler.findOne({user: data.user})
+        if(existRecycler) return res.status(418).send({message: 'That user is already an admin for a recycler'})
         if (data.user == null || data.user == undefined) return res.status(401).send({ message: `Can not select that user  ${data.user}` })
         let newRecycler = new Recycler(data)
         let recycler = await newRecycler.save()
@@ -123,12 +124,16 @@ exports.editRecycler = async (req, res) => {
         let userLogged = req.user
         let idRecycler = req.params.id
         let data = req.body
+        let recycler = await Recycler.findOne({_id: idRecycler})
         if(userLogged.sub != idRecycler && userLogged.role != 'MASTER') 
         return res.status(418).send({message: 'User with not accsses to update recycler'})
         if (data.user != undefined){
-            data.email = undefined
             data.user = undefined
-        } 
+        }
+        if(data.email != recycler.email ){
+            let emailExist = await Recycler.findOne({email: data.email})
+            if(emailExist) return res.status(418).send({message: 'That email is already taked in another recycler'})
+        }
         let recyclerUpdated = await Recycler.findOneAndUpdate(
             { _id: idRecycler },
             data,
@@ -166,6 +171,118 @@ exports.getByUser = async (req, res) => {
 
         let recycler = await Recycler.findOne({ user: user })
         if (!recycler) return res.status(404).send({ message: 'Recycler not found :(' })
+
+        return res.send({ message: 'Recycler found!', recycler })
+
+    } catch (err) {
+        console.error(err)
+        return res.status(500).send({ message: 'Error getting user :(', error: err })
+    }
+}
+
+exports.getRecyclers = async(req,res) =>{
+    try{
+        let userLogged = req.user
+        let recyclers = await Recycler.find()
+        return res.send({recyclers})
+    }catch (err) {
+        return res.status(500).send({message:'Error getting Recyclers'})
+    }
+}
+exports.getRecycler = async(req,res) =>{
+    try{
+        let userLogged = req.user
+        let idRecycler = req.params.id
+        let recycler = await Recycler.findOne({_id:idRecycler})
+        if(!recycler) return res.status(404).send({message:'Recycler not found please check the id'})
+        return res.send({recycler})
+    }catch (err) {
+        return res.status(500).send({message:'Error getting Recyclers'})
+    }
+}
+
+exports.getImg = async(req, res) => {
+    try {
+        const { file } = req.params;
+        const url = `./src/uploads/recyclers/${file}`
+        const img = fs.existsSync(url)
+        if (!img)
+            return res.status(404).send({ message: 'Image not found' });
+        return res.sendFile(path.resolve(url));
+    } catch (err) {
+        console.error(err)
+        return res.status(500).send({ message: 'Error getting img', error: err })
+    }
+}
+
+exports.uploadImgs = async(req, res) => {
+    try {
+        if (!req.files.images)
+            return res.status(400).send({ message: 'Have not sent images' });
+        const imgs = req.files.images;
+        let names = [];
+        const reciclerId = req.params.id;
+        const url = './src/uploads/recyclers/';
+        const recycler = await Recycler.findOne({ _id: reciclerId });
+        if (recycler) {
+            console.log(recycler.photos.length);
+            if (recycler.photos.length > 0) {
+                for (let photo of recycler.photos)
+                    fs.unlinkSync(`${url}${photo}`);
+            }
+            let fP, fN, fE, fS, e;
+            if (Array.isArray(imgs)) {
+                for (let img of imgs) {
+                    fP = img.path;
+                    fS = fP.split('\\');
+                    fN = fS[3];
+                    e = fN.split('\.');
+                    fE = e[3];
+                    if (isImg(e))
+                        fs.unlinkSync(fP);
+                    names.push(fN);
+                }
+            } else {
+                fP = imgs.path;
+                fS = fP.split('\\');
+                fN = fS[3];
+                e = fN.split('\.');
+                fE = e[3];
+                if (isImg(e))
+                    fs.unlinkSync(fP);
+                names.push(fN);
+            }
+            await Recycler.updateOne({ _id: reciclerId }, { photos: names });
+            return res.send({ message: `Photos added successfully` });
+        } else {
+            if (Array.isArray(imgs)) {
+                for (let img of imgs) {
+                    const fp = img.path;
+                    fs.unlinkSync(fp);
+                }
+            } else {
+                const fp = imgs.path;
+                fs.unlinkSync(fp);
+            }
+            return res.status(404).send({ message: `Recycler not found` });
+        }
+    } catch (err) {
+        console.error(err);
+        return res.status(500).send({ message: `Error uploading imgs` });
+    }
+}
+
+
+
+
+
+/* ----- GET USER ----- */
+exports.getByUser = async(req, res) => {
+    try {
+        let user = req.params.user
+
+        let recycler = await Recycler.findOne({ user: user })
+        if(!recycler) return res.status(404).send({ message: 'Recycler not found :(' })
 
         return res.send({ message: 'Recycler found!', recycler })
 

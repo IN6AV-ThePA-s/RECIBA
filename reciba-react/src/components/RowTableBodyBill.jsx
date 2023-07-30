@@ -30,7 +30,7 @@ export const RowTableBodyBill = ({ number, materialid, amountWeight, subtotal })
 
     return (
         <>
-            <tr>
+            <tr className='align-middle'>
                 <td scope="col">{number+1} </td>
                 <td scope="col">{materialData?.type} </td>
                 <td>{materialData?.price.quantity} x {materialData?.price.amount}</td>

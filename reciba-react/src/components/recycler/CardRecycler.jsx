@@ -1,22 +1,18 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import c1 from '../../assets/c1.jpg'
 import '../../css/UserHomePage.css'
-import axios from 'axios'
 import { Link, useNavigate } from 'react-router-dom'
 
 export const CardRecycler = ({ name, direction, id, email, phone, startHour, endHour, photos, user, butDel }) => {
-    const [photo, setPhoto] = useState()
-
 
     return (
         <div className='col'>
             <div className="rounded-5 shadow-lg transitionY">
                 <div className="row g-0 align-items-center">
                     <div className="col-sm-5">
-
                         <img
                             src={`http://localhost:3033/recycler/getImage/${photos?.[0]}`}
-                            crossOrigin='anonymous'
+                            crossOrigin='anonymous' 
                             className="img-fluid rounded-5 shadow"
                             style={{
                                 objectFit: 'cover',
@@ -27,7 +23,6 @@ export const CardRecycler = ({ name, direction, id, email, phone, startHour, end
                     </div>
                     <div className="col-sm-7 p-4">
                         <div className="card-body">
-
                             <h5 className="card-title">{name}</h5>
                             <p className="card-subtitle mb-2 text-body-secondary">{direction}</p>
                             <span className="badge bg-success">Info</span>
@@ -35,8 +30,8 @@ export const CardRecycler = ({ name, direction, id, email, phone, startHour, end
                             <span className="badge bg-dark">Contact</span>
                             <p className="card-text mb-0"><small className="text-body-secondary">Email: {email}</small></p>
                             <p className="card-text"><small className="text-body-secondary">Phone: {phone}</small></p>
-
-                            <div className="d-grid gap-1">
+                            
+                            <div className="d-grid gap-2">
                                 <Link type="button" className="btn btn-outline-success rounded-pill" to={`/home/recyclerview/${id}`}>
                                     Visit
                                 </Link>

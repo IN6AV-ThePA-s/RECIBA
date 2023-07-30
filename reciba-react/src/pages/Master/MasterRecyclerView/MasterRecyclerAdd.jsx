@@ -31,27 +31,13 @@ export const MasterRecyclerAdd = () => {
     }
 
 
-    const handleSelect = async (e) => {
-        try {
-            const { data } = await axios.get(`http://localhost:3033/user/get/${e.target.options[e.target.selectedIndex].value}`, { headers: headers });
-            setForm({
-                ...form,
-                [e.target.name]: e.target.options[e.target.selectedIndex].value,
-                email: data.data[0].email
-            })
-            document.getElementById('email').value = data.data[0].email
-        } catch (err) {
-            document.getElementById('email').value = ''
-            Swal.fire({
-                title: 'Select another user',
-                text: 'Was not selected any user, please select one',
-                icon: 'warning',
-                timer: 2000,
-                showConfirmButton: false
-            })
-        }
+    const handleSelect = (e) => {
+        setForm({
+            ...form,
+            [e.target.name]: e.target.options[e.target.selectedIndex].value
+        })
     }
-
+    
     const handlePhoto = (e) => {
         let formData = new FormData()
         for (let img of e.target.files) {
@@ -70,8 +56,6 @@ export const MasterRecyclerAdd = () => {
                 for (let i = 0; i < data.data?.length; i++) {
                     if (data.data[i].role == 'RECYCLER') {
                         setUser(user => user.concat(data.data[i]))
-
-
                     }
                 }
             }
@@ -87,7 +71,7 @@ export const MasterRecyclerAdd = () => {
         try {
             const { data } = await axios.post('http://localhost:3033/recycler/add', form, { headers: headers })
             if (data.recycler) {
-                if (!photo){
+                if (!photo) {
                     Swal.fire({
                         title: 'Recycler added without photo',
                         text: `Recycler "${data.recycler.name}" was successfully added`,
@@ -149,7 +133,7 @@ export const MasterRecyclerAdd = () => {
                                     <input onChange={handleForm} name='phone' type="text" className="form-control" />
 
                                     <h5 className="mr-2 mt-3">Email</h5>
-                                    <input id='email' name='email' type="text" className="form-control" disabled readOnly />
+                                    <input onChange={handleForm} id='email' name='email' type="text" className="form-control" />
 
                                     <h5 className="mr-2 mt-3">Open Hour</h5>
                                     <input onChange={handleForm} name='startHour' type="text" className="form-control" />

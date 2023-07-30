@@ -3,36 +3,42 @@
 const mongoose = require('mongoose')
 
 const materialSchema = mongoose.Schema({
-    type:{
-        type:String,
-        required:true
+    type: {
+        type: String,
+        required: true
     },
-    unit:{
-        type:String,
-        required:true,
-        lowerCase:true,
-        enum:['pound','ounce','kilogram','gram','unit']
+    unit: {
+        type: String,
+        required: true,
+        lowerCase: true,
+        enum: ['pound', 'ounce', 'kilogram', 'gram', 'unit']
     },
-    price:{
-        type:{
-            quantity:{ // COMPRA DE BASE
-                type:Number,
-                required:true
-            },
-            amount:{ // PRECIO POR ESA BASE
-                type:Number,
-                required:true
-            }
+    price: {
+        quantity: { // COMPRA DE BASE
+            type: Number,
+            required: true
         },
-        required:true
+        amount: { // PRECIO POR ESA BASE
+            type: Number,
+            required: true
+        }
     },
-    recycle:{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:'Recycle',
-        required:true
+    photo: {
+        type: String
+    },
+    recycle: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Recycle',
+        required: true
+    },
+    status: {
+        type: String,
+        required: true,
+        enum: ['ENABLED', 'DISABLED'],
+        default: 'ENABLED'
     }
-},{
-    versionKey:false
+}, {
+    versionKey: false
 })
 
-module.exports = mongoose.model('Material',materialSchema) 
+module.exports = mongoose.model('Material', materialSchema) 

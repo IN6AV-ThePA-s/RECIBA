@@ -1,6 +1,8 @@
 'use strict'
 
 const Range = require('./range.model')
+const fs = require('fs')
+const path = require('path')
 
 const { validateData } = require('../utils/validate')
 
@@ -14,7 +16,6 @@ exports.defaultRange = async(req, res) => {
     try {
         let range = await Range.findOne({ name: 'JUNIOR' })
         if (range) return console.log('Range default already created in db')
-
         let data = {
             name: 'JUNIOR',
             initExp: 0,
@@ -23,6 +24,25 @@ exports.defaultRange = async(req, res) => {
         let defRange = new Range(data)
         await defRange.save()
         return console.log('Range default created successfully')
+        
+    } catch (err) {
+        console.error(err)
+        return res.status(500).send({ message: 'Error creating range default', error: err })
+    }
+}
+
+exports.defaultRangeAdmin = async(req, res) => {
+    try {
+        let range = await Range.findOne({ name: 'ADMIN' })
+        if (range) return console.log('Range admin default already created in db')
+        let data = {
+            name: 'ADMIN',
+            initExp: 0,
+            limitExp: 0
+        }
+        let defRange = new Range(data)
+        await defRange.save()
+        return console.log('Range admin default created successfully')
         
     } catch (err) {
         console.error(err)
@@ -43,6 +63,11 @@ exports.add = async(req, res) => {
         let msg = validateData(params)
         if (msg) return res.status(400).send({ msg })
 
+        if (data.initExp >= data.limitExp) return res.status(400).send({ message: 'Please select a coherent exp range' })
+
+        let existRange = await Range.findOne({ initExp: params.initExp })
+        if (existRange) return res.status(400).send({ message: 'Another range has been initialized with that initial exp' })
+        
         let range = new Range(data)
         await range.save()
 
@@ -120,6 +145,7 @@ exports.getRange = async(req, res) => {
 exports.get = async(req, res) => {
     try {
         let ranges = await Range.find()
+        
         if (ranges.length === 0) return res.status(404).send({ message: 'Ranges not found :(' })
 
         return res.send({ message: 'Ranges found!', range: ranges })
@@ -127,5 +153,65 @@ exports.get = async(req, res) => {
     } catch (err) {
         console.error(err)
         return res.status(500).send({ message: 'Error getting range :(', error: err })
+    }
+}
+
+/* GET IMAGE */
+exports.getImg = async (req, res) => {
+    try {
+        const fileName = req.params.file
+        const pathFile = `./src/uploads/ranges/${fileName}`
+        const img = fs.existsSync(pathFile)
+
+        if (!img) return res.status(404).send({ message: 'Image not found :(' })
+
+        return res.sendFile(path.resolve(pathFile))
+
+    } catch (err) {
+        console.error(err)
+        return res.status(500).send({ message: 'Error getting img :(', error: err })
+    }
+}
+
+/* UPLOAD IMAGE */
+exports.uploadImg = async (req, res) => {
+    try {
+        const id = req.params.id
+        const alreadyImg = await Range.findOne({ _id: id })
+
+        let pathFile = './src/uploads/rages/'
+
+        if (alreadyImg.photo) fs.unlinkSync(`${pathFile}${alreadyImg.photo}`)
+        if (!req.files.image || !req.files.image.type) return res.status(400).send({ message: 'Have not sent an image :(' })
+
+        const filePath = req.files.image.path
+
+        const fileSplit = filePath.split('\\')
+        const fileName = fileSplit[3]
+
+        const extension = fileName.split('\.')
+        const fileExt = extension[1]
+
+        if (
+            fileExt !== 'png' &&
+            fileExt !== 'jpg' &&
+            fileExt !== 'jpeg'
+        ) {
+            fs.unlinkSync(filePath)
+            return res.status(400).send({ message: 'File extension not admited' })
+        } else {
+            const upRange = await Range.findOneAndUpdate(
+                { _id: id },
+                { photo: fileName },
+                { new: true }
+            )
+
+            if (!upRange) return res.status(404).send({ message: 'Range not found!' })
+            return res.send({ message: 'Logo added successfully', range: upRange })
+        }
+        
+    } catch (err) {
+        console.error(err)
+        return res.status(500).send({ message: 'Error while updating img :(', error: err })
     }
 }

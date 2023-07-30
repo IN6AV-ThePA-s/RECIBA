@@ -14,9 +14,16 @@ import { RegisterPage } from './pages/HomePage/RegisterPage'
 import { RecyclerView } from './pages/User/RecyclerView/RecyclerView'
 import { PartnerView } from './pages/User/PartnerView/PartnerView'
 import { UserHome } from './pages/User/UserHome'
-import { ViewMaterials } from './pages/Recycler/ViewMaterials'
+import { ViewBillMaterials } from './pages/Recycler/ViewBillMaterials'
 import { CreateBill } from './pages/Recycler/CreateBill'
 import { ViewBills } from './pages/Recycler/ViewBills'
+import { ViewMaterials } from './pages/Recycler/ViewMaterials'
+import { CreateMaterial } from './pages/Recycler/CreateMaterial'
+import { UpdateMaterial } from './pages/Recycler/UpdateMaterial'
+import { BillView } from './pages/User/BillView/BillView'
+import { RewardView } from './pages/User/RewardView/RewardView'
+import { Settings } from './pages/User/Settings'
+import { ViewDetails } from './components/bill/ViewDetails'
 import { Example } from './pages/Master/Example'
 import { UserPage } from './pages/Master/MasterUserView/UserPage'
 import { AddUserPage } from './pages/Master/MasterUserView/AddUserPage'
@@ -43,27 +50,27 @@ export const Index = () => {
         {
             path: '/',
             element: <App />,
-            errorElement: <NotFound />,
+            errorElement: <NotFound/>,
             children: [
                 {
                     path: '/',
-                    element: <HomePage />
+                    element: <HomePage/>
                 },
                 {
                     path: '/about',
-                    element: <AboutUsPage />
+                    element: <AboutUsPage/>
                 },
                 {
                     path: '/register',
-                    element: <RegisterPage />
+                    element: <RegisterPage/>
                 },
                 {
                     path: '/login',
-                    element: <LoginPage />
+                    element: <LoginPage/>
                 },
                 {
                     path: '/master',
-                    element: loggedIn ? (dataUser?.role === 'MASTER' ? <MasterDashboard /> : <NotFound />) : (<LoginPage />),
+                    element: loggedIn ? (dataUser?.role === 'MASTER' ? <MasterDashboard/> : <NotFound/>) : (<LoginPage/>),
                     children: [
                         {
                             path: 'page',
@@ -97,41 +104,69 @@ export const Index = () => {
                 },
                 {
                     path: '/home',
-                    element: loggedIn ? (dataUser?.role === 'CLIENT' ? <UserHomePage /> : <NotFound />) : (<LoginPage />),
+                    element: loggedIn ? (dataUser?.role === 'CLIENT' ? <UserHomePage/> : <NotFound/>) : (<LoginPage/>),
                     children: [
                         {
                             path: 'page',
-                            element: <UserHome />
+                            element: <UserHome/>
                         },
                         {
                             path: 'recyclerview/:id',
-                            element: <RecyclerView />
+                            element: <RecyclerView/>
                         },
                         {
                             path: 'partnerview/:id',
-                            element: <PartnerView />
+                            element: <PartnerView/>
+                        },
+                        {
+                            path: 'bills',
+                            element: <BillView/>
+                        },
+                        {
+                            path: 'claimers',
+                            element: <RewardView/>
+                        },
+                        {
+                            path: 'settings',
+                            element: <Settings/>
+                        },
+                        {
+                            path: 'viewDetails/:id',
+                            element: <ViewDetails/>
                         }
                     ]
                 },
                 {
                     path: '/recycler',
-                    element: loggedIn ? (dataUser?.role === 'RECYCLER' ? <RecyclerDashboard /> : <NotFound />) : (<LoginPage />),
+                    element: loggedIn ? (dataUser?.role === 'RECYCLER' ? <RecyclerDashboard/> : <NotFound/>) : (<LoginPage/>),
                     children: [
                         {
                             path: 'home',
-                            element: <HomeRecycler />,
+                            element: <HomeRecycler/>,
                         },
                         {
                             path: 'viewMaterials',
-                            element: <ViewMaterials />
+                            element: <ViewMaterials/>
+                        },
+                        {
+                            path: 'createMaterial',
+                            element: <CreateMaterial/>
+                        },
+                        {
+                            path: 'updateMaterial/:id',
+                            element: <UpdateMaterial/>
                         },
                         {
                             path: 'createBill',
-                            element: <CreateBill />
+                            element: <CreateBill/>
                         },
                         {
                             path: 'viewBills',
-                            element: <ViewBills />
+                            element: <ViewBills/>
+                        },
+                        {
+                            path: 'viewBillMaterials/:id',
+                            element: <ViewBillMaterials/>
                         }
                     ]
                 },

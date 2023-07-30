@@ -74,7 +74,6 @@ export const UserHome = () => {
             if (data) {
                 let user = data.data[0]
                 let perc = 0
-                console.log(user)
 
                 let limit = user.range.limitExp - user.range.initExp
                 setLimitExp(limit)
@@ -93,36 +92,54 @@ export const UserHome = () => {
         }
     }
 
+    const checkRange = async () => {
+        try {
+            const { data } = await axios(`${HOST.url}/user/checkRange`, { headers: headers })
+
+            if (data) {
+                console.log(data.promoted);
+                if (data.promoted) Swal.fire('You have been promoted', '', 'info')
+            }
+
+            return
+
+        } catch (err) {
+            console.error(err)
+            Swal.fire(err.response.data.message, '', 'error')
+        }
+    }
+
     useEffect(() => {
         getRecyclers()
         getRewards()
         getPartners()
         getOwn()
+        checkRange()
     }, [])
 
 
     return (
         <>
             {/* Carousel */}
-            <div id="carruselImagenes" className="carousel container slide mt-4" data-bs-ride="carousel" style={{ height: '60vh', width: '100%' }}>
+            <div id="carruselImagenes" className="carousel container slide mt-4 p-0" data-bs-ride="carousel" style={{ height: '65vh', width: '100%' }}>
                 <div className="carousel-inner rounded-4">
                     <div id="uno" className="carousel-item active">
-                        <img src={c1} className="d-block" style={{ objectFit: 'cover', width: '100%', height: '60vh' }} />
+                        <img src={c1} className="d-block" style={{ objectFit: 'cover', width: '100%', height: '65vh' }} />
                     </div>
 
                     <div id="dos" className="carousel-item">
-                        <img src={c2} className="d-block" style={{ objectFit: 'cover', width: '100%', height: '60vh' }} />
+                        <img src={c2} className="d-block" style={{ objectFit: 'cover', width: '100%', height: '65vh' }} />
                     </div>
 
                     <div id="tres" className="carousel-item">
-                        <img src={c3} className="d-block" style={{ objectFit: 'cover', width: '100%', height: '60vh' }} />
+                        <img src={c3} className="d-block" style={{ objectFit: 'cover', width: '100%', height: '65vh' }} />
                     </div>
                 </div>
 
-                <button className="carousel-control-prev" type="button" data-bs-target="#carruselImagenes" data-bs-slide="prev">
+                <button className="carousel-control-prev rounded-4" type="button" data-bs-target="#carruselImagenes" data-bs-slide="prev">
                     <span className="carousel-control-prev-icon"></span>
                 </button>
-                <button className="carousel-control-next" type="button" data-bs-target="#carruselImagenes" data-bs-slide="next">
+                <button className="carousel-control-next rounded-4" type="button" data-bs-target="#carruselImagenes" data-bs-slide="next">
                     <span className="carousel-control-next-icon"></span>
                 </button>
             </div>
@@ -165,16 +182,18 @@ export const UserHome = () => {
             {/* Recyclers */}
             <div className='container mx-auto mt-5'>
                 <div className='row align-items-center'>
-                    <h1 className='mb-5 col py-1 px-4 text-success'>
+                    <h1 className='col py-1 px-4 text-success'>
                         Most popular recyclers
                     </h1>
 
-                    <div className='mb-5 col-auto text-center text-light'>
+                    <div className='col-auto text-center text-light'>
                         <h6 className='bg-danger rounded-pill py-1 px-3'>
                             {recyclers?.length} on FIRE!
                         </h6>
                     </div>
                 </div>
+
+                <hr className='mb-5' />
 
                 <div className="row row-cols-1 row-cols-md-2 g-4">
                     {
@@ -201,31 +220,36 @@ export const UserHome = () => {
             <div className='container mx-auto my-5'>
                 <div className='row align-items-center'>
 
-                    <h1 className='mb-5 col py-1 px-4 text-success'>
+                    <h1 className='col py-1 px-4 text-success'>
                         Most popular rewards
                     </h1>
 
-                    <div className='mb-5 col-auto text-center text-light'>
+                    <div className='col-auto text-center text-light'>
                         <h6 className='bg-danger rounded-pill py-1 px-3'>
                             {rewards?.length} on FIRE!
                         </h6>
                     </div>
                 </div>
 
+                <hr className='mb-5' />
+
                 <div className='row row-cols-1 row-cols-md-2 g-4 text-center'>
                     {
                         rewards?.map(({ name, description, partner, range, cantPoints, photo, _id }, index) => {
                             return (
-                                <CardReward
-                                    id={_id}
-                                    name={name}
-                                    desc={description}
-                                    range={range}
-                                    cantPoints={cantPoints}
-                                    photo={photo}
-                                    partner={partner}
-                                    key={index}
-                                />
+                                <>
+                                    <CardReward
+                                        id={_id}
+                                        name={name}
+                                        desc={description}
+                                        range={range}
+                                        cantPoints={cantPoints}
+                                        photo={photo}
+                                        partner={partner}
+                                        key={index}
+                                    />
+                                </>
+
                             )
                         })
                     }
@@ -234,9 +258,11 @@ export const UserHome = () => {
 
             {/* PARTNERS */}
             <div className='container mx-auto my-5'>
-                <h1 className='mb-5 py-1 px-4 text-success'>
+                <h1 className='py-1 px-4 text-success'>
                     Our Partners
                 </h1>
+
+                <hr className='mb-5' />
 
                 <div className="row row-cols-1 row-cols-md-3 g-4 text-center">
                     {
