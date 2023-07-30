@@ -222,7 +222,11 @@ exports.claim = async (req, res) => {
                 { $inc: { 'historyRewards.$.claims': 1, points: -(reward.cantPoints), exp: exp } },
                 { new: true }
             )
-
+            await Reward.findOneAndUpdate(
+                {_id:id},
+                {$inc:{claims:1}},
+                {new:true}
+            )
             if (!upHistory) return res.status(404).send({ message: 'Error, item not found' })
                 
             return res.send({ message: 'Reward claimed successfully', upHistory })
@@ -252,7 +256,11 @@ exports.claim = async (req, res) => {
             },
             { new: true }
         )
-
+        await Reward.findOneAndUpdate(
+            {_id:id},
+            {$inc:{claims:1}},
+            {new:true}
+        )
         if (!upHistory) return res.status(404).send({ message: 'User not found :(', error: err })
         return res.send({ message: 'Reward claimed successfully', upHistory })
         
