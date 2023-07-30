@@ -49,21 +49,14 @@ export const MasterRecyclerUpdate = () => {
         direction: document.getElementById('direction').value,
         phone: document.getElementById('phone').value,
         startHour: document.getElementById('startHour').value,
-        endHour: document.getElementById('endHour').value
+        endHour: document.getElementById('endHour').value,
+        email: document.getElementById('email').value
       }
 
       const { data } = await axios.put(`http://localhost:3033/recycler/set/${id}`, form, { headers: headers })
 
       if (data.recycler) {
-        if (!photo) 
-          return Swal.fire({
-            title: 'IMAGE REQUIRED',
-            text: `You need to choose one photo at least`,
-            icon: 'warning',
-            iconColor: 'orange',
-            showConfirmButton: true
-          })
-
+        if (photo)
         await axios.put(`http://localhost:3033/recycler/uploadImage/${id}`, photo, {
           headers: { 'Content-type': 'multipart/form-data', 'Authorization': localStorage.getItem('token') }
         })
@@ -113,7 +106,7 @@ export const MasterRecyclerUpdate = () => {
                   <input defaultValue={recycler.phone} name='phone' id='phone' type="text" className="form-control" />
 
                   <h5 className="mr-2 mt-3">Email</h5>
-                  <input defaultValue={recycler.email} name='email' id='email' type="text" className="form-control" disabled readOnly />
+                  <input defaultValue={recycler.email} name='email' id='email' type="text" className="form-control" />
 
                   <h5 className="mr-2 mt-3">Open Hour</h5>
                   <input defaultValue={recycler.startHour} name='startHour' id='startHour' type="text" className="form-control" />

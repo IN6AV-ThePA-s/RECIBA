@@ -122,7 +122,7 @@ export const ModalUsers = ({ id }) => {
                                     </div>
                                 </div>
                                 {
-                                    user.range ? (
+                                    user.range != 'ADMIN' ? (
                                         <div className='d-flex flex-row justify-content-evenly'>
                                             <div className="mb-3 ">
                                                 <span className="text-success fs-5">Exp: </span>

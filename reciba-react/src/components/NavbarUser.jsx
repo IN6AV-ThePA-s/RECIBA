@@ -51,7 +51,7 @@ export const NavbarUser = () => {
 
         } catch (err) {
             console.error(err)
-            Swal.fire(err.response.data.message, '', 'error')
+            Swal.fire(err.response?.data.message, '', 'error')
         }
     }
 

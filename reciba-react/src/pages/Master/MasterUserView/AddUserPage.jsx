@@ -41,14 +41,18 @@ export const AddUserPage = () => {
         setPhoto(formData)
     }
 
-    useEffect(() => {
+    /*useEffect(() => {
         console.log(photo);
-      }, [photo])
+      }, [photo])*/
 
     const getRanges = async () =>{
         try {
             const { data } = await axios.get(`http://localhost:3033/range/get`, {headers: headers})
-            setRange(data.range)
+            setRange([])
+            for(let i=0; i< data.range?.length;i++){
+                if(data.range[i].name != 'ADMIN')
+                setRange(range =>range.concat([data.range[i]]))
+            }
         } catch (err) {
             console.log(err)
             Swal.fire(err.response.data.message, '', 'error')
@@ -58,6 +62,7 @@ export const AddUserPage = () => {
     const add = async (e) => {
         try {
             const { data } = await axios.post('http://localhost:3033/user/save', form, { headers: headers })
+            
 
             if (data.user) {
                 if (photo) await axios.put(`http://localhost:3033/user/uploadImg/${data.user._id}`, photo, {
@@ -133,6 +138,7 @@ export const AddUserPage = () => {
                                             <>
                                                 <h5 className=" mr-2 mt-3">Range</h5>
                                                 <select onChange={handleSelect} name='range' className='form-select'>
+                                                <option value='NULL'>{'CHANGE THE RANGE'}</option>
                                                 {
                                                         range.map(({_id, name}, i)=>{
                                                             return(
