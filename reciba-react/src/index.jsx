@@ -42,6 +42,7 @@ import { ViewPartner } from './pages/Master/MasterPartnerView/ViewPartner'
 import { UpdatePartner } from './pages/Master/MasterPartnerView/UpdatePartner'
 import { AddPartner } from './pages/Master/MasterPartnerView/AddPartner'
 import { MasterUpdateReward } from './pages/Master/MasterRewardView/MasterUpdateReward'
+import { RangesView } from './pages/Master/Ranges/RangesView'
 
 export const AuthContext = createContext()
 
@@ -146,6 +147,10 @@ export const Index = () => {
                             path: 'settings',
                             element: <Settings/>
                         },
+                        {
+                            path: 'rangeView',
+                            element: <RangesView/>
+                        }
                     ]
                 },
                 {

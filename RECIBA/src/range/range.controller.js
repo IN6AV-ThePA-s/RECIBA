@@ -93,6 +93,8 @@ exports.edit = async(req, res) => {
         let msg = validateData(params)
         if (msg) return res.status(400).send({ msg })
 
+        if (data.initExp >= data.limitExp) return res.status(400).send({ message: 'Please select a coherent exp range' })
+
         let upRange = await Range.findOneAndUpdate(
             { _id: id },
             data,
@@ -179,7 +181,7 @@ exports.uploadImg = async (req, res) => {
         const id = req.params.id
         const alreadyImg = await Range.findOne({ _id: id })
 
-        let pathFile = './src/uploads/rages/'
+        let pathFile = './src/uploads/ranges/'
 
         if (alreadyImg.photo) fs.unlinkSync(`${pathFile}${alreadyImg.photo}`)
         if (!req.files.image || !req.files.image.type) return res.status(400).send({ message: 'Have not sent an image :(' })

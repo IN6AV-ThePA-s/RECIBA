@@ -115,6 +115,12 @@ export const NavbarUser = () => {
                                         <Link to={'/master/stats'} className='optionSidebar'>
                                             <h6>Watch my stats</h6>
                                         </Link>
+
+                                        <h3 className='fw-bold mt-3' style={{ color: '#086c3c' }}>Ranges</h3>
+                                        <Link to={'/master/rangeView'} className='optionSidebar'>
+                                            <h6>Ranges view</h6>
+                                        </Link>
+                                        
                                         <h3 className='fw-bold mt-3' style={{ color: '#086c3c' }}>Partner{' '}<i className="fa-solid fa-users-rectangle"></i></h3>
                                         <Link className='optionSidebar'></Link>
                                         <Link to={'/master/partnerView'} className='optionSidebar'>
