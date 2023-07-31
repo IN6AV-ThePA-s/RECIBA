@@ -44,6 +44,7 @@ import { AddPartner } from './pages/Master/MasterPartnerView/AddPartner'
 import { MasterUpdateReward } from './pages/Master/MasterRewardView/MasterUpdateReward'
 import { RangesView } from './pages/Master/Ranges/RangesView'
 import { ModalAddRange } from './components/ranges/ModalAddRange'
+import { AddReward2 } from './pages/Partner/AddReward2'
 
 export const AuthContext = createContext()
 
@@ -244,7 +245,7 @@ export const Index = () => {
                     children: [
                         {
                             path:'addReward',
-                            element:<AddReward/>
+                            element:<AddReward2/>
                         },
                         {
                             path:'viewReward',
