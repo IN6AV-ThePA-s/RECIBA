@@ -14,20 +14,16 @@ export const ViewReward = () => {
     'Authorization': localStorage.getItem('token')
   }
 
-  const getPartnerRewards = async() => {
+  const getRewards = async () => {
     try {
-      const { data } = await axios.get(`http://localhost:3033/partner/getByUser/${dataUser.sub}`,{headers:headers})
-      let partnerId = data.partner._id
-      if(data){
-        const { data } = await axios.get(`http://localhost:3033/reward/getByPartner/${partnerId}`, { headers: headers })
-        if (data) {
-          setRewards(data.rewards)
-        }
-      } 
+      const { data } = await axios.get(`http://localhost:3033/reward/getByPartner/${dataUser.sub}`, { headers: headers })
+      if (data) {
+        setRewards(data.rewards)
+      }
     } catch (err) {
       console.error(err);
-      Swal.fire(err.response.data?.message, '', 'error')
-      navigate('/partner')
+      Swal.fire(err.response.data.message, '', 'error')
+      navigate('/partner/addReward')
     }
   }
 
@@ -47,7 +43,7 @@ export const ViewReward = () => {
   }
 
   useEffect(() => {
-    getPartnerRewards()
+    getRewards()
   }, [])
 
   return (
@@ -61,7 +57,7 @@ export const ViewReward = () => {
 
         <div className='row row-cols-1 row-cols-md-2 g-4 text-center mb-5'>
           {
-            rewards?.map(({ name, description, partner, range, cantPoints, photo, _id }, index) => {
+            rewards?.map(({ name, description, range, cantPoints, photo, _id }, index) => {
               return (
                 <CardRewardOnly
                   id={_id}
@@ -69,7 +65,6 @@ export const ViewReward = () => {
                   desc={description}
                   range={range.name}
                   cantPoints={cantPoints}
-                  partner={partner}
                   photo={photo}
                   key={index}
                   reload={() => delRewats(_id)}

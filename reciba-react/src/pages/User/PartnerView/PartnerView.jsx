@@ -1,18 +1,23 @@
 import axios from 'axios'
-import React, { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import React, { useEffect, useState, useContext } from 'react'
+import { useParams, Link } from 'react-router-dom'
 import Swal from 'sweetalert2'
 import { CardReward } from '../../../components/rewards/CardReward'
+import { AuthContext } from '../../../index'
 
 export const PartnerView = () => {
+  const { dataUser } = useContext(AuthContext)
   const { id } = useParams()
   const [partner, setPartner] = useState()
   const [rewards, setRewards] = useState()
+  const [user, setUser] = useState()
 
   const headers = {
     'Content-Type': 'application/json',
     'Authorization': localStorage.getItem('token')
   }
+
+
 
   const getPartner = async () => {
     try {
@@ -29,7 +34,6 @@ export const PartnerView = () => {
   const getRewards = async () => {
     try {
       const { data } = await axios(`http://localhost:3033/reward/getByPartner/${id}`, { headers: headers })
-      console.log(data);
       if (data) return setRewards(data.rewards)
 
     } catch (err) {
@@ -37,6 +41,31 @@ export const PartnerView = () => {
       Swal.fire(err.response.data.message, '', 'error')
     }
   }
+
+  const del= async(id) =>{
+    try {
+        Swal.fire({
+            title: 'Are you sure to delet this reward?',
+            icon: 'question',
+            showConfirmButton: true,
+            showDenyButton: true,
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                const { data } = await axios.delete(`http://localhost:3033/reward/delete/${id}`, { headers: headers })
+                    .catch((err) => {
+                        Swal.fire(err.response.data.message, '', 'error')
+                    })
+                getRewards()
+                Swal.fire(`${data.message}`, '', 'success')
+            } else {
+                Swal.fire('No worries', '', 'success')
+            }
+        })
+    } catch (err) {
+        console.log(err);
+        Swal.fire(err.response.data.message, '', 'error')
+    }
+}
 
   useEffect(() => {
     getPartner()
@@ -81,8 +110,21 @@ export const PartnerView = () => {
           </h1>
 
           <div className='mb-5 col-auto text-center text-light'>
+            {dataUser.role == 'MASTER' ?
+              (<>
+                <Link to={`/master/addReward/${id}`}>
+                  <button className="btn btn-outline-success rounded-pill border-0 pl-2">
+                    <i className="fa-solid fa-plus"
+                      trigger="hover"
+                      style={{ width: '25px', height: '25px' }}>
+                    </i> ADD
+                  </button>
+                </Link>
+              </>) :
+              (<></>)}
+            <br />
             <h6 className='bg-danger rounded-pill py-1 px-3'>
-              {rewards?.length} available
+              {rewards?.length}{' '}Available
             </h6>
           </div>
         </div>
@@ -100,6 +142,7 @@ export const PartnerView = () => {
                   photo={photo}
                   partner={partner}
                   key={index}
+                  butDel={() => del(_id)}
                 />
               )
             })

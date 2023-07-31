@@ -38,6 +38,10 @@ import { ViewReward } from './pages/Partner/ViewReward'
 import { EditReward } from './pages/Partner/EditReward'
 import { MasterStats } from './pages/Master/Stadistics/MasterStats'
 import { RewardStats } from './pages/Partner/Stadistics/RewardStats'
+import { ViewPartner } from './pages/Master/MasterPartnerView/ViewPartner'
+import { UpdatePartner } from './pages/Master/MasterPartnerView/UpdatePartner'
+import { AddPartner } from './pages/Master/MasterPartnerView/AddPartner'
+import { MasterUpdateReward } from './pages/Master/MasterRewardView/MasterUpdateReward'
 
 export const AuthContext = createContext()
 
@@ -114,6 +118,29 @@ export const Index = () => {
                         {
                             path: 'stats',
                             element: <MasterStats/>
+                        },
+                        {
+                            path: 'partnerView',
+                            element: <ViewPartner/>
+                        },
+                        {
+                            path: 'addPartner',
+                            element: <AddPartner/>
+                        },
+                        {
+                            path: 'updatePartner/:id',
+                            element: <UpdatePartner/>
+                        },
+                        {
+                            path: 'partnerview/:id',
+                            element: <PartnerView/>
+                        },
+                        {
+                            path:'addReward/:id',
+                            element:<AddReward/>
+                        },{
+                            path: 'updateReward/:id',
+                            element: <MasterUpdateReward/>
                         }
                     ]
                 },

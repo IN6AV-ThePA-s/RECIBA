@@ -120,7 +120,15 @@ export const UserHome = () => {
 
     return (
         <>
-            {/* Carousel */}
+        <br />
+            {user.role != 'CLIENT' ?
+                (<div style={{ backgroundColor: '#44AF41', borderRadius: '15px' }} className='sticky-top text-white mb-4'>
+
+                    <h1 className='h1TE text-center'>Client View</h1>
+
+                </div>)
+                :
+                (<></>)}
             <div id="carruselImagenes" className="carousel container slide mt-4 p-0" data-bs-ride="carousel" style={{ height: '65vh', width: '100%' }}>
                 <div className="carousel-inner rounded-4">
                     <div id="uno" className="carousel-item active">
