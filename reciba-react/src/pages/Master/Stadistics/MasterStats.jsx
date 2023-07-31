@@ -62,7 +62,6 @@ export const MasterStats = () => {
         )
 
         setCantOfBills(filterBills.length)
-
         let filterRecycler = []
 
         //Contar cuantas facturas ha hecho cada recicladora
@@ -164,7 +163,6 @@ export const MasterStats = () => {
   useEffect(() => {
     getRecyclers()
   }, [month])
-
 
   return (
     <div className='container my-5'>
