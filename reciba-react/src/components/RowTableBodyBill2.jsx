@@ -2,7 +2,7 @@ import React from 'react'
 import '../css/Dashboard.css'
 import { Link } from 'react-router-dom'
 
-export const RowTableBodyBill2 = ({ id, user, recycler, cantMaterials, payMethod, total, date, status, butCheck }) => {
+export const RowTableBodyBill2 = ({ id, user, recycler, cantMaterials, payMethod, total, date, status, butCheck, butDisable }) => {
 
     const formatDateTime = (timestamp) => {
         const date = new Date(timestamp);

@@ -15,8 +15,8 @@ export const CardBill = ({ cantMaterials, date, payMethod, recycler, status, tot
         </div>
         <div className="card-body">
           <div className='d-flex'>
-            <h1 className='text-success d-flex justify-content-start'>{payMethod}</h1>
-            <h2 className="card-title d-flex justify-content-end text-success">Q{total}</h2>
+            <h1 className={`text-${payMethod === 'ECOINS' ? 'success' : 'primary'} d-flex justify-content-start`}>{payMethod}</h1>
+            <h2 className={`card-title d-flex justify-content-end text-${payMethod === 'ECOINS' ? 'success' : 'primary'}`}>{payMethod === 'ECOINS' ? `${total}pts` : `GTQ${parseFloat(total).toFixed(2)}`}</h2>
           </div>
           
           <h2 className="card-title">{date.split('\T')[0]}</h2>

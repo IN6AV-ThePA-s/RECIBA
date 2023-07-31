@@ -1,8 +1,15 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import '../../css/UserHomePage.css'
 import { ModalClaimReward } from './ModalClaimReward'
+import { AuthContext } from '../../index'
+import { Link } from 'react-router-dom'
 
-export const CardReward = ({ name, desc, partner, range, cantPoints, photo, id, claims }) => {
+export const CardReward = ({ name, desc, partner, range, cantPoints, photo, id, claims, butDel }) => {
+    
+    const { dataUser } = useContext(AuthContext)
+
+    
+
     return (
         <>
             <div className='col'>
@@ -49,17 +56,38 @@ export const CardReward = ({ name, desc, partner, range, cantPoints, photo, id, 
                                             </div>
 
                                         </div>
-                                    ) : (
-                                        <div className="d-grid gap-2">
-                                            <button
-                                                type="button"
-                                                className="btn btn-outline-warning rounded-pill"
-                                                data-bs-toggle="modal" data-bs-target={`#modal${id}`}
-                                            >
-                                                Claim
-                                            </button>
-                                        </div>
-                                    )
+                                    ) : dataUser.role == 'MASTER' ? (
+                                        <>
+                                            <div className="d-flex justify-content-center mt-1">
+                                                <button onClick={(e) => { e.preventDefault(), butDel(id) }} className="btn btn-outline-danger rounded-pill border-0 pl-2">
+                                                    <i className="fa-sharp fa-solid fa-trash "
+                                                        trigger="hover"
+                                                        style={{ width: '25px', height: '25px' }}>
+                                                    </i>
+                                                </button>
+                                                <Link type="button" className="btn btn-outline-primary rounded-pill border-0 mr-2" to={`/master/updateReward/${id}`}>
+                                                    <lord-icon
+                                                        src="https://cdn.lordicon.com/wloilxuq.json"
+                                                        trigger="hover"
+                                                        stroke="100"
+                                                        colors="primary:black, secondary:black"
+                                                        style={{ width: '25px', height: '25px' }}>
+                                                    </lord-icon>
+                                                </Link>
+                                            </div>
+                                        </>) :
+                                        (<>
+                                            <div className="d-grid gap-2">
+                                                <button
+                                                    type="button"
+                                                    className="btn btn-outline-warning rounded-pill"
+                                                    data-bs-toggle="modal" data-bs-target={`#modal${id}`}
+                                                >
+                                                    Claim
+                                                </button>
+                                            </div>
+                                        </>)
+
                                 }
 
                             </div>

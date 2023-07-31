@@ -57,7 +57,7 @@ export const MasterRecyclerUpdate = () => {
 
       if (data.recycler) {
         if (photo)
-        await axios.put(`http://localhost:3033/recycler/uploadImage/${id}`, photo, {
+        await axios.put(`http://localhost:3033/recycler/uploadImage/${data.partner._id}`, photo, {
           headers: { 'Content-type': 'multipart/form-data', 'Authorization': localStorage.getItem('token') }
         })
         Swal.fire({

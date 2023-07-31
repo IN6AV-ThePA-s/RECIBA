@@ -31,6 +31,15 @@ import { UpdateUserPage } from './pages/Master/MasterUserView/UpdateUserPage'
 import { MasterRecyclerView } from './pages/Master/MasterRecyclerView/MasterRecyclerView'
 import { MasterRecyclerUpdate } from './pages/Master/MasterRecyclerView/MasterRecyclerUpdate'
 import { MasterRecyclerAdd } from './pages/Master/MasterRecyclerView/MasterRecyclerAdd'
+import { Stats } from './pages/User/stadistics/Stats'
+import { RecyclerStats } from './pages/Recycler/Stadistics/RecyclerStats'
+import { AddReward } from './pages/Partner/AddReward'
+import { ViewReward } from './pages/Partner/ViewReward'
+import { EditReward } from './pages/Partner/EditReward'
+import { ViewPartner } from './pages/Master/MasterPartnerView/ViewPartner'
+import { UpdatePartner } from './pages/Master/MasterPartnerView/UpdatePartner'
+import { AddPartner } from './pages/Master/MasterPartnerView/AddPartner'
+import { MasterUpdateReward } from './pages/Master/MasterRewardView/MasterUpdateReward'
 
 export const AuthContext = createContext()
 
@@ -99,6 +108,33 @@ export const Index = () => {
                         {
                             path: 'updateRecycler/:id',
                             element: <MasterRecyclerUpdate/>
+                        },
+                        {
+                            path: 'recyclerview/:id',
+                            element: <RecyclerView/>
+                        },
+                        {
+                            path: 'partnerView',
+                            element: <ViewPartner/>
+                        },
+                        {
+                            path: 'addPartner',
+                            element: <AddPartner/>
+                        },
+                        {
+                            path: 'updatePartner/:id',
+                            element: <UpdatePartner/>
+                        },
+                        {
+                            path: 'partnerview/:id',
+                            element: <PartnerView/>
+                        },
+                        {
+                            path:'addReward/:id',
+                            element:<AddReward/>
+                        },{
+                            path: 'updateReward/:id',
+                            element: <MasterUpdateReward/>
                         }
                     ]
                 },
@@ -133,6 +169,10 @@ export const Index = () => {
                         {
                             path: 'viewDetails/:id',
                             element: <ViewDetails/>
+                        },
+                        {
+                            path: 'stats',
+                            element: <Stats/>
                         }
                     ]
                 },
@@ -167,13 +207,30 @@ export const Index = () => {
                         {
                             path: 'viewBillMaterials/:id',
                             element: <ViewBillMaterials/>
+                        },
+                        {
+                            path: 'stats',
+                            element: <RecyclerStats/>
                         }
                     ]
                 },
                 {
                     path: '/partner',
                     element: loggedIn ? (dataUser?.role === 'PARTNER' ? <PartnerDashboard /> : <NotFound />) : (<LoginPage />),
-                    children: []
+                    children: [
+                        {
+                            path:'addReward',
+                            element:<AddReward/>
+                        },
+                        {
+                            path:'viewReward',
+                            element:<ViewReward/>
+                        },
+                        {
+                            path:'editReward/:id',
+                            element:<EditReward/>
+                        }
+                    ]
                 }
             ]
         }

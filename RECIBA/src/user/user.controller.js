@@ -202,6 +202,22 @@ exports.getOwn = async(req, res) => {
     }
 }
 
+/* ----- GET CLIENT USERS ----- */
+exports.getClients = async(req, res) => {
+    try {
+        let users = await User.find({role: 'CLIENT'})
+
+        if(!users) return res.status(404).send({ message: 'Users not found :(' })
+
+        let data = sensitiveData(users)
+        return res.send({ message: 'Users found!', data })
+
+    } catch (err) {
+        console.error(err)
+        return res.status(500).send({ message: 'Error getting users :(', error: err })
+    }
+}
+
 /* ----- GET USERBYUSERNAME ----- */
 exports.getUserByUsername = async(req, res) => {
     try {
@@ -304,9 +320,12 @@ exports.updatePassword = async (req, res) => {
 exports.save = async (req, res) => {
      try {
         let data = req.body
-        if(data.role != ROLES.client){
-            let range = await Range.findOne({name: 'ADMIN'})
-            data.range = range._id.toString()
+        let range = await Range.findOne({name: 'JUNIOR'});
+        data.range = range._id.toString()
+        
+        if(data.role !== ROLES.client){
+            let rangeAdmin = await Range.findOne({name: 'ADMIN'})
+            data.range = rangeAdmin._id.toString()
         }
         console.log(data.range);
         let params = {
@@ -407,11 +426,9 @@ exports.delUser = async (req, res) => {
 /* -----UPLOAD PHOTO ----- */
 exports.uploadImg = async (req, res) => {
     try {
-        const user = req.user
         const id = req.params.id
         const alreadyImg = await User.findOne({ _id: id })
         let pathFile = './src/uploads/users/'
-
         if (alreadyImg.photo) fs.unlinkSync(`${pathFile}${alreadyImg.photo}`)
         if (!req.files.image || !req.files.image.type) return res.status(400).send({ message: 'Have not sent an image :(' })
 
@@ -437,6 +454,7 @@ exports.uploadImg = async (req, res) => {
             { photo: fileName },
             { new: true }
         )
+        
         if (!upUser) return res.status(404).send({ message: 'User not found!' })
         return res.send({ message: 'Photo added successfully' })
 
