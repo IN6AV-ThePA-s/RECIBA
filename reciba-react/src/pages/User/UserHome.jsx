@@ -121,7 +121,7 @@ export const UserHome = () => {
     return (
         <>
         <br />
-            {user.role != 'CLIENT' ?
+            {user?.role != 'CLIENT' ?
                 (<div style={{ backgroundColor: '#44AF41', borderRadius: '15px' }} className='sticky-top text-white mb-4'>
 
                     <h1 className='h1TE text-center'>Client View</h1>
