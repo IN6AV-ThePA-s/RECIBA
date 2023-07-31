@@ -6,6 +6,7 @@ import Swal from 'sweetalert2'
 import axios from 'axios'
 
 export const AddReward2 = () => {
+  /*Obtener datos y crear los necesarios */
   const { dataUser } = useContext(AuthContext)
   const navigate = useNavigate()
   const [form, setForm] = useState({
@@ -21,25 +22,27 @@ export const AddReward2 = () => {
     'Content-Type': 'application/json',
     'Authorization': localStorage.getItem('token')
   }
-
+  /*metodo para cambiar escritura del form*/
   const handleForm = (e) => {
     setForm({
       ...form,
       [e.target.name]: e.target.value
     })
   }
+  /*metodo para cambiar select del form*/
   const handleSelect = (e) => {
     setForm({
       ...form,
       [e.target.name]: e.target.options[e.target.selectedIndex].value
     })
   }
+  /*metodo para cambiar foto del form*/
   const handlePhoto = (e) => {
     let formData = new FormData()
     formData.append('image', e.target.files[0])
     setPhoto(formData)
   }
-
+ /*metodo para obtener partner y cambiarlo en el form */
   const getPartner = async () => {
     try {
       const { data } = await axios.get(`http://localhost:3033/partner/getByUser/${dataUser.sub}`, { headers: headers })
@@ -55,7 +58,7 @@ export const AddReward2 = () => {
       navigate('/partner')
     }
   }
-
+  /*metodo para obtener rango */
   const getRanges = async () => {
     try {
       const { data } = await axios.get(`http://localhost:3033/range/get`, { headers: headers })
@@ -69,7 +72,7 @@ export const AddReward2 = () => {
       Swal.fire(err.response.data?.message, '', 'error')
     }
   }
-
+  /*Metodo para agregar reward */
   const addReward = async () => {
     try {
       const { data } = await axios.post('http://localhost:3033/reward/add', form, { headers: headers })

@@ -426,11 +426,9 @@ exports.delUser = async (req, res) => {
 /* -----UPLOAD PHOTO ----- */
 exports.uploadImg = async (req, res) => {
     try {
-        const user = req.user
         const id = req.params.id
         const alreadyImg = await User.findOne({ _id: id })
         let pathFile = './src/uploads/users/'
-
         if (alreadyImg.photo) fs.unlinkSync(`${pathFile}${alreadyImg.photo}`)
         if (!req.files.image || !req.files.image.type) return res.status(400).send({ message: 'Have not sent an image :(' })
 
@@ -456,6 +454,7 @@ exports.uploadImg = async (req, res) => {
             { photo: fileName },
             { new: true }
         )
+        
         if (!upUser) return res.status(404).send({ message: 'User not found!' })
         return res.send({ message: 'Photo added successfully' })
 

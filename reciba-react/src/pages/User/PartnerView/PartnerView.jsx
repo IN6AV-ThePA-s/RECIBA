@@ -110,18 +110,7 @@ export const PartnerView = () => {
           </h1>
 
           <div className='mb-5 col-auto text-center text-light'>
-            {dataUser.role == 'MASTER' ?
-              (<>
-                <Link to={`/master/addReward/${id}`}>
-                  <button className="btn btn-outline-success rounded-pill border-0 pl-2">
-                    <i className="fa-solid fa-plus"
-                      trigger="hover"
-                      style={{ width: '25px', height: '25px' }}>
-                    </i> ADD
-                  </button>
-                </Link>
-              </>) :
-              (<></>)}
+
             <br />
             <h6 className='bg-danger rounded-pill py-1 px-3'>
               {rewards?.length}{' '}Available

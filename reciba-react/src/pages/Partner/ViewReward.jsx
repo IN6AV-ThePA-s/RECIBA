@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom'
 import { CardRewardOnly } from '../../components/rewards/CardRewardOnly'
 
 export const ViewReward = () => {
+   /*Obtener datos y crear los necesarios */
   const [rewards, setRewards] = useState()
   const navigate = useNavigate()
   const { dataUser } = useContext(AuthContext)
@@ -13,7 +14,7 @@ export const ViewReward = () => {
     'Content-Type': 'application/json',
     'Authorization': localStorage.getItem('token')
   }
-
+  /*obtener las rewards*/
   const getRewards = async () => {
     try {
       const idUserPartner = dataUser.id
@@ -29,7 +30,7 @@ export const ViewReward = () => {
       /* navigate('/partner/addReward') */
     }
   }
-
+  /*Eliminar reward */
   const delRewats = async (id) => {
     try {
       const { data } = await axios.delete(`http://localhost:3033/reward/delete/${id}`, { headers: headers })

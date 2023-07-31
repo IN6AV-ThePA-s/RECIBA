@@ -62,6 +62,12 @@ export const ViewMaterials = () => {
         }
     }
 
+    const [searchTerm, setSearchTerm] = useState('')
+
+    const filteredMaterials = materials.filter((m)=>
+        m.type?.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+
 
     useEffect(() => {
         getMaterials()
@@ -82,8 +88,8 @@ export const ViewMaterials = () => {
                                     type="text"
                                     className="form-control"
                                     placeholder="Search"
-                                /* value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)} */
+                                    value={searchTerm}
+                                    onChange={(e) => setSearchTerm(e.target.value)}
                                 />
                             </div>
                         </div>
@@ -104,10 +110,9 @@ export const ViewMaterials = () => {
 
                     </div>
 
-
                     <div className='row row-cols-1 row-cols-md-2 g-4 text-center'>
                         {
-                            materials?.map(({ _id, type, price, unit, recycle, photo }, index) => (
+                            filteredMaterials?.map(({ _id, type, price, unit, recycle, photo }, index) => (
 
                                 <CartMaterialRecycler
                                     key={index}

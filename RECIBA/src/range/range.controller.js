@@ -3,6 +3,7 @@
 const Range = require('./range.model')
 const fs = require('fs')
 const path = require('path')
+const User = require('../user/user.model')
 
 const { validateData } = require('../utils/validate')
 
@@ -71,7 +72,7 @@ exports.add = async(req, res) => {
         let range = new Range(data)
         await range.save()
 
-        return res.send({ message: 'Range added successfully!' })
+        return res.send({ message: 'Range added successfully!', range: range })
                 
     } catch (err) {
         console.error(err)
@@ -93,6 +94,8 @@ exports.edit = async(req, res) => {
         let msg = validateData(params)
         if (msg) return res.status(400).send({ msg })
 
+        if (data.initExp >= data.limitExp) return res.status(400).send({ message: 'Please select a coherent exp range' })
+
         let upRange = await Range.findOneAndUpdate(
             { _id: id },
             data,
@@ -113,6 +116,18 @@ exports.edit = async(req, res) => {
 exports.del = async(req, res) => {
     try {
         let id = req.params.id
+        let willDelRange = await Range.findOne({ _id: id })
+
+        if (willDelRange.name === 'JUNIOR' || willDelRange.name === 'ADMIN') return res.status(400).send({ message: 'Cannot delete this fundamental range' })
+        
+        let range = await Range.findOne({ $or: [{limitExp: { $lt: willDelRange.initExp }}, {limitExp: { $eq: willDelRange.initExp }}]  })
+        
+        let upUsers = await User.updateMany(
+            { range: id },
+            { range: range._id }
+        )
+
+        if (!upUsers) return res.status(404).send({ message: 'Cannot find any range to update the users' })
 
         let delRange = await Range.findOneAndDelete({ _id: id })
         if (!delRange) return res.status(404).send({ message: 'Range not found and not deleted :(' })
@@ -179,7 +194,7 @@ exports.uploadImg = async (req, res) => {
         const id = req.params.id
         const alreadyImg = await Range.findOne({ _id: id })
 
-        let pathFile = './src/uploads/rages/'
+        let pathFile = './src/uploads/ranges/'
 
         if (alreadyImg.photo) fs.unlinkSync(`${pathFile}${alreadyImg.photo}`)
         if (!req.files.image || !req.files.image.type) return res.status(400).send({ message: 'Have not sent an image :(' })

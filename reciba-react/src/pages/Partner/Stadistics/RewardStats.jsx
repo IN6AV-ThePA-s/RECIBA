@@ -5,6 +5,7 @@ import axios from 'axios'
 import { AuthContext } from '../../../index'
 
 export const RewardStats = () => {
+    /*Obtener el usuario logueado, crear headers y variable de datos*/
     const { dataUser } = useContext(AuthContext)
     const [rewardsData, setRewardsData] = useState({
         labels: undefined,
@@ -19,7 +20,7 @@ export const RewardStats = () => {
         'Content-Type': 'application/json',
         'Authorization': localStorage.getItem('token')
     }
-
+    /*Metodo para obtener el partner y las rewards */
     const getByPartner = async () => {
         try {
             const { data } = await axios(`http://localhost:3033/partner/getByUser/${dataUser.sub}`, { headers: headers })

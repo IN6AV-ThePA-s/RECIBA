@@ -75,11 +75,14 @@ export const UserHome = () => {
                 let user = data.data[0]
                 let perc = 0
 
+                //Establecer el rango total de exp del range
                 let limit = user.range.limitExp - user.range.initExp
                 setLimitExp(limit)
 
+                //Obtener la exp actual del usuario
                 let actual = user.exp
 
+                //Ecuacion para conocer el porcentaje del usuario sobre el range que tiene
                 perc = ((actual - user.range.initExp) * 100) / (limit)
 
                 setExp(perc)
@@ -92,6 +95,7 @@ export const UserHome = () => {
         }
     }
 
+    //Funcion para checkear si el usuario puede ser promovido de rango
     const checkRange = async () => {
         try {
             const { data } = await axios(`${HOST.url}/user/checkRange`, { headers: headers })
@@ -129,6 +133,8 @@ export const UserHome = () => {
                 </div>)
                 :
                 (<></>)}
+
+            {/* Carousel */}
             <div id="carruselImagenes" className="carousel container slide mt-4 p-0" data-bs-ride="carousel" style={{ height: '65vh', width: '100%' }}>
                 <div className="carousel-inner rounded-4">
                     <div id="uno" className="carousel-item active">
@@ -171,6 +177,7 @@ export const UserHome = () => {
 
             <br />
 
+            {/* EXP & ECOINS */}
             <div className='container mt-3'>
                 <div className='container row'>
                     <div className='col-6'>

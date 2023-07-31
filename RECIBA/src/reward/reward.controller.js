@@ -44,9 +44,6 @@ exports.addReward = async (req, res) => {
 exports.getRewards = async (req, res) => {
     try {
         const rewards = await Reward.find().populate('partner').populate('range')
-        if (rewards.length == 0) {
-            return res.status(404).send({ message: 'Rewards not found.' })
-        }
         return res.send({ message: 'Rewards found:', rewards })
     } catch (err) {
         console.error(err)
@@ -109,7 +106,6 @@ exports.updateReward = async (req, res) => {
         const params = {
             name: data.name,
             description: data.description,
-            partner: data.partner,
             range: data.range,
             cantPoints: data.cantPoints
         }
