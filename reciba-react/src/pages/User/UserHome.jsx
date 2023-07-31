@@ -218,21 +218,28 @@ export const UserHome = () => {
 
                 <div className="row row-cols-1 row-cols-md-2 g-4">
                     {
-                        recyclers?.map(({ name, direction, _id, email, phone, startHour, endHour, photos }, index) => {
-                            return (
-                                <CardRecycler
-                                    key={index}
-                                    name={name}
-                                    direction={direction}
-                                    email={email}
-                                    id={_id}
-                                    phone={phone}
-                                    startHour={startHour}
-                                    endHour={endHour}
-                                    photos={photos}
-                                />
-                            )
-                        })
+                        recyclers?.length != 0 ? (
+                            recyclers?.map(({ name, direction, _id, email, phone, startHour, endHour, photos }, index) => {
+                                return (
+                                    <CardRecycler
+                                        key={index}
+                                        name={name}
+                                        direction={direction}
+                                        email={email}
+                                        id={_id}
+                                        phone={phone}
+                                        startHour={startHour}
+                                        endHour={endHour}
+                                        photos={photos}
+                                    />
+                                )
+                            })
+                        ) : (
+                            null
+                        )
+
+
+
                     }
                 </div>
             </div>
@@ -256,23 +263,28 @@ export const UserHome = () => {
 
                 <div className='row row-cols-1 row-cols-md-2 g-4 text-center'>
                     {
-                        rewards?.map(({ name, description, partner, range, cantPoints, photo, _id }, index) => {
-                            return (
-                                <>
-                                    <CardReward
-                                        id={_id}
-                                        name={name}
-                                        desc={description}
-                                        range={range}
-                                        cantPoints={cantPoints}
-                                        photo={photo}
-                                        partner={partner}
-                                        key={index}
-                                    />
-                                </>
+                        recyclers?.length != 0 ? (
+                            rewards?.map(({ name, description, partner, range, cantPoints, photo, _id }, index) => {
+                                return (
+                                    <>
+                                        <CardReward
+                                            id={_id}
+                                            name={name}
+                                            desc={description}
+                                            range={range}
+                                            cantPoints={cantPoints}
+                                            photo={photo}
+                                            partner={partner}
+                                            key={index}
+                                        />
+                                    </>
 
-                            )
-                        })
+                                )
+                            })
+                        ) : (
+                            null
+                        )
+
                     }
                 </div>
             </div>

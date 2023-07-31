@@ -54,6 +54,15 @@ export const AddReward = () => {
 
   const addReward = async () => {
     try {
+      const idUserPartner = dataUser.id
+      const findPartner = await axios(`http://localhost:3033/partner/getByUser/${idUserPartner}`, {headers: headers})
+      console.log(findPartner.data.partner._id);
+      setForm({
+        ...form,
+        'partner': findPartner?.data.partner._id
+      })
+      console.log(form);
+
       const { data } = await axios.post('http://localhost:3033/reward/add', form, { headers: headers })
       if (data.reward) {
         if (photo) {
@@ -80,7 +89,7 @@ export const AddReward = () => {
   useEffect(() => {
     setForm({
       ...form,
-      'range': range[0]?._id
+      'range': range[0]?._id,
     })
   }, [range])
 
@@ -136,7 +145,7 @@ export const AddReward = () => {
 
                 </div>
                 <button onClick={(e) => { addReward() }} className="btn btn-success me-1 mt-4">Add Reward</button>
-                <Link to={`/${id? `master/partnerView/${id}` : 'partner/partnerview' }`} >
+                <Link to={`/${id? `master/partnerView/${id}` : 'partner/viewReward' }`} >
                   <button className="btn btn-danger me-1 mt-4">Cancel</button>
                 </Link>
 

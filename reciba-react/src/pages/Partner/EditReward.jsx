@@ -12,7 +12,7 @@ export const EditReward = () => {
   const [form, setForm] = useState({
     name: '',
     description: '',
-    partner: dataUser.sub,
+    partner: '',
     range: '',
     cantPoints: ''
   })
@@ -64,6 +64,7 @@ export const EditReward = () => {
 
   const editReward = async () => {
     try {
+      
       const { data } = await axios.put(`http://localhost:3033/reward/update/${id}`, form, { headers: headers })
       if (data.reward) {
         if (photo) {
@@ -73,7 +74,7 @@ export const EditReward = () => {
       }
       Swal.fire({
         title: 'Edit',
-        text: `Reward "${data.reward?.name}" was successfully updated`,
+        text: `Reward was successfully updated`,
         icon: 'success'
       })
       navigate('/partner/viewReward')
@@ -148,7 +149,7 @@ export const EditReward = () => {
 
                 </div>
                 <button onClick={() => { editReward() }} className="btn btn-success me-1 mt-4">Save Changes</button>
-                <Link to={'/partner'} >
+                <Link to={'/partner/viewReward'} >
                   <button className="btn btn-danger me-1 mt-4">Cancel</button>
                 </Link>
 
