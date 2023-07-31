@@ -1,8 +1,12 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import '../../css/UserHomePage.css'
 import { Link } from 'react-router-dom'
+import { AuthContext } from '../..'
 
 export const CardPartner = ({ id, name, phone, email, address, photo, admin, butDel }) => {
+
+    const { dataUser } = useContext(AuthContext)
+    
     return (
         <div className="col">
             <div className="h-100 transitionY shadow-lg rounded-4">
@@ -23,7 +27,7 @@ export const CardPartner = ({ id, name, phone, email, address, photo, admin, but
                     <p className="card-text">{address}</p>
 
                     <div className="d-grid gap-2">
-                        <Link type="button" className="btn btn-outline-success rounded-pill" to={`/${butDel ? 'master' : 'home'}/partnerview/${id}`}>
+                        <Link type="button" className="btn btn-outline-success rounded-pill" to={`/${dataUser.role === 'MASTER' ? 'master' : 'home'}/partnerview/${id}`}>
                             Visit
                         </Link>
                     </div>

@@ -111,11 +111,6 @@ export const NavbarUser = () => {
                                             <h6><i className="fa-solid fa-plus"></i>{' '}Add Recycler</h6>
                                         </Link>
 
-                                        <h3 className='fw-bold mt-3' style={{ color: '#086c3c' }}>Statistics</h3>
-                                        <Link to={'/master/stats'} className='optionSidebar'>
-                                            <h6>Watch my stats</h6>
-                                        </Link>
-
                                         <h3 className='fw-bold mt-3' style={{ color: '#086c3c' }}>Ranges</h3>
                                         <Link to={'/master/rangeView'} className='optionSidebar'>
                                             <h6>Ranges view</h6>
@@ -128,6 +123,11 @@ export const NavbarUser = () => {
                                         </Link>
                                         <Link to={'/master/addPartner'} className='optionSidebar'>
                                             <h6><i className="fa-solid fa-plus"></i>{' '}Add Partner</h6>
+                                        </Link>
+                                        
+                                        <h3 className='fw-bold mt-3' style={{ color: '#086c3c' }}>Statistics</h3>
+                                        <Link to={'/master/stats'} className='optionSidebar'>
+                                            <h6>Watch my stats</h6>
                                         </Link>
                                     </>
                                 ) : (

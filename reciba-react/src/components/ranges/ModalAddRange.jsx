@@ -1,14 +1,15 @@
 import axios from 'axios'
 import React, { useState } from 'react'
 import Swal from 'sweetalert2'
+import photoError from '../../assets/defaultRange.png'
 
 const HOST = Object.freeze({ url: 'http://localhost:3033' })
 
-export const ModalEditRange = ({ id, name, initExp, limitExp, photo }) => {
+export const ModalAddRange = () => {
     const [form, setForm] = useState({
-        name: name,
-        initExp: initExp,
-        limitExp: limitExp
+        name: '',
+        initExp: 0,
+        limitExp: 0
     })
     const [ePhoto, setEPhoto] = useState()
     const [uPhoto, setUPhoto] = useState()
@@ -21,6 +22,10 @@ export const ModalEditRange = ({ id, name, initExp, limitExp, photo }) => {
     const headersPhoto = {
         'Content-Type': 'multipart/form-data',
         'Authorization': localStorage.getItem('token')
+    }
+
+    const handleImageError = (e) => {
+        e.target.src = photoError
     }
 
     const handlePhoto = (e) => {
@@ -51,38 +56,38 @@ export const ModalEditRange = ({ id, name, initExp, limitExp, photo }) => {
         })
     }
 
-    const updateRange = async () => {
+    const addRange = async () => {
         try {
-            const { data } = await axios.put(`${HOST.url}/range/edit/${id}`, form, { headers: headers })
+            const { data } = await axios.post(`${HOST.url}/range/add`, form, { headers: headers })
 
             if (ePhoto) {
-               await axios.put(`${HOST.url}/range/uploadImage/${id}`, ePhoto, { headers: headersPhoto })
+                await axios.put(`${HOST.url}/range/uploadImage/${data.range._id}`, ePhoto, { headers: headersPhoto })
             }
             
             if (data) {
-                Swal.fire('Updated successfully', '', 'success').then(() => location.reload())
+                Swal.fire('Range created successfully', '', 'success').then(() => location.reload())
             }
-
+            
         } catch (err) {
             console.error(err)
             Swal.fire(err.response.data.message, '', 'error')
         }
     }
-
+    
     return (
         <>
-            <div className="modal modal-lg modal-dialog-scrollable fade" id={`modal${id}`} tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div className="modal modal-lg modal-dialog-scrollable fade" id={`modalAddRange`} tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div className="modal-dialog">
                     <div className="modal-content">
                         <div className="modal-header">
-                            <h1 className="modal-title fs-5" id="exampleModalLabel">{`Edit ${name}'s info`}</h1>
+                            <h1 className="modal-title fs-5" id="exampleModalLabel">{`Add range`}</h1>
                             <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div className="modal-body">
 
                             <div className='d-flex justify-content-center'>
                                 <img
-                                    src={photo ?  `http://localhost:3033/range/getImage/${photo}` : uPhoto}
+                                    src={uPhoto ? uPhoto : photoError}
                                     crossOrigin='anonymous'
                                     className="img-fluid rounded-circle shadow"
                                     style={{
@@ -90,6 +95,7 @@ export const ModalEditRange = ({ id, name, initExp, limitExp, photo }) => {
                                         width: '30vh',
                                         height: '30vh'
                                     }}
+                                    onError={handleImageError}
                                 />
                             </div>
 
@@ -101,28 +107,26 @@ export const ModalEditRange = ({ id, name, initExp, limitExp, photo }) => {
 
                             <div className="mb-3">
                                 <label htmlFor="name" className="form-label">Name</label>
-                                <input onChange={handleForm} defaultValue={name} type="email" className="form-control" id="name" name='name' />
+                                <input onChange={handleForm} type="email" className="form-control" id="name" name='name' />
 
                             </div>
 
                             <div className="mb-3">
                                 <label htmlFor="initExp" className="form-label">Initial Exp</label>
-                                <input onChange={handleForm} defaultValue={initExp} type="number" className="form-control" id="initExp" name='initExp' />
+                                <input onChange={handleForm} type="email" className="form-control" id="initExp" name='initExp' />
 
                             </div>
 
                             <div className="mb-3">
                                 <label htmlFor="limitExp" className="form-label">Limit Exp</label>
-                                <input onChange={handleForm} defaultValue={limitExp} type="number" className="form-control" id="limitExp" name='limitExp' />
+                                <input onChange={handleForm} type="email" className="form-control" id="limitExp" name='limitExp' />
 
                             </div>
-
-
 
                         </div>
                         <div className="modal-footer justify-content-center">
                             <button type="button" className="btn btn-outline-secondary rounded-pill my-3" data-bs-dismiss="modal">Close</button>
-                            <button type="button" className="btn btn-outline-success rounded-pill my-3" onClick={() => updateRange()}>Update</button>
+                            <button type="button" className="btn btn-outline-success rounded-pill my-3" onClick={() => addRange()}>Create</button>
                         </div>
                     </div>
                 </div>

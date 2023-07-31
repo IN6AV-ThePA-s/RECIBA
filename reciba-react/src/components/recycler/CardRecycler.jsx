@@ -1,11 +1,12 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import c1 from '../../assets/c1.jpg'
 import '../../css/UserHomePage.css'
 import { Link, useNavigate } from 'react-router-dom'
+import { AuthContext } from '../..'
 
 export const CardRecycler = ({ name, direction, id, email, phone, startHour, endHour, photos, user, butDel }) => {
 
-    
+    const { dataUser } = useContext(AuthContext)
 
     return (
         <div className='col'>
@@ -34,7 +35,7 @@ export const CardRecycler = ({ name, direction, id, email, phone, startHour, end
                             <p className="card-text"><small className="text-body-secondary">Phone: {phone}</small></p>
 
                             <div className="d-grid gap-2">
-                                <Link type="button" className="btn btn-outline-success rounded-pill" to={`/${butDel ? 'master' : 'home'}/recyclerview/${id}`}>
+                                <Link type="button" className="btn btn-outline-success rounded-pill" to={`/${dataUser.role === 'MASTER' ? 'master' : 'home'}/recyclerview/${id}`}>
                                     Visit
                                 </Link>
                             </div>

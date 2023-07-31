@@ -3,6 +3,7 @@ import React, { useContext, useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import Swal from 'sweetalert2'
 import photoError from '../../assets/userDefault.png'
+import rangePhotoError from '../../assets/defaultRange.png'
 import { AuthContext } from '../..'
 import { ModalEditImg } from '../../components/user/ModalEditImg'
 import { ModalDelAccount } from '../../components/user/ModalDelAccount'
@@ -69,6 +70,10 @@ export const Settings = () => {
 
     const handleImageError = (e) => {
         e.target.src = photoError
+    }
+
+    const handleRangeImageError = (e) => {
+        e.target.src = rangePhotoError
     }
 
     useEffect(() => {
@@ -228,13 +233,14 @@ export const Settings = () => {
                     <h1 className='align-self-center mb-3'>Range</h1>
                     <h1 className='align-self-center mb-3'>{user?.range?.name}</h1>
                     <img
-                        src={`${HOST.url}/range/getImage/${user?.range?.photo}`}
+                        src={user?.range?.photo ? `${HOST.url}/range/getImage/${user?.range?.photo}` : rangePhotoError}
                         crossOrigin='anonymous'
                         className='img-fluid rounded-circle align-self-center'
                         style={{
                             objectFit: 'cover',
                             width: '20%',
                         }}
+                        onError={handleRangeImageError}
                     />
                     <br />
                     {

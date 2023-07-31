@@ -1,5 +1,5 @@
 import React from 'react'
-import photoError from '../../assets/userDefault.png'
+import photoError from '../../assets/defaultRange.png'
 import { Link } from 'react-router-dom';
 import { ModalEditRange } from './ModalEditRange';
 

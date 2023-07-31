@@ -71,7 +71,7 @@ exports.add = async(req, res) => {
         let range = new Range(data)
         await range.save()
 
-        return res.send({ message: 'Range added successfully!' })
+        return res.send({ message: 'Range added successfully!', range: range })
                 
     } catch (err) {
         console.error(err)

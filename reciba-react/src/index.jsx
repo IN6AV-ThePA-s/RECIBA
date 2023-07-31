@@ -43,6 +43,7 @@ import { UpdatePartner } from './pages/Master/MasterPartnerView/UpdatePartner'
 import { AddPartner } from './pages/Master/MasterPartnerView/AddPartner'
 import { MasterUpdateReward } from './pages/Master/MasterRewardView/MasterUpdateReward'
 import { RangesView } from './pages/Master/Ranges/RangesView'
+import { ModalAddRange } from './components/ranges/ModalAddRange'
 
 export const AuthContext = createContext()
 
@@ -150,6 +151,10 @@ export const Index = () => {
                         {
                             path: 'rangeView',
                             element: <RangesView/>
+                        },
+                        {
+                            path: 'addRange',
+                            element: <ModalAddRange/>
                         }
                     ]
                 },
