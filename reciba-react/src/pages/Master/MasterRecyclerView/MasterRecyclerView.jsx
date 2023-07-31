@@ -35,6 +35,7 @@ export const MasterRecyclerView = () => {
             }).then(async (result) => {
                 if (result.isConfirmed) {
                     const { data } = await axios.delete(`http://localhost:3033/recycler/delete/${id}`, { headers: headers })
+                    return console.log(a)
                         .catch((err) => {
                             Swal.fire(err.response.data.message, '', 'error')
                         })
@@ -78,7 +79,7 @@ export const MasterRecyclerView = () => {
                                         startHour={startHour}
                                         endHour={endHour}
                                         user={user}
-                                        butDel={() => del(_id)}
+                                        butDel={del}
                                     />
                                 )
                             })

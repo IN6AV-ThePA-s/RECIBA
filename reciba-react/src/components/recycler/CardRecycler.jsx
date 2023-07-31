@@ -43,7 +43,7 @@ export const CardRecycler = ({ name, direction, id, email, phone, startHour, end
                             {
                                 butDel ? (
                                     <div className="d-flex justify-content-center mt-1">
-                                        <button onClick={(e) => { e.preventDefault(), butDel(id) }} className="btn btn-outline-danger rounded-pill border-0 pl-2">
+                                        <button onClick={(e) => { butDel(id) }} className="btn btn-outline-danger rounded-pill border-0 pl-2">
                                             <i className="fa-sharp fa-solid fa-trash "
                                                 trigger="hover"
                                                 style={{ width: '25px', height: '25px' }}>
