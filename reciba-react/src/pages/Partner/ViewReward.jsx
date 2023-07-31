@@ -14,20 +14,19 @@ export const ViewReward = () => {
     'Authorization': localStorage.getItem('token')
   }
 
-  const getPartnerRewards = async() => {
+  const getRewards = async () => {
     try {
-      const { data } = await axios.get(`http://localhost:3033/partner/getByUser/${dataUser.sub}`,{headers:headers})
-      let partnerId = data.partner._id
-      if(data){
-        const { data } = await axios.get(`http://localhost:3033/reward/getByPartner/${partnerId}`, { headers: headers })
-        if (data) {
-          setRewards(data.rewards)
-        }
-      } 
+      const idUserPartner = dataUser.id
+      const findPartner = await axios(`http://localhost:3033/partner/getByUser/${idUserPartner}`, {headers: headers})
+      const { data } = await axios.get(`http://localhost:3033/reward/getByPartner/${findPartner?.data.partner._id}`, { headers: headers })
+      console.log(data.rewards);
+      if (data) {
+        setRewards(data.rewards)
+      }
     } catch (err) {
       console.error(err);
-      Swal.fire(err.response.data?.message, '', 'error')
-      navigate('/partner')
+      Swal.fire(err.response.data.message, '', 'error')
+      /* navigate('/partner/addReward') */
     }
   }
 
@@ -37,7 +36,7 @@ export const ViewReward = () => {
       getRewards()
       Swal.fire({
         title: 'Deleted',
-        text: `Reward "${data.deleteReward.name}" was successfully deleted`,
+        text: `Reward "${data?.deleteReward.name}" was successfully deleted`,
         icon: 'success'
       })
     } catch (err) {
@@ -47,7 +46,7 @@ export const ViewReward = () => {
   }
 
   useEffect(() => {
-    getPartnerRewards()
+    getRewards()
   }, [])
 
   return (
@@ -61,7 +60,7 @@ export const ViewReward = () => {
 
         <div className='row row-cols-1 row-cols-md-2 g-4 text-center mb-5'>
           {
-            rewards?.map(({ name, description, partner, range, cantPoints, photo, _id }, index) => {
+            rewards?.map(({ name, description, range, cantPoints, partner, photo, _id }, index) => {
               return (
                 <CardRewardOnly
                   id={_id}

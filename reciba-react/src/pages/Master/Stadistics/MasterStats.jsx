@@ -13,6 +13,26 @@ export const MasterStats = () => {
       }
     ]
   })
+  const [rewardData, setRewardData] = useState({
+    labels: undefined,
+    datasets: [
+      {
+        label: undefined,
+        data: null
+      }
+    ]
+  })
+  const [popRewards, setPopRewards] = useState({
+    labels: undefined,
+    datasets: [
+      {
+        label: undefined,
+        data: null
+      }
+    ]
+  })
+  const [cantPopRewards, setCantPopRewards] = useState(0)
+  const [claims, setClaims] = useState(0)
   const [month, setMonth] = useState(`${new Date().getMonth() + 1}`)
   const [cantOfBills, setCantOfBills] = useState(0)
   const headers = {
@@ -27,6 +47,8 @@ export const MasterStats = () => {
     try {
       const { data } = await axios(`http://localhost:3033/bill/get`, { headers: headers })
       const { data: recyclers } = await axios(`http://localhost:3033/recycler/get`, { headers: headers })
+      const { data: partners } = await axios(`http://localhost:3033/partner/get`, { headers: headers })
+      const { data: rewards } = await axios(`http://localhost:3033/reward/get`, { headers: headers })
 
       if (data) {
         //Obtener fecha actual
@@ -40,14 +62,13 @@ export const MasterStats = () => {
         )
 
         setCantOfBills(filterBills.length)
-        
         let filterRecycler = []
 
         //Contar cuantas facturas ha hecho cada recicladora
         for (let item of recyclers.recyclers) {
 
           //Obtener todas las facturas que se hayan hecho en la recicladora en ciclo
-          const f = filterBills.filter((b) => 
+          const f = filterBills.filter((b) =>
             b.recycler._id.includes(item._id)
           )
 
@@ -62,8 +83,71 @@ export const MasterStats = () => {
           labels: filterRecycler.map((data) => data.name),
           datasets: [
             {
-              label: 'Recyclers',
+              label: 'Cant of bills',
               data: filterRecycler.map((data) => data.bills)
+            }
+          ]
+        })
+
+
+        //Grafica por partners con recompensas mas reclamadas
+        let filterRewards = []
+        let totalClaims = 0
+
+        for (let item of partners.partners) {
+          const f = rewards.rewards.filter((b) =>
+            b.partner._id.includes(item._id)
+          )
+
+          var cantOfClaims = 0
+
+          for (let r of f) {
+            cantOfClaims = cantOfClaims + r.claims
+            totalClaims = totalClaims + r.claims
+          }
+
+          filterRewards.push({
+            name: item.name,
+            cantOfClaims: cantOfClaims
+          })
+        }
+
+        setClaims(totalClaims)
+
+        setRewardData({
+          labels: filterRewards.map((data) => data.name),
+          datasets: [
+            {
+              label: 'Rewards Claimed',
+              data: filterRewards.map((data) => data.cantOfClaims)
+            }
+          ]
+        })
+
+
+        //Grafica de rewards mas populares
+
+        const filteredRewards = rewards.rewards.filter((b) =>
+          b.claims > 10
+        )
+
+        let mostPopRewards = []
+
+        for (let item of filteredRewards) {
+          mostPopRewards.push({
+            name: item.name,
+            cantOfClaims: item.claims
+          })
+        }
+
+        setCantPopRewards(mostPopRewards.length)
+
+        setPopRewards({
+          labels: mostPopRewards.map((data) => data.name),
+          datasets: [
+            {
+              label: 'Rewards Claimed',
+              data: mostPopRewards.map((data) => data.cantOfClaims)
             }
           ]
         })
@@ -79,7 +163,6 @@ export const MasterStats = () => {
   useEffect(() => {
     getRecyclers()
   }, [month])
-  
 
   return (
     <div className='container my-5'>
@@ -113,10 +196,31 @@ export const MasterStats = () => {
         Most popular recyclers
       </h1>
 
-      <h3 className='d-flex justify-content-end'>Total of bills: {cantOfBills}</h3>
+      <h3 className='d-flex justify-content-end'>Total of bills this month: {cantOfBills}</h3>
 
       <div className='container mb-5'>
         <BarChart chartData={recyclerData} />
+      </div>
+
+
+      <h1 className='py-1 text-secondary'>
+        Most popular partners
+      </h1>
+
+      <h3 className='d-flex justify-content-end'>Total claims of all time: {claims}</h3>
+
+      <div className='container mb-5'>
+        <BarChart chartData={rewardData} />
+      </div>
+
+      <h1 className='py-1 text-secondary'>
+        Most popular rewards
+      </h1>
+
+      <h3 className='d-flex justify-content-end'>Popular rewards: {cantPopRewards}</h3>
+
+      <div className='container mb-5'>
+        <BarChart chartData={popRewards} />
       </div>
 
     </div>

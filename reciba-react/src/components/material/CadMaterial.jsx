@@ -31,7 +31,7 @@ export const CadMaterial = ({ _id, type, price, unit, photo, recycle, butDel }) 
                         </div>
 
                         {
-                            dataUser.role === 'CLIENT' || dataUser.role === 'PARTNER' ? (
+                            dataUser.role === 'CLIENT' || dataUser.role === 'PARTNER' || dataUser.role === 'MASTER' ? (
                                 <></>
                             ) : (
                                 <>

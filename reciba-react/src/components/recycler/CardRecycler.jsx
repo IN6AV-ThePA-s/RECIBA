@@ -1,9 +1,12 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import c1 from '../../assets/c1.jpg'
 import '../../css/UserHomePage.css'
 import { Link, useNavigate } from 'react-router-dom'
+import { AuthContext } from '../..'
 
 export const CardRecycler = ({ name, direction, id, email, phone, startHour, endHour, photos, user, butDel }) => {
+
+    const { dataUser } = useContext(AuthContext)
 
     return (
         <div className='col'>
@@ -12,7 +15,7 @@ export const CardRecycler = ({ name, direction, id, email, phone, startHour, end
                     <div className="col-sm-5">
                         <img
                             src={`http://localhost:3033/recycler/getImage/${photos?.[0]}`}
-                            crossOrigin='anonymous' 
+                            crossOrigin='anonymous'
                             className="img-fluid rounded-5 shadow"
                             style={{
                                 objectFit: 'cover',
@@ -30,24 +33,24 @@ export const CardRecycler = ({ name, direction, id, email, phone, startHour, end
                             <span className="badge bg-dark">Contact</span>
                             <p className="card-text mb-0"><small className="text-body-secondary">Email: {email}</small></p>
                             <p className="card-text"><small className="text-body-secondary">Phone: {phone}</small></p>
-                            
+
                             <div className="d-grid gap-2">
-                                <Link type="button" className="btn btn-outline-success rounded-pill" to={`/${butDel ? 'master' : 'home'}/recyclerview/${id}`}>
+                                <Link type="button" className="btn btn-outline-success rounded-pill" to={`/${dataUser.role === 'MASTER' ? 'master' : 'home'}/recyclerview/${id}`}>
                                     Visit
                                 </Link>
                             </div>
-                            
+
                             {
                                 butDel ? (
                                     <div className="d-flex justify-content-center mt-1">
-                                        <button onClick={(e) =>{e.preventDefault(), butDel(id)}} className="btn btn-outline-danger rounded-pill border-0 pl-2">
+                                        <button onClick={(e) => { butDel(id) }} className="btn btn-outline-danger rounded-pill border-0 pl-2">
                                             <i className="fa-sharp fa-solid fa-trash "
                                                 trigger="hover"
                                                 style={{ width: '25px', height: '25px' }}>
                                             </i>
                                         </button>
                                         <Link type="button" className="btn btn-outline-primary rounded-pill border-0 mr-2" to={`/master/updateRecycler/${id}`}>
-                                        <lord-icon
+                                            <lord-icon
                                                 src="https://cdn.lordicon.com/wloilxuq.json"
                                                 trigger="hover"
                                                 stroke="100"
@@ -60,7 +63,7 @@ export const CardRecycler = ({ name, direction, id, email, phone, startHour, end
                                     <></>
                                 )
                             }
-                            
+
                         </div>
                     </div>
                 </div>

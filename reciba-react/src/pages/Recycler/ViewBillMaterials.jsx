@@ -60,7 +60,7 @@ export const ViewBillMaterials = () => {
 
 
                     /* ***********CAMBIAR A 300 DESPUES DE PRUEBAS************  */
-                    if (difference >= 60000) {
+                    if (difference >= 300) {
                         return (
                             Swal.fire({
                                 title: 'The invoice cannot be disabled after 5 minutes of being created.',

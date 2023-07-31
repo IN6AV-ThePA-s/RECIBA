@@ -3,6 +3,7 @@ import React, { useContext, useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import Swal from 'sweetalert2'
 import photoError from '../../assets/userDefault.png'
+import rangePhotoError from '../../assets/defaultRange.png'
 import { AuthContext } from '../..'
 import { ModalEditImg } from '../../components/user/ModalEditImg'
 import { ModalDelAccount } from '../../components/user/ModalDelAccount'
@@ -31,6 +32,8 @@ export const Settings = () => {
 
             if (data) {
                 if (data.data[0].photo) setPhoto(true)
+                console.log(data.data[0]);
+                if (data.data[0].role !== 'CLIENT') return setUser(data.data[0])
 
                 let user = data.data[0]
                 let perc = 0
@@ -69,6 +72,10 @@ export const Settings = () => {
         e.target.src = photoError
     }
 
+    const handleRangeImageError = (e) => {
+        e.target.src = rangePhotoError
+    }
+
     useEffect(() => {
         getOwn()
     }, [])
@@ -86,26 +93,33 @@ export const Settings = () => {
                 </div>
 
                 <hr />
-                <div className='row container'>
-                    <div className='col-auto'>
-                        <button 
-                            type='button' 
-                            className='btn btn-outline-warning' 
-                            data-bs-toggle="modal" data-bs-target={`#modalEditAccount`}
-                        >
-                            Edit
-                        </button>
-                    </div>
-                    <div className='col-auto'>
-                        <button
-                            type='button'
-                            className='btn btn-outline-danger'
-                            data-bs-toggle="modal" data-bs-target={`#modalDeleteAccount`}
-                        >
-                            Delete your account
-                        </button>
-                    </div>
-                </div>
+                {
+                    user?.role === 'CLIENT' ? (
+                        <div className='row container'>
+                            <div className='col-auto'>
+                                <button
+                                    type='button'
+                                    className='btn btn-outline-warning'
+                                    data-bs-toggle="modal" data-bs-target={`#modalEditAccount`}
+                                >
+                                    Edit
+                                </button>
+                            </div>
+                            <div className='col-auto'>
+                                <button
+                                    type='button'
+                                    className='btn btn-outline-danger'
+                                    data-bs-toggle="modal" data-bs-target={`#modalDeleteAccount`}
+                                >
+                                    Delete your account
+                                </button>
+                            </div>
+                        </div>
+                    ) : (
+                        <></>
+                    )
+                }
+                
 
 
                 <div className='row g-0 align-items-center mb-5 my-4 rounded-4 shadow-lg p-5 bg-dark text-light'>
@@ -143,15 +157,45 @@ export const Settings = () => {
                         <span class="badge rounded-pill text-bg-success text-light">Phone</span>
                         <h6 className=''>{user?.phone}</h6>
                         <hr />
-                        <h5>
-                            <Link to={'/home/bills'} className='text-warning text-decoration-none'>Bills</Link>
-                        </h5>
-                        <h5>
-                            <Link to={'/home/claimers'} className='text-warning text-decoration-none'>Rewards history</Link>
-                        </h5>
-                        <h5>
-                            <a data-bs-toggle="modal" data-bs-target={`#modalChangePass`} className='text-warning text-decoration-none'>Change password</a>
-                        </h5>
+                        {
+                            user?.role === 'CLIENT' ? (
+                                <>
+                                    <h5>
+                                        <Link to={'/home/bills'} className='text-warning text-decoration-none'>Bills</Link>
+                                    </h5>
+                                    <h5>
+                                        <Link to={'/home/claimers'} className='text-warning text-decoration-none'>Rewards history</Link>
+                                    </h5>
+                                </>
+                                
+                            ) : (
+
+                                user?.role === 'MASTER' ? (
+                                    <>
+                                        <h5>
+                                            <Link to={`/master/stats`} className='text-warning text-decoration-none'>View Stats</Link>
+                                        </h5>
+                                    </>
+                                ) : (
+                                    user?.role === 'PARTNER' ? (
+                                        <>
+                                            <h5>
+                                                <Link to={`/partner/rewardStats`} className='text-warning text-decoration-none'>View Stats</Link>
+                                            </h5>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <h5>
+                                                <Link to={`/recycler/stats`} className='text-warning text-decoration-none'>View Stats</Link>
+                                            </h5>
+                                        </>
+                                    )
+                                )
+                                
+                            )
+                        }
+
+                        <Link data-bs-toggle="modal" data-bs-target={`#modalChangePass`} className='text-warning text-decoration-none fs-5'>Change password</Link>
                     </div>
                 </div>
             </div>
@@ -160,13 +204,26 @@ export const Settings = () => {
                 <div className='container row'>
                     <div className='col-6'>
                         <div className="progress" role="progressbar" aria-label="Animated striped example" aria-valuenow={`${user?.exp}`} aria-valuemin='0' aria-valuemax={`${limitExp}`}>
-                            <div className="progress-bar progress-bar-striped progress-bar-animated bg-success" style={{ width: `${exp}%` }}>{exp}%</div>
+                            <div className="progress-bar progress-bar-striped progress-bar-animated bg-success" style={{ width: `${user?.role === 'CLIENT' ? exp : '100'}%` }}>{user?.role === 'CLIENT' ? exp : 'Infinite '}%</div>
                         </div>
-                        <h6>{user?.exp} - {user?.range.limitExp} exp</h6>
+                        {
+                            user?.role === 'CLIENT' ? (
+                                <h6>{user?.exp} - {user?.range.limitExp} exp</h6>
+                            ) : (
+                                <h6>Infinite - Infinite exp</h6>
+                            )
+                        }
                     </div>
 
                     <div className='col-6 p-0 text-end'>
-                        <h4>Ecoins: {user?.points}</h4>
+                        {
+                            user?.role === 'CLIENT' ? (
+                                <h4>Ecoins: {user?.points}</h4>
+                            ) : (
+                                <h4>Ecoins: Infinite</h4>
+                            )
+                        }
+                        
                     </div>
                 </div>
             </div>
@@ -174,18 +231,25 @@ export const Settings = () => {
             <div className='container'>
                 <div className='d-flex flex-column my-5'>
                     <h1 className='align-self-center mb-3'>Range</h1>
-                    <h1 className='align-self-center mb-3'>{user?.range.name}</h1>
+                    <h1 className='align-self-center mb-3'>{user?.range?.name}</h1>
                     <img
-                        src={`${HOST.url}/range/getImage/${user?.range.photo}`}
+                        src={user?.range?.photo ? `${HOST.url}/range/getImage/${user?.range?.photo}` : rangePhotoError}
                         crossOrigin='anonymous'
                         className='img-fluid rounded-circle align-self-center'
                         style={{
                             objectFit: 'cover',
                             width: '20%',
                         }}
+                        onError={handleRangeImageError}
                     />
                     <br />
-                    <h5 className='text-center'>{user?.range.initExp} - {user?.range.limitExp}</h5>
+                    {
+                        user?.role === 'CLIENT' ? (
+                            <h6 className='text-center'>{user?.exp} - {user?.range.limitExp} exp</h6>
+                        ) : (
+                            <h6 className='text-center'>Infinite - Infinite</h6>
+                        )
+                    }
                     <h5 className='text-center'>EXP</h5>
                 </div>
             </div>
@@ -202,7 +266,7 @@ export const Settings = () => {
                 user={user}
             />
 
-            <ModalChangePass 
+            <ModalChangePass
                 user={user}
             />
         </>

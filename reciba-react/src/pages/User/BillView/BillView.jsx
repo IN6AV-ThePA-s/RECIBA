@@ -47,7 +47,7 @@ export const BillView = () => {
 
         <div className='container mb-5'>
           {
-            bills?.map(({ cantMaterials, date, payMethod, recycler, status, total, user, _id }, index) => {
+            bills?.map(({ cantMaterials, date, payMethod, recycler, status, total, user, _id, points }, index) => {
               return (
                 <>
                   <CardBill
@@ -59,6 +59,7 @@ export const BillView = () => {
                     total={total}
                     user={user}
                     id={_id}
+                    points={points}
                     key={_id}
                   />
                 </>

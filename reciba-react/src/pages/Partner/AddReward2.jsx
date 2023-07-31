@@ -1,24 +1,22 @@
 import React, { useContext, useEffect, useState } from 'react'
 import '../Master/MasterUserView/user.css'
-import { useParams, Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { AuthContext } from '../../index'
 import Swal from 'sweetalert2'
 import axios from 'axios'
 
-export const AddReward = () => {
-  const { id } = useParams()
+export const AddReward2 = () => {
   const { dataUser } = useContext(AuthContext)
   const navigate = useNavigate()
   const [form, setForm] = useState({
     name: '',
     description: '',
-    partner: id,
+    partner: '',
     range: '',
     cantPoints: ''
   })
   const [range, setRange] = useState([])
   const [photo, setPhoto] = useState()
-  const [partner, setPartner] = useState()
   const headers = {
     'Content-Type': 'application/json',
     'Authorization': localStorage.getItem('token')
@@ -42,27 +40,38 @@ export const AddReward = () => {
     setPhoto(formData)
   }
 
+  const getPartner = async () => {
+    try {
+      const { data } = await axios.get(`http://localhost:3033/partner/getByUser/${dataUser.sub}`, { headers: headers })
+      if (data) {
+        setForm({
+          ...form,
+          'partner': data.partner._id
+        })
+      }
+    } catch (err) {
+      console.error(err);
+      Swal.fire(err.response.data?.message, '', 'error')
+      navigate('/partner')
+    }
+  }
+
   const getRanges = async () => {
     try {
       const { data } = await axios.get(`http://localhost:3033/range/get`, { headers: headers })
-      setRange(data.range)
+      setRange([])
+      for (let i = 0; i < data.range?.length; i++) {
+        if (data.range[i].name != 'ADMIN')
+          setRange(range => range.concat([data.range[i]]))
+      }
     } catch (err) {
       console.log(err)
-      Swal.fire(err.response.data.message, '', 'error')
+      Swal.fire(err.response.data?.message, '', 'error')
     }
   }
 
   const addReward = async () => {
     try {
-      const idUserPartner = dataUser.id
-      const findPartner = await axios(`http://localhost:3033/partner/getByUser/${idUserPartner}`, {headers: headers})
-      console.log(findPartner.data.partner._id);
-      setForm({
-        ...form,
-        'partner': findPartner?.data.partner._id
-      })
-      console.log(form);
-
       const { data } = await axios.post('http://localhost:3033/reward/add', form, { headers: headers })
       if (data.reward) {
         if (photo) {
@@ -74,7 +83,7 @@ export const AddReward = () => {
           text: `Reward "${data.reward.name}" was successfully added`,
           icon: 'success'
         })
-        navigate(`/${id? `master/partnerView/${id}` : '/partner/viewReward'}`)
+        navigate('/partner/viewReward')
       }
     } catch (err) {
       console.error(err);
@@ -84,14 +93,19 @@ export const AddReward = () => {
 
   useEffect(() => {
     getRanges()
+    getPartner()
   }, [])
 
   useEffect(() => {
     setForm({
       ...form,
-      'range': range[0]?._id,
+      'range': range[0]?._id
     })
   }, [range])
+
+  useEffect(()=>{
+    console.log(form);
+  },[form])
 
   return (
     <div className="main-content">
@@ -116,14 +130,7 @@ export const AddReward = () => {
 
                   <h5 className="mr-2 mt-3">Description</h5>
                   <input onChange={handleForm} name='description' type="text" className="form-control" />
-                  {
-                    id ?
-                      (<>
-                        <h5 className="mr-2 mt-3">Partner</h5>
-                        <input onChange={handleForm} defaultValue={id} name='partner' type="text" className="form-control" disabled readOnly/>
-                      </>) :
-                      (<></>)
-                  }
+
                   <h5 className=" mr-2 mt-3">Range</h5>
                   <select onChange={handleSelect} name='range' className='form-select'>
                     {
@@ -145,7 +152,7 @@ export const AddReward = () => {
 
                 </div>
                 <button onClick={(e) => { addReward() }} className="btn btn-success me-1 mt-4">Add Reward</button>
-                <Link to={`/${id? `master/partnerView/${id}` : 'partner/viewReward' }`} >
+                <Link to={'/partner'} >
                   <button className="btn btn-danger me-1 mt-4">Cancel</button>
                 </Link>
 

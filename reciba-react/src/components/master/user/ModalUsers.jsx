@@ -106,7 +106,7 @@ export const ModalUsers = ({ id }) => {
                                     </div>
                                     <div className="mb-3 ">
                                         <span className="text-success fs-5">Username: </span>
-                                        <span className=" fs-5">{user.name}</span>
+                                        <span className=" fs-5">{user.username}</span>
                                     </div>
                                 </div>
                                 <div className='d-flex flex-row justify-content-evenly'>

@@ -38,6 +38,13 @@ import { ViewReward } from './pages/Partner/ViewReward'
 import { EditReward } from './pages/Partner/EditReward'
 import { MasterStats } from './pages/Master/Stadistics/MasterStats'
 import { RewardStats } from './pages/Partner/Stadistics/RewardStats'
+import { ViewPartner } from './pages/Master/MasterPartnerView/ViewPartner'
+import { UpdatePartner } from './pages/Master/MasterPartnerView/UpdatePartner'
+import { AddPartner } from './pages/Master/MasterPartnerView/AddPartner'
+import { MasterUpdateReward } from './pages/Master/MasterRewardView/MasterUpdateReward'
+import { RangesView } from './pages/Master/Ranges/RangesView'
+import { ModalAddRange } from './components/ranges/ModalAddRange'
+import { AddReward2 } from './pages/Partner/AddReward2'
 
 export const AuthContext = createContext()
 
@@ -114,6 +121,41 @@ export const Index = () => {
                         {
                             path: 'stats',
                             element: <MasterStats/>
+                        },
+                        {
+                            path: 'partnerView',
+                            element: <ViewPartner/>
+                        },
+                        {
+                            path: 'addPartner',
+                            element: <AddPartner/>
+                        },
+                        {
+                            path: 'updatePartner/:id',
+                            element: <UpdatePartner/>
+                        },
+                        {
+                            path: 'partnerview/:id',
+                            element: <PartnerView/>
+                        },
+                        {
+                            path:'addReward/:id',
+                            element:<AddReward/>
+                        },{
+                            path: 'updateReward/:id',
+                            element: <MasterUpdateReward/>
+                        },
+                        {
+                            path: 'settings',
+                            element: <Settings/>
+                        },
+                        {
+                            path: 'rangeView',
+                            element: <RangesView/>
+                        },
+                        {
+                            path: 'addRange',
+                            element: <ModalAddRange/>
                         }
                     ]
                 },
@@ -190,7 +232,11 @@ export const Index = () => {
                         {
                             path: 'stats',
                             element: <RecyclerStats/>
-                        }
+                        },
+                        {
+                            path: 'settings',
+                            element: <Settings/>
+                        },
                     ]
                 },
                 {
@@ -199,7 +245,7 @@ export const Index = () => {
                     children: [
                         {
                             path:'addReward',
-                            element:<AddReward/>
+                            element:<AddReward2/>
                         },
                         {
                             path:'viewReward',
@@ -212,7 +258,11 @@ export const Index = () => {
                         {
                             path:'rewardStats',
                             element:<RewardStats/>
-                        }
+                        },
+                        {
+                            path: 'settings',
+                            element: <Settings/>
+                        },
                     ]
                 }
             ]

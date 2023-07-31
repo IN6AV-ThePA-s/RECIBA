@@ -1,8 +1,61 @@
-import React from 'react'
-import { Link, Outlet } from 'react-router-dom'
+import React, { useContext, useEffect, useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 import '../css/Dashboard.css'
+import photoError from '../assets/userDefault.png'
+import axios from 'axios'
+import Swal from 'sweetalert2'
+import { AuthContext } from '../index'
+
+const HOST = Object.freeze({ url: 'http://localhost:3033' })
 
 export const NavbarPartner = () => {
+
+    const { dataUser, setLoggedIn } = useContext(AuthContext)
+    const [user, setUser] = useState()
+
+    const [photo, setPhoto] = useState()
+    const handleImageError = (e) => {
+        e.target.src = photoError;
+    };
+    const headers = {
+        'Content-Type': 'application/json',
+        'Authorization': localStorage.getItem('token')
+    }
+
+    const navigate = useNavigate()
+
+    const getOwn = async () => {
+        try {
+            const { data } = await axios(`${HOST.url}/user/getOwn`, { headers: headers })
+
+            if (data) {
+                setPhoto(`${HOST.url}/user/getImg/${data.data[0].photo}`)
+                let user = data.data[0]
+                return setUser(user)
+            }
+
+        } catch (err) {
+            console.error(err)
+            Swal.fire(err.response?.data.message, '', 'error')
+        }
+    }
+
+    const logout = () => {
+        localStorage.clear()
+        setLoggedIn(false)
+
+        navigate('/login')
+        Swal.fire({
+            icon: 'success',
+            timer: 1000,
+            showConfirmButton: false
+        })
+    }
+
+    useEffect(() => {
+        getOwn()
+    }, [])
+
     return (
         <>
             <nav className="navbar navbar-dark bgGreen fixed-top" aria-label="Dark offcanvas navbar">
@@ -36,6 +89,26 @@ export const NavbarPartner = () => {
                                 </Link>
 
                             </div>
+                        </div>
+
+                        <div className="dropup pb-4 px-4">
+
+                            <div className="dropdown d-grip gap-2">
+                                <a className="btn btn-dark dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <img src={photo || photoError} onError={handleImageError} crossOrigin='anonymous' alt="userFoto" style={{ objectFit: 'cover', width: '4vh', height: '4vh' }} className="rounded-circle me-1" />
+                                    <span className="d-none d-sm-inline mx-1 fs-5">{dataUser.username}</span>
+                                </a>
+                                <ul className="dropdown-menu dropdown-menu-dark text-lg shadow">
+                                    <li><Link className="dropdown-item" to='settings'>Settings</Link></li>
+                                    <li><Link className="dropdown-item disabled" href="#">Role: {dataUser.role}</Link></li>
+
+                                    <li>
+                                        <hr className="dropdown-divider" />
+                                    </li>
+                                    <li><Link className="dropdown-item" href="#" onClick={logout}>Log Out</Link></li>
+                                </ul>
+                            </div>
+
                         </div>
                     </div>
                 </div>

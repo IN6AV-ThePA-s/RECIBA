@@ -134,12 +134,29 @@ export const ViewDetails = () => {
 
                                 </div>
                                 <div className="col-xl-3">
-                                    {/* <ul className="list-unstyled">
-                                        <li className="text-muted ms-3"><span className="text-black me-4">SubTotal</span>$1110</li>
-                                        <li className="text-muted ms-3 mt-2"><span className="text-black me-4">Tax(15%)</span>$111</li>
-                                    </ul> */}
-                                    <p className="text-black float-start"><span className="text-black me-3"> Total Amount</span><span
-                                        style={{ fontSize: '25px' }}>Q. {parseFloat(bill.total).toFixed(2)}</span></p>
+                                    {
+                                        bill.payMethod == 'ECOINS' ? (
+                                            <>
+                                                <ul className="list-unstyled">
+                                                    <li className="text-muted ms-3"><span className="text-black me-4">Total</span>Q. {parseFloat(bill.total).toFixed(2)}</li>
+                                                    <li className="text-muted ms-3 mt-2"><span className="text-black me-4">Points</span>{parseInt(bill.total * 110)}  (+10%)</li>
+                                                    <li className="text-muted ms-3 mt-2"><span className="text-black me-4">Bonus</span>{bill.bonus} %</li>
+                                                </ul>
+                                                <p className="text-black float-start"><span className="text-black me-3"> Total Points</span><span
+                                                    style={{ fontSize: '25px', color: 'green' }}>{bill.points}</span>
+                                                </p>
+                                            </>
+
+
+                                        ) : (
+                                            <>
+                                                <p className="text-black float-start"><span className="text-black me-3"> Total Amount:</span><span
+                                                    style={{ fontSize: '25px' }}>Q. {parseFloat(bill.total).toFixed(2)}</span>
+                                                </p>
+                                            </>
+
+                                        )
+                                    }
                                 </div>
                             </div>
                             <hr />

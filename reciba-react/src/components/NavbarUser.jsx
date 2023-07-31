@@ -91,6 +91,9 @@ export const NavbarUser = () => {
                             {
                                 user?.role === "MASTER" ? (
                                     <>
+                                        <Link to={'/master/page'} className='optionSidebar'>
+                                            <h6>Client View</h6>
+                                        </Link>
                                         <h3 className='fw-bold mt-3' style={{ color: '#086c3c' }}>User{' '}<i className="fa-sharp fa-solid fa-user"></i></h3>
                                         <Link className='optionSidebar'></Link>
                                         <Link to={'/master/users'} className='optionSidebar'>
@@ -108,6 +111,20 @@ export const NavbarUser = () => {
                                             <h6><i className="fa-solid fa-plus"></i>{' '}Add Recycler</h6>
                                         </Link>
 
+                                        <h3 className='fw-bold mt-3' style={{ color: '#086c3c' }}>Ranges</h3>
+                                        <Link to={'/master/rangeView'} className='optionSidebar'>
+                                            <h6>Ranges view</h6>
+                                        </Link>
+                                        
+                                        <h3 className='fw-bold mt-3' style={{ color: '#086c3c' }}>Partner{' '}<i className="fa-solid fa-users-rectangle"></i></h3>
+                                        <Link className='optionSidebar'></Link>
+                                        <Link to={'/master/partnerView'} className='optionSidebar'>
+                                            <h6><i className="fa-solid fa-list"></i>{' '}Partner</h6>
+                                        </Link>
+                                        <Link to={'/master/addPartner'} className='optionSidebar'>
+                                            <h6><i className="fa-solid fa-plus"></i>{' '}Add Partner</h6>
+                                        </Link>
+                                        
                                         <h3 className='fw-bold mt-3' style={{ color: '#086c3c' }}>Statistics</h3>
                                         <Link to={'/master/stats'} className='optionSidebar'>
                                             <h6>Watch my stats</h6>
@@ -120,7 +137,7 @@ export const NavbarUser = () => {
                                             <div className="progress-bar progress-bar-striped progress-bar-animated bg-success" style={{ width: `${exp}%` }}>{exp}%</div>
                                         </div>
                                         <h6>{user?.exp} - {user?.range.limitExp} exp</h6>
-                                        <br/>
+                                        <br />
 
                                         <h3 className='fw-bold' style={{ color: '#086c3c' }}>Actions</h3>
 
@@ -148,7 +165,7 @@ export const NavbarUser = () => {
 
                         <div className="dropdown d-grip gap-2">
                             <a className="btn btn-dark dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <img src={photo || photoError} onError={handleImageError} crossOrigin='anonymous' alt="userFoto" style={{objectFit: 'cover', width: '4vh', height: '4vh'}} className="rounded-circle me-1" />
+                                <img src={photo || photoError} onError={handleImageError} crossOrigin='anonymous' alt="userFoto" style={{ objectFit: 'cover', width: '4vh', height: '4vh' }} className="rounded-circle me-1" />
                                 <span className="d-none d-sm-inline mx-1 fs-5">{dataUser.username}</span>
                             </a>
                             <ul className="dropdown-menu dropdown-menu-dark text-lg shadow">
