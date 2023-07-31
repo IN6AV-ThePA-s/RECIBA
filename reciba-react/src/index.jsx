@@ -24,6 +24,24 @@ import { BillView } from './pages/User/BillView/BillView'
 import { RewardView } from './pages/User/RewardView/RewardView'
 import { Settings } from './pages/User/Settings'
 import { ViewDetails } from './components/bill/ViewDetails'
+import { Example } from './pages/Master/Example'
+import { UserPage } from './pages/Master/MasterUserView/UserPage'
+import { AddUserPage } from './pages/Master/MasterUserView/AddUserPage'
+import { UpdateUserPage } from './pages/Master/MasterUserView/UpdateUserPage'
+import { MasterRecyclerView } from './pages/Master/MasterRecyclerView/MasterRecyclerView'
+import { MasterRecyclerUpdate } from './pages/Master/MasterRecyclerView/MasterRecyclerUpdate'
+import { MasterRecyclerAdd } from './pages/Master/MasterRecyclerView/MasterRecyclerAdd'
+import { Stats } from './pages/User/stadistics/Stats'
+import { RecyclerStats } from './pages/Recycler/Stadistics/RecyclerStats'
+import { AddReward } from './pages/Partner/AddReward'
+import { ViewReward } from './pages/Partner/ViewReward'
+import { EditReward } from './pages/Partner/EditReward'
+import { MasterStats } from './pages/Master/Stadistics/MasterStats'
+import { RewardStats } from './pages/Partner/Stadistics/RewardStats'
+import { ViewPartner } from './pages/Master/MasterPartnerView/ViewPartner'
+import { UpdatePartner } from './pages/Master/MasterPartnerView/UpdatePartner'
+import { AddPartner } from './pages/Master/MasterPartnerView/AddPartner'
+import { MasterUpdateReward } from './pages/Master/MasterRewardView/MasterUpdateReward'
 
 export const AuthContext = createContext()
 
@@ -64,7 +82,71 @@ export const Index = () => {
                 {
                     path: '/master',
                     element: loggedIn ? (dataUser?.role === 'MASTER' ? <MasterDashboard/> : <NotFound/>) : (<LoginPage/>),
-                    children: []
+                    children: [
+                        {
+                            path: 'page',
+                            element: <UserHome />
+                        },
+                        {
+                            path: 'users',
+                            element: <UserPage/>
+                        },
+                        {
+                            path: 'addUser',
+                            element: <AddUserPage/>
+                        },
+                        {
+                            path: 'updateUser/:id',
+                            element: <UpdateUserPage/>
+                        },
+                        {
+                            path: 'recyclerview',
+                            element: <MasterRecyclerView/>
+                        },
+                        {
+                            path: 'addRecycler',
+                            element: <MasterRecyclerAdd/>
+                        },
+                        {
+                            path: 'updateRecycler/:id',
+                            element: <MasterRecyclerUpdate/>
+                        },
+                        {
+                            path: 'recyclerview/:id',
+                            element: <RecyclerView/>
+                        },
+                        {
+                            path: 'stats',
+                            element: <MasterStats/>
+                        },
+                        {
+                            path: 'partnerView',
+                            element: <ViewPartner/>
+                        },
+                        {
+                            path: 'addPartner',
+                            element: <AddPartner/>
+                        },
+                        {
+                            path: 'updatePartner/:id',
+                            element: <UpdatePartner/>
+                        },
+                        {
+                            path: 'partnerview/:id',
+                            element: <PartnerView/>
+                        },
+                        {
+                            path:'addReward/:id',
+                            element:<AddReward/>
+                        },{
+                            path: 'updateReward/:id',
+                            element: <MasterUpdateReward/>
+                        },
+                        {
+                            path: 'settings',
+                            element: <Settings/>
+                        },
+                    ]
                 },
                 {
                     path: '/home',
@@ -97,6 +179,10 @@ export const Index = () => {
                         {
                             path: 'viewDetails/:id',
                             element: <ViewDetails/>
+                        },
+                        {
+                            path: 'stats',
+                            element: <Stats/>
                         }
                     ]
                 },
@@ -131,13 +217,42 @@ export const Index = () => {
                         {
                             path: 'viewBillMaterials/:id',
                             element: <ViewBillMaterials/>
-                        }
+                        },
+                        {
+                            path: 'stats',
+                            element: <RecyclerStats/>
+                        },
+                        {
+                            path: 'settings',
+                            element: <Settings/>
+                        },
                     ]
                 },
                 {
                     path: '/partner',
-                    element: loggedIn ? (dataUser?.role === 'PARTNER' ? <PartnerDashboard/> : <NotFound/>) : (<LoginPage/>),
-                    children: []
+                    element: loggedIn ? (dataUser?.role === 'PARTNER' ? <PartnerDashboard /> : <NotFound />) : (<LoginPage />),
+                    children: [
+                        {
+                            path:'addReward',
+                            element:<AddReward/>
+                        },
+                        {
+                            path:'viewReward',
+                            element:<ViewReward/>
+                        },
+                        {
+                            path:'editReward/:id',
+                            element:<EditReward/>
+                        },
+                        {
+                            path:'rewardStats',
+                            element:<RewardStats/>
+                        },
+                        {
+                            path: 'settings',
+                            element: <Settings/>
+                        },
+                    ]
                 }
             ]
         }

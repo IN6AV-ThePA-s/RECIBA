@@ -23,11 +23,12 @@ export const AboutUsPage = () => {
                                 <div className="col-lg-5 offset-lg-3 col-md-8 me-auto">
                                     <h3 className="h2247 text-white fs-1 text-decoration-underline pb-3 pt-3">About Us</h3>
                                     <p className="p247 fs-5 text-white">
-                                        In Warehouse 24/7, we believe that running a warehouse leasing company doesn't have to be complicated.
-                                        That is why we have created a system designed to keep track of these in an efficient and practical way.
+                                        In RECIBA, we are committed to protecting the planet and promoting sustainable practices. 
+                                        We believe that recycling is a vital part of the solution to address the environmental challenges 
+                                        we face today. For this reason, we have proposed to promote a culture of recycling through an 
+                                        innovative and rewarding initiative.
                                         <br/>
-                                        Our team is made up of technology experts and we are committed to customer satisfaction and in the 
-                                        warehouse leasing business.
+                                        
                                     </p>
                                 </div>
                             </div>

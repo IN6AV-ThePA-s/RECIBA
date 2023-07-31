@@ -64,7 +64,7 @@ export const NavbarOffcanvas = () => {
                             </Link>
 
                             <h3 className='fw-bold mt-3' style={{ color: '#086c3c' }}>Statistics</h3>
-                            <Link className='optionSidebar'>
+                            <Link to={'/recycler/stats'} className='optionSidebar'>
                                 <h6>Watch my stats</h6>
                             </Link>
 

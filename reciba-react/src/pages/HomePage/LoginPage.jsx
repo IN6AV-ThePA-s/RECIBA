@@ -43,7 +43,7 @@ export const LoginPage = () => {
                         break;
 
                     case 'MASTER':
-                        navigate(`/master`)
+                        navigate(`/master/page`)
                         break;
 
                     case 'RECYCLER':
@@ -51,7 +51,7 @@ export const LoginPage = () => {
                         break;
 
                     case 'PARTNER':
-                        navigate(`/partner`)
+                        navigate(`/partner/viewReward`)
                         break;
                     default:
                         break;

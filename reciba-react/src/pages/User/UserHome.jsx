@@ -8,7 +8,6 @@ import { CardRecycler } from '../../components/recycler/CardRecycler'
 import Swal from 'sweetalert2'
 import { CardReward } from '../../components/rewards/CardReward'
 import { CardPartner } from '../../components/partner/CardPartner'
-import { ModalClaimReward } from '../../components/rewards/ModalClaimReward'
 
 const HOST = Object.freeze({ url: 'http://localhost:3033' })
 
@@ -93,18 +92,44 @@ export const UserHome = () => {
         }
     }
 
+    const checkRange = async () => {
+        try {
+            const { data } = await axios(`${HOST.url}/user/checkRange`, { headers: headers })
+
+            if (data) {
+                console.log(data.promoted);
+                if (data.promoted) Swal.fire('You have been promoted', '', 'info')
+            }
+
+            return
+
+        } catch (err) {
+            console.error(err)
+            Swal.fire(err.response.data.message, '', 'error')
+        }
+    }
+
     useEffect(() => {
         getRecyclers()
         getRewards()
         getPartners()
         getOwn()
+        checkRange()
     }, [])
 
 
     return (
         <>
-            {/* Carousel */}
-            <div id="carruselImagenes" className="carousel container slide mt-4" data-bs-ride="carousel" style={{ height: '65vh', width: '100%' }}>
+        <br />
+            {user?.role != 'CLIENT' ?
+                (<div style={{ backgroundColor: '#44AF41', borderRadius: '15px' }} className='sticky-top text-white mb-4'>
+
+                    <h1 className='h1TE text-center'>Client View</h1>
+
+                </div>)
+                :
+                (<></>)}
+            <div id="carruselImagenes" className="carousel container slide mt-4 p-0" data-bs-ride="carousel" style={{ height: '65vh', width: '100%' }}>
                 <div className="carousel-inner rounded-4">
                     <div id="uno" className="carousel-item active">
                         <img src={c1} className="d-block" style={{ objectFit: 'cover', width: '100%', height: '65vh' }} />
@@ -119,10 +144,10 @@ export const UserHome = () => {
                     </div>
                 </div>
 
-                <button className="carousel-control-prev" type="button" data-bs-target="#carruselImagenes" data-bs-slide="prev">
+                <button className="carousel-control-prev rounded-4" type="button" data-bs-target="#carruselImagenes" data-bs-slide="prev">
                     <span className="carousel-control-prev-icon"></span>
                 </button>
-                <button className="carousel-control-next" type="button" data-bs-target="#carruselImagenes" data-bs-slide="next">
+                <button className="carousel-control-next rounded-4" type="button" data-bs-target="#carruselImagenes" data-bs-slide="next">
                     <span className="carousel-control-next-icon"></span>
                 </button>
             </div>
@@ -150,13 +175,26 @@ export const UserHome = () => {
                 <div className='container row'>
                     <div className='col-6'>
                         <div className="progress" role="progressbar" aria-label="Animated striped example" aria-valuenow={`${user?.exp}`} aria-valuemin='0' aria-valuemax={`${limitExp}`}>
-                            <div className="progress-bar progress-bar-striped progress-bar-animated bg-success" style={{ width: `${exp}%` }}>{exp}%</div>
+                            <div className="progress-bar progress-bar-striped progress-bar-animated bg-success" style={{ width: `${user?.role === 'CLIENT' ? exp : '100'}%` }}>{user?.role === 'CLIENT' ? exp : 'Infinite '}%</div>
                         </div>
-                        <h6>{user?.exp} - {user?.range.limitExp} exp</h6>
+                        {
+                            user?.role === 'CLIENT' ? (
+                                <h6>{user?.exp} - {user?.range.limitExp} exp</h6>
+                            ) : (
+                                <h6>Infinite - Infinite exp</h6>
+                            )
+                        }
+                        
                     </div>
 
                     <div className='col-6 p-0 text-end'>
-                        <h4>Ecoins: {user?.points}</h4>
+                        {
+                            user?.role === 'CLIENT' ? (
+                                <h4>Ecoins: {user?.points}</h4>
+                            ) : (
+                                <h4>Ecoins: Infinite</h4>
+                            )
+                        }
                     </div>
                 </div>
             </div>
@@ -176,25 +214,32 @@ export const UserHome = () => {
                     </div>
                 </div>
 
-                <hr className='mb-5'/>
+                <hr className='mb-5' />
 
                 <div className="row row-cols-1 row-cols-md-2 g-4">
                     {
-                        recyclers?.map(({ name, direction, _id, email, phone, startHour, endHour, photos }, index) => {
-                            return (
-                                <CardRecycler
-                                    key={index}
-                                    name={name}
-                                    direction={direction}
-                                    email={email}
-                                    id={_id}
-                                    phone={phone}
-                                    startHour={startHour}
-                                    endHour={endHour}
-                                    photos={photos}
-                                />
-                            )
-                        })
+                        recyclers?.length != 0 ? (
+                            recyclers?.map(({ name, direction, _id, email, phone, startHour, endHour, photos }, index) => {
+                                return (
+                                    <CardRecycler
+                                        key={index}
+                                        name={name}
+                                        direction={direction}
+                                        email={email}
+                                        id={_id}
+                                        phone={phone}
+                                        startHour={startHour}
+                                        endHour={endHour}
+                                        photos={photos}
+                                    />
+                                )
+                            })
+                        ) : (
+                            null
+                        )
+
+
+
                     }
                 </div>
             </div>
@@ -214,27 +259,32 @@ export const UserHome = () => {
                     </div>
                 </div>
 
-                <hr className='mb-5'/>
+                <hr className='mb-5' />
 
                 <div className='row row-cols-1 row-cols-md-2 g-4 text-center'>
                     {
-                        rewards?.map(({ name, description, partner, range, cantPoints, photo, _id }, index) => {
-                            return (
-                                <>
-                                    <CardReward
-                                        id={_id}
-                                        name={name}
-                                        desc={description}
-                                        range={range}
-                                        cantPoints={cantPoints}
-                                        photo={photo}
-                                        partner={partner}
-                                        key={index}
-                                    />
-                                </>
+                        recyclers?.length != 0 ? (
+                            rewards?.map(({ name, description, partner, range, cantPoints, photo, _id }, index) => {
+                                return (
+                                    <>
+                                        <CardReward
+                                            id={_id}
+                                            name={name}
+                                            desc={description}
+                                            range={range}
+                                            cantPoints={cantPoints}
+                                            photo={photo}
+                                            partner={partner}
+                                            key={index}
+                                        />
+                                    </>
 
-                            )
-                        })
+                                )
+                            })
+                        ) : (
+                            null
+                        )
+
                     }
                 </div>
             </div>
@@ -245,7 +295,7 @@ export const UserHome = () => {
                     Our Partners
                 </h1>
 
-                <hr className='mb-5'/>
+                <hr className='mb-5' />
 
                 <div className="row row-cols-1 row-cols-md-3 g-4 text-center">
                     {

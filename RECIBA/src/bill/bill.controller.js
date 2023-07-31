@@ -3,6 +3,7 @@
 const Bill = require('./bill.model')
 const Material = require('../material/material.model')
 const User = require('../user/user.model')
+const Recycler = require('../recycler/recycler.model')
 
 const { validateData } = require('../utils/validate')
 const materials = [{}]
@@ -120,6 +121,34 @@ exports.getOwn = async (req, res) => {
     }
 }
 
+exports.getBills = async(req,res)=>{
+    try {
+        let data = await Bill.find().populate('user').populate('recycler').populate('cantMaterials.material');
+        if(!data) return res.status(404).send({message: 'Couldnt find any bill'});
+        return res.send({message: 'Bills found!', data})
+    } catch (err) {
+        console.error(err);
+        return res.status(500).send({message: 'Error gettitng parnters'})
+    }
+}
+
+exports.getRecyclerBills = async (req, res) => {
+    try {
+        const user = req.user.sub
+
+        let recycler = await Recycler.findOne({ user: user })
+        if (!recycler) return res.status(404).send({ message: 'Recycler not found' })
+
+        let bills = await Bill.find({ recycler: recycler._id })
+        if (!bills) return res.status(404).send({ message: 'Could not find any bill' })
+        
+        return res.send({ message: 'Bills found', bills })
+        
+    } catch (err) {
+        console.error(err)
+        return res.status(500).send({ message: 'Error getting bills', error: err })
+    }
+}
 exports.disableBill = async(req,res)=>{
     try {
         const idBill = req.params.id

@@ -44,9 +44,6 @@ exports.addReward = async (req, res) => {
 exports.getRewards = async (req, res) => {
     try {
         const rewards = await Reward.find().populate('partner').populate('range')
-        if (rewards.length == 0) {
-            return res.status(404).send({ message: 'Rewards not found.' })
-        }
         return res.send({ message: 'Rewards found:', rewards })
     } catch (err) {
         console.error(err)
@@ -109,7 +106,6 @@ exports.updateReward = async (req, res) => {
         const params = {
             name: data.name,
             description: data.description,
-            partner: data.partner,
             range: data.range,
             cantPoints: data.cantPoints
         }
@@ -222,11 +218,18 @@ exports.claim = async (req, res) => {
                 { $inc: { 'historyRewards.$.claims': 1, points: -(reward.cantPoints), exp: exp } },
                 { new: true }
             )
-
+            await Reward.findOneAndUpdate(
+                {_id:id},
+                {$inc:{claims:1}},
+                {new:true}
+            )
             if (!upHistory) return res.status(404).send({ message: 'Error, item not found' })
                 
             return res.send({ message: 'Reward claimed successfully', upHistory })
         }
+
+        let diff = userInfo.points - reward.cantPoints
+        if (diff < 0) return res.status(400).send({ message: `Insuficient points :( you need at least '${reward.cantPoints}pts' to claim this reward` })
 
         let rewardClaimed = {
             _id: reward._id,
@@ -239,12 +242,21 @@ exports.claim = async (req, res) => {
             claims: 1
         }
 
+        let exp = reward.cantPoints * 0.10
+
         let upHistory = await User.findOneAndUpdate(
             { _id: user },
-            { $push: { historyRewards: rewardClaimed } },
+            { 
+                $push: { historyRewards: rewardClaimed },
+                $inc: { points: -(reward.cantPoints), exp: exp }
+            },
             { new: true }
         )
-
+        await Reward.findOneAndUpdate(
+            {_id:id},
+            {$inc:{claims:1}},
+            {new:true}
+        )
         if (!upHistory) return res.status(404).send({ message: 'User not found :(', error: err })
         return res.send({ message: 'Reward claimed successfully', upHistory })
         
