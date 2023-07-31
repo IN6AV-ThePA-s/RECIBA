@@ -8,6 +8,7 @@ const { isImg } = require('../utils/validate');
 
 exports.addMaterial = async(req,res) =>{
     try {
+        /*Obtener los datos entrantes y del usuario logueado*/
         let data = req.body
         let userLogged = req.user
         console.log(data)
@@ -28,6 +29,7 @@ exports.addMaterial = async(req,res) =>{
 
 exports.getMaterials = async (req, res) =>{
     try{
+        /*Obtener los materiales */
         let materials = await Material.find({status: 'ENABLED'}).populate('recycle')
         return res.send({ materials })
     }catch (err) {
@@ -37,7 +39,9 @@ exports.getMaterials = async (req, res) =>{
 
 exports.getMaterial = async (req, res) => {
     try {
+        /*Obtener el id*/
         let idMaterial = req.params.id
+        /*Buscar el material y retornarlo */
         let material = await Material.findOne({ _id: idMaterial })
         if (!material) return res.status(404).send({ message: 'Material not found please check the id' })
         return res.send({ material })
@@ -48,8 +52,9 @@ exports.getMaterial = async (req, res) => {
 
 exports.getRecyclerMaterial = async(req, res) => {
     try {
+        /*Obtener el id*/
         let recycler = req.params.id
-
+        /*Buscar el material y retornarlo */
         let materials = await Material.find({ recycle: recycler, status: 'ENABLED' }).populate('recycle')
         if (!materials) return res.status(404).send({ message: `The recycler's materials you are looking for does not exist` })
         
@@ -63,9 +68,11 @@ exports.getRecyclerMaterial = async(req, res) => {
 
 exports.getImg = async(req, res) => {
     try {
+        /*Obtener el archivo y guardarlo en la ruta*/ 
         const { file } = req.params;
         const url = `./src/uploads/materials/${file}`
         const img = fs.existsSync(url)
+        /*retornarlo*/
         if (!img)
             return res.status(404).send({ message: 'Image not found' });
         return res.sendFile(path.resolve(url));
@@ -112,9 +119,12 @@ exports.uploadImgs = async (req, res) => {
 
 exports.editMaterial = async (req, res) => {
     try {
+        /*Obtener el id y los datos entrantes*/
         let idMaterial = req.params.id
         let data = req.body
+        /*Cambiar el ususario a nullo para no actualizarlo*/
         if (data.recycle) data.recycle = undefined
+        /*Actulizar */
         let materialUpdated = await Material.findOneAndUpdate(
             { _id: idMaterial },
             data,
@@ -130,7 +140,9 @@ exports.editMaterial = async (req, res) => {
 
 exports.deleteMaterial = async (req, res) => {
     try {
+        /*Obtener el id*/
         let idMaterial = req.params.id
+        /*Eliminar*/
         let materialDeleted = await Material.findOneAndUpdate(
             { _id: idMaterial },
             {status: 'DISABLED'},

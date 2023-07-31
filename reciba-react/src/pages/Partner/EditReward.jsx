@@ -6,6 +6,7 @@ import axios from 'axios'
 import Swal from 'sweetalert2'
 
 export const EditReward = () => {
+   /*Obtener datos y crear los necesarios */
   const { id } = useParams()
   const { dataUser } = useContext(AuthContext)
   const navigate = useNavigate()
@@ -23,25 +24,27 @@ export const EditReward = () => {
     'Content-Type': 'application/json',
     'Authorization': localStorage.getItem('token')
   }
-
+   /*metodo para cambiar escritura del form*/
   const handleForm = (e) => {
     setForm({
       ...form,
       [e.target.name]: e.target.value
     })
   }
+ /*metodo para cambiar select del form*/
   const handleSelect = (e) => {
     setForm({
       ...form,
       [e.target.name]: e.target.options[e.target.selectedIndex].value
     })
   }
+  /*metodo para cambiar foto del form*/
   const handlePhoto = (e) => {
     let formData = new FormData()
     formData.append('image', e.target.files[0])
     setPhoto(formData)
   }
-
+  /*Metodo para obtener la reward */
   const getReward = async () => {
     try {
       const { data } = await axios.get(`http://localhost:3033/reward/getOne/${id}`, { headers: headers })
@@ -51,7 +54,7 @@ export const EditReward = () => {
       Swal.fire(err.response.data.message, '', 'error')
     }
   }
-
+  /*Metodo para obtener rango */
   const getRanges = async () => {
     try {
       const { data } = await axios.get(`http://localhost:3033/range/get`, { headers: headers })
@@ -61,7 +64,7 @@ export const EditReward = () => {
       Swal.fire(err.response.data.message, '', 'error')
     }
   }
-
+  /*Metodo para editar */
   const editReward = async () => {
     try {
       
@@ -88,7 +91,7 @@ export const EditReward = () => {
     getRanges()
     getReward()
   }, [])
-
+  
   useEffect(()=>{
     document.getElementById('range').value = reward?.range._id
     setForm({

@@ -8,16 +8,19 @@ const path = require('path');
 
 exports.addRecycler = async (req, res) => {
     try {
+        /*Obtener los datos entrantes*/
         let data = req.body
         let userLogged = req.user
-
+        /*Buscar que los datos con dependencias existan y no esten tomados ya */
         let existsUser = await User.findOne({ _id: userLogged.sub, role: 'MASTER' })
         if (!existsUser) return res.status(404).send({ message: 'Account not found or role is not MASTER' })
         let existEmail = await Recycler.findOne({ email: data.email })
         if (existEmail) return res.status(418).send({ message: 'This email is already taken, please choose another one' })
         let existRecycler = await Recycler.findOne({user: data.user})
         if(existRecycler) return res.status(418).send({message: 'That user is already an admin for a recycler'})
+        /*Validar que venga user */
         if (data.user == null || data.user == undefined) return res.status(401).send({ message: `Can not select that user  ${data.user}` })
+        /*Guardar */
         let newRecycler = new Recycler(data)
         let recycler = await newRecycler.save()
         return res.send({ message: 'Recycler save successfully', recycler: recycler })
@@ -29,6 +32,7 @@ exports.addRecycler = async (req, res) => {
 
 exports.getRecyclers = async (req, res) => {
     try {
+        /*Obtener los datos y retornar*/
         let userLogged = req.user
         let recyclers = await Recycler.find()
         return res.send({ recyclers })
@@ -39,8 +43,10 @@ exports.getRecyclers = async (req, res) => {
 
 exports.getRecycler = async (req, res) => {
     try {
+        /*Obtener el id a buscar */
         let userLogged = req.user
         let idRecycler = req.params.id
+        /*BUscar y retornar */
         let recycler = await Recycler.findOne({ _id: idRecycler })
         if (!recycler) return res.status(404).send({ message: 'Recycler not found please check the id' })
         return res.send({recycler: recycler })
@@ -51,9 +57,11 @@ exports.getRecycler = async (req, res) => {
 
 exports.getImg = async (req, res) => {
     try {
+        /*Obtener el archivo y guardarlo en la ruta*/ 
         const { file } = req.params;
         const url = `./src/uploads/recyclers/${file}`
         const img = fs.existsSync(url)
+        /*retornarlo*/
         if (!img)
             return res.status(404).send({ message: 'Image not found' });
         return res.sendFile(path.resolve(url));
@@ -121,12 +129,14 @@ exports.uploadImgs = async (req, res) => {
 
 exports.editRecycler = async (req, res) => {
     try {
+        /*Obtener los datos a modificar y los id de user y recycler */
         let userLogged = req.user
         let idRecycler = req.params.id
         let data = req.body
         let recycler = await Recycler.findOne({_id: idRecycler})
         if(userLogged.sub != idRecycler && userLogged.role != 'MASTER') 
         return res.status(418).send({message: 'User with not accsses to update recycler'})
+        /*verificar que no venga user y que no tenga email repetido*/
         if (data.user != undefined){
             data.user = undefined
         }
@@ -134,6 +144,7 @@ exports.editRecycler = async (req, res) => {
             let emailExist = await Recycler.findOne({email: data.email})
             if(emailExist) return res.status(418).send({message: 'That email is already taked in another recycler'})
         }
+        /*Actualizar */
         let recyclerUpdated = await Recycler.findOneAndUpdate(
             { _id: idRecycler },
             data,
@@ -149,9 +160,11 @@ exports.editRecycler = async (req, res) => {
 
 exports.deleteRecycler = async (req, res) => {
     try {
+        /*Obtener lo valores */
         let userLogged = req.user
         let idRecycler = req.params.id
         console.log(userLogged.role);
+        /*validar rol y eliminar */
         if (userLogged.role === 'MASTER') {
             const recyclerMDeleted = await Recycler.findOneAndDelete({ _id: idRecycler })
             if (!recyclerMDeleted) return res.status(404).send({ message: 'Recycler not found and not delete' })
