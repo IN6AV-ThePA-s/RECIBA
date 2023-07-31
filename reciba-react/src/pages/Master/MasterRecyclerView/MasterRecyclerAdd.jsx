@@ -37,13 +37,13 @@ export const MasterRecyclerAdd = () => {
             [e.target.name]: e.target.options[e.target.selectedIndex].value
         })
     }
-    
+
     const handlePhoto = (e) => {
-        let formData = new FormData()
+        let f = new FormData()
         for (let img of e.target.files) {
-            formData.append('images', img)
+            f.append('images', img)
         }
-        setPhoto(formData)
+        setPhoto(f)
     }
 
 
@@ -136,10 +136,10 @@ export const MasterRecyclerAdd = () => {
                                     <input onChange={handleForm} id='email' name='email' type="text" className="form-control" />
 
                                     <h5 className="mr-2 mt-3">Open Hour</h5>
-                                    <input onChange={handleForm} name='startHour' type="text" className="form-control" />
+                                    <input onChange={handleForm} name='startHour' type="number" className="form-control" />
 
                                     <h5 className="mr-2 mt-3">Close Hour</h5>
-                                    <input onChange={handleForm} name='endHour' type="text" className="form-control" />
+                                    <input onChange={handleForm} name='endHour' type="number" className="form-control" />
 
                                     <h5 className=" mr-2 mt-3">User</h5>
                                     <select onChange={handleSelect} name='user' className='form-select'>
@@ -155,7 +155,7 @@ export const MasterRecyclerAdd = () => {
                                     </select>
 
                                     <h5 className="mr-2 mt-3">Photo</h5>
-                                    <input onChange={handlePhoto} name='images' type="file" className="form-control" />
+                                    <input onChange={handlePhoto} multiple accept='image/png, image/jpg, image/jpeg' name='images' type="file" className="form-control" />
 
 
 
