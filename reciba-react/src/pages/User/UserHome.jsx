@@ -211,7 +211,7 @@ export const UserHome = () => {
             <div className='container mx-auto mt-5'>
                 <div className='row align-items-center'>
                     <h1 className='col py-1 px-4 text-success'>
-                        Most popular recyclers
+                        Recyclers
                     </h1>
 
                     <div className='col-auto text-center text-light'>
@@ -256,7 +256,7 @@ export const UserHome = () => {
                 <div className='row align-items-center'>
 
                     <h1 className='col py-1 px-4 text-success'>
-                        Most popular rewards
+                        Rewards
                     </h1>
 
                     <div className='col-auto text-center text-light'>
