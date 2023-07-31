@@ -5,6 +5,7 @@ const Partner = require('./partner.model')
 const { validateData, sensitiveData } = require('../utils/validate')
 const fs = require('fs');
 const path = require('path');
+const Reward = require('../reward/reward.model')
 
 exports.test = (req, res) => {
     res.send({ message: 'Test partner' })
@@ -102,8 +103,12 @@ exports.edit = async(req, res)=>{
 exports.del = async (req, res) => {
     try {
         let partnerId = req.params.id
+
+        let deletedRewards = await Reward.deleteMany({ partner: partnerId })
+        if (!deletedRewards) return res.status(404).send({ message: 'Couldnt find any partner' })
+        
         let deletePartner = await Partner.findOneAndDelete({ _id: partnerId })
-        if (!deletePartner) return res.status(400).send({ message: 'Couldnt find an delete partner' })
+        if (!deletePartner) return res.status(404).send({ message: 'Couldnt find an delete partner' })
         return res.send({ message: 'Partner deleted successfully' })
     } catch (err) {
         console.error(err);

@@ -18,11 +18,11 @@ export const MasterRecyclerUpdate = () => {
 
 
   const handlePhoto = (e) => {
-    let formData = new FormData()
+    let f = new FormData()
     for (let img of e.target.files) {
-      formData.append('images', img)
+      f.append('images', img)
     }
-    setPhoto(formData)
+    setPhoto(f)
   }
 
 
@@ -57,9 +57,9 @@ export const MasterRecyclerUpdate = () => {
 
       if (data.recycler) {
         if (photo)
-        await axios.put(`http://localhost:3033/recycler/uploadImage/${data.partner._id}`, photo, {
-          headers: { 'Content-type': 'multipart/form-data', 'Authorization': localStorage.getItem('token') }
-        })
+          await axios.put(`http://localhost:3033/recycler/uploadImage/${data.recycler._id}`, photo, {
+            headers: { 'Content-type': 'multipart/form-data', 'Authorization': localStorage.getItem('token') }
+          })
         Swal.fire({
           title: 'Recycler updated!',
           text: `Recycler "${data.recycler.name}" was updated!`,
