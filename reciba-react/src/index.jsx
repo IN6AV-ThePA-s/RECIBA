@@ -141,7 +141,11 @@ export const Index = () => {
                         },{
                             path: 'updateReward/:id',
                             element: <MasterUpdateReward/>
-                        }
+                        },
+                        {
+                            path: 'settings',
+                            element: <Settings/>
+                        },
                     ]
                 },
                 {
@@ -217,7 +221,11 @@ export const Index = () => {
                         {
                             path: 'stats',
                             element: <RecyclerStats/>
-                        }
+                        },
+                        {
+                            path: 'settings',
+                            element: <Settings/>
+                        },
                     ]
                 },
                 {
@@ -239,7 +247,11 @@ export const Index = () => {
                         {
                             path:'rewardStats',
                             element:<RewardStats/>
-                        }
+                        },
+                        {
+                            path: 'settings',
+                            element: <Settings/>
+                        },
                     ]
                 }
             ]
