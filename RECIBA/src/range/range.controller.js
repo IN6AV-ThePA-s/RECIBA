@@ -3,6 +3,7 @@
 const Range = require('./range.model')
 const fs = require('fs')
 const path = require('path')
+const User = require('../user/user.model')
 
 const { validateData } = require('../utils/validate')
 
@@ -115,6 +116,18 @@ exports.edit = async(req, res) => {
 exports.del = async(req, res) => {
     try {
         let id = req.params.id
+        let willDelRange = await Range.findOne({ _id: id })
+
+        if (willDelRange.name === 'JUNIOR' || willDelRange.name === 'ADMIN') return res.status(400).send({ message: 'Cannot delete this fundamental range' })
+        
+        let range = await Range.findOne({ $or: [{limitExp: { $lt: willDelRange.initExp }}, {limitExp: { $eq: willDelRange.initExp }}]  })
+        
+        let upUsers = await User.updateMany(
+            { range: id },
+            { range: range._id }
+        )
+
+        if (!upUsers) return res.status(404).send({ message: 'Cannot find any range to update the users' })
 
         let delRange = await Range.findOneAndDelete({ _id: id })
         if (!delRange) return res.status(404).send({ message: 'Range not found and not deleted :(' })

@@ -2,11 +2,43 @@ import React from 'react'
 import photoError from '../../assets/defaultRange.png'
 import { Link } from 'react-router-dom';
 import { ModalEditRange } from './ModalEditRange';
+import Swal from 'sweetalert2';
+import axios from 'axios';
 
 export const RangeCard = ({ id, name, initExp, limitExp, photo }) => {
     const handleImageError = (e) => {
         e.target.src = photoError;
     };
+
+    const headers = {
+        'Content-Type': 'application/json',
+        'Authorization': localStorage.getItem('token')
+    }
+
+    const delRange = async () => {
+        try {
+            Swal.fire({
+                title: 'Are you sure to delet this range?',
+                icon: 'question',
+                showConfirmButton: true,
+                showDenyButton: true,
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                    const { data } = await axios.delete(`http://localhost:3033/range/delete/${id}`, { headers: headers })
+                    .catch((err) => {
+                        Swal.fire(err.response.data.message, '', 'error')
+                    })
+                    Swal.fire(`${data.message}`, '', 'success').then(() => location.reload())
+                } else {
+                    Swal.fire('No worries', '', 'success')
+                }
+            })
+            
+        } catch (err) {
+            console.error(err)
+            Swal.fire(err.response.data.message, '', 'error')
+        }
+    }
 
     return (
         <>
@@ -36,7 +68,7 @@ export const RangeCard = ({ id, name, initExp, limitExp, photo }) => {
                             <></>
                         ) : (
                             <div className="d-flex justify-content-center mt-1">
-                                <button onClick={(e) => { e.preventDefault() }} className="btn btn-outline-danger rounded-pill border-0 pl-2">
+                                <button onClick={(e) => { e.preventDefault(); delRange(id) }} className="btn btn-outline-danger rounded-pill border-0 pl-2">
                                     <i className="fa-sharp fa-solid fa-trash "
                                         trigger="hover"
                                         style={{ width: '25px', height: '25px' }}>
