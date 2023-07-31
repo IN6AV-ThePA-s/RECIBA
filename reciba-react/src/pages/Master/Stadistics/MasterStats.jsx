@@ -94,24 +94,29 @@ export const MasterStats = () => {
         let filterRewards = []
         let totalClaims = 0
 
+        //Contar las recompensas que hizo cada partner
         for (let item of partners.partners) {
+          //Filtrar las recompensas por el partner que esta en ciclo
           const f = rewards.rewards.filter((b) =>
             b.partner._id.includes(item._id)
           )
 
           var cantOfClaims = 0
 
+          //Por cada recompensa del partner en ciclo, sumar los reclamos que ha tenido
           for (let r of f) {
             cantOfClaims = cantOfClaims + r.claims
             totalClaims = totalClaims + r.claims
           }
 
+          //Pushear un objeto con la informacion del reward
           filterRewards.push({
             name: item.name,
             cantOfClaims: cantOfClaims
           })
         }
 
+        //Setear todas las claims hechas de todos los tiempos
         setClaims(totalClaims)
 
         setRewardData({
@@ -126,13 +131,14 @@ export const MasterStats = () => {
 
 
         //Grafica de rewards mas populares
-
+        //Filtrar las recompensas por el numero de reclamos, empezando desde 10 para que sean populares
         const filteredRewards = rewards.rewards.filter((b) =>
           b.claims > 10
         )
 
         let mostPopRewards = []
 
+        //Por cada recompensa pushearla con un modelo de datos
         for (let item of filteredRewards) {
           mostPopRewards.push({
             name: item.name,
@@ -140,6 +146,7 @@ export const MasterStats = () => {
           })
         }
 
+        //Setear cantidad total de rewards que son populares
         setCantPopRewards(mostPopRewards.length)
 
         setPopRewards({

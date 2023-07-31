@@ -32,16 +32,19 @@ export const Settings = () => {
 
             if (data) {
                 if (data.data[0].photo) setPhoto(true)
-                console.log(data.data[0]);
+                
+                //Si el usuario no es cliente no tiene que mostrarle su rango porque no lo maneja
                 if (data.data[0].role !== 'CLIENT') return setUser(data.data[0])
 
                 let user = data.data[0]
                 let perc = 0
 
+                //Establecer rango de exp del range de user
                 let limit = user.range.limitExp - user.range.initExp
                 setLimitExp(limit)
 
                 let actual = user.exp
+                //Obtener el porcentaje de exp que el user tiene sobre el rango 
                 perc = ((actual - user.range.initExp) * 100) / (limit)
 
                 setExp(perc)
